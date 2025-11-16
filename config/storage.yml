@@ -1,0 +1,16 @@
+test:
+  service: Disk
+  root: <%= Rails.root.join("tmp/storage") %>
+
+local:
+  service: Disk
+  root: <%= Rails.root.join("storage") %>
+
+minio:
+  service: S3
+  endpoint: <%= ENV["S3_LOCAL_ENDPOINT"] %>
+  access_key_id: <%= ENV["S3_USERNAME"] %>
+  secret_access_key: <%= ENV["S3_PASSWORD"] %>
+  region: <%= ENV["S3_REGION"] %>
+  bucket: <%= ENV["S3_BUCKET"] %>
+  force_path_style: true
