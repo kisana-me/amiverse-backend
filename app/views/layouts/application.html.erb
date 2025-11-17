@@ -24,6 +24,34 @@
   </head>
 
   <body>
-    <%= yield %>
+    <header>
+      <h1><%= link_to "Amiverse", root_path %></h1>
+      <nav>
+        <%= link_to "ホーム", root_path %> |
+        <%= link_to "セッション", sessions_path %> |
+        <%= link_to "アカウント", accounts_path %> |
+        <%= link_to "画像", images_path %> |
+        <%= link_to "投稿", posts_path %>
+      </nav>
+      <div>
+        <% if @current_account %>
+          サインイン中: <%= @current_account.name %> <small>@<%= @current_account.name_id %></small>
+        <% else %>
+          <%= link_to "サインイン/サインアップ", sessions_start_path %>
+        <% end %>
+      </div>
+    </header>
+
+    <main>
+      <%= yield %>
+    </main>
+
+    <div id="flash">
+      <%= render "shared/flash" %>
+    </div>
+
+    <footer>
+      <p>&copy; Amiverse</p>
+    </footer>
   </body>
 </html>

@@ -12,6 +12,21 @@
   <% end %>
 
   <div>
-    <%= form.submit %>
+    <%= form.label :name_id, "nid" %><br>
+    <%= form.text_field :name_id %>
+  </div>
+
+  <div>
+    <%= form.label :name, "name" %><br>
+    <%= form.text_field :name %>
+  </div>
+
+  <div>
+    <%= form.label :email, "email" %><br>
+    <%= form.email_field :email %>
+  </div>
+
+  <div>
+    <%= form.submit "送信" %>
   </div>
 <% end %>

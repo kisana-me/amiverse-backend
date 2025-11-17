@@ -1,0 +1,12 @@
+<% provide(:title, "セッション") %>
+
+<h1>セッション</h1>
+
+<div class="sessions">
+  <% @sessions.each do |session| %>
+    <div>
+      <strong>名前:</strong>
+      <%= session.name %>
+    </div>
+  <% end %>
+</div>

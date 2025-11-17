@@ -1,0 +1,9 @@
+<div class="posts">
+  <%= render partial: "post", collection: @posts %>
+</div>
+<% if @posts.empty? %>
+  <p>投稿はありません</p>
+<% end %>
+<div>
+  ページネーション
+</div>

@@ -1,0 +1,38 @@
+<h1>Amiverseを開始する</h1>
+
+<p>ようこそ！以下の情報を確認して登録してください。</p>
+
+<% if session[:oauth_signup] %>
+  <p style="color: #ff5000;">ANYUR連携中</p>
+<% end %>
+
+<%= form_with model: @account, url: signup_path, method: :post, class: "ctmf", data: { turbo: false } do |f| %>
+  <%= render "shared/error_messages", instead: @account %>
+
+  <div>
+    <%= f.label :name %>
+    <%= f.text_field :name, value: session[:oauth_signup]&.dig("name") %>
+  </div>
+
+  <div>
+    <%= f.label :name_id %>
+    <%= f.text_field :name_id, value: session[:oauth_signup]&.dig("name_id") %>
+  </div>
+
+  <div>
+    <%= f.label :description %>
+    <%= f.text_area :description, value: session[:oauth_signup]["description"] %>
+  </div>
+
+  <div>
+    <br />
+    アカウントを作成することで、当サービスの<br />
+    <%= link_to "利用規約", root_path %>と<%= link_to "プライバシーポリシー", root_path %>に<br />
+    同意したとみなされます。<br />
+    <br />
+  </div>
+
+  <div>
+    <%= f.submit "登録する" %>
+  </div>
+<% end %>

@@ -1,0 +1,26 @@
+<% provide(:title, "セッションをみる") %>
+
+<h1>セッションをみる</h1>
+
+<div>
+  <p>
+    <strong>lookup:</strong>
+    <%= @session.token_lookup %>
+  </p>
+
+  <p>
+    <strong>名前:</strong>
+    <%= @session.name %>
+  </p>
+
+  <p>
+    <strong>IP:</strong>
+    <%= @session.ip_address %>
+  </p>
+
+  <p>
+    <strong>操作:</strong>
+    <%= link_to "変更", edit_session_path(@session.token_lookup) %>
+    <%= button_to "削除", session_path(@session.token_lookup), method: :delete %>
+  </p>
+</div>

@@ -1,0 +1,187 @@
+ja:
+  activerecord:
+    models:
+      account: "アカウント"
+      session: "セッション"
+      follow: "フォロー"
+      image: "画像"
+      group: "グループ"
+      entry: "エントリー"
+      capture: "キャプチャー"
+      comment: "コメント"
+    attributes:
+      account:
+        aid: "固有ID"
+        name: "名前"
+        name_id: "ID"
+        description: "紹介文"
+        birthdate: "生年月日"
+        email: "Eメールアドレス"
+        email_verified: "検証済みのEメールアドレスかどうか"
+        visibility: "公開状態"
+        password: "パスワード"
+        password_confirmation: "パスワード(確認)"
+        meta: "メタデータ"
+        status: "ステータス"
+        created_at: "作成日時"
+        updated_at: "更新日時"
+        icon: "アイコン"
+      session:
+        aid: "固有ID"
+        account: "アカウント"
+        name: "名前"
+        token_lookup: "トークンのルックアップ"
+        token_digest: "トークンのダイジェスト"
+        token_expires_at: "トークンの有効期限"
+        token_generated_at: "トークンの生成日時"
+        meta: "メタデータ"
+        status: "ステータス"
+        created_at: "作成日時"
+        updated_at: "更新日時"
+      follow:
+        follower: "フォロワー"
+        followee: "フォロー先"
+        accepted: "承認済みかどうか"
+        created_at: "作成日時"
+        updated_at: "更新日時"
+      image:
+        account: "アカウント"
+        image: "画像"
+        aid: "固有ID"
+        name: "名前"
+        description: "説明"
+        original_ext: "オリジナル拡張子"
+        variants: "バリアント"
+        visibility: "公開状態"
+        meta: "メタデータ"
+        status: "ステータス"
+        created_at: "作成日時"
+        updated_at: "更新日時"
+      group:
+        account: "創設者"
+        icon: "アイコン"
+        aid: "固有ID"
+        name: "グループ名"
+        description: "グループの説明"
+        visibility: "公開状態"
+        meta: "メタデータ"
+        status: "ステータス"
+        created_at: "作成日時"
+        updated_at: "更新日時"
+      entry:
+        account: "アカウント"
+        group: "グループ"
+        accepted: "承認済みかどうか"
+        created_at: "作成日時"
+        updated_at: "更新日時"
+      post:
+        aid: "固有ID"
+        sender: "送信者"
+        receiver: "受信者"
+        parent_capture: "親キャプチャー"
+        group: "所属グループ"
+        main_photo: "メイン写真"
+        sub_photo: "サブ写真"
+        latitude: "緯度"
+        longitude: "経度"
+        sender_comment: "送信者コメント"
+        receiver_comment: "受信者コメント"
+        captured_at: "キャプチャー日時"
+        visibility: "公開状態"
+        meta: "メタデータ"
+        status: "ステータス"
+        created_at: "作成日時"
+        updated_at: "更新日時"
+      comment:
+        account: "アカウント"
+        capture: "キャプチャー"
+        aid: "固有ID"
+        name: "名前"
+        content: "内容"
+        meta: "メタデータ"
+        status: "ステータス"
+        created_at: "作成日時"
+        updated_at: "更新日時"
+    enums:
+      account:
+        visibility:
+          closed: "非公開"
+          limited: "限定公開"
+          opened: "公開"
+        status:
+          normal: "通常"
+          locked: "停止中"
+          deleted: "削除済み"
+      session:
+        status:
+          normal: "通常"
+          locked: "停止中"
+          deleted: "削除済み"
+      image:
+        visibility:
+          closed: "非公開"
+          limited: "限定公開"
+          opened: "公開"
+        status:
+          normal: "通常"
+          locked: "停止中"
+          deleted: "削除済み"
+      group:
+        visibility:
+          closed: "非公開"
+          limited: "限定公開"
+          opened: "公開"
+        status:
+          normal: "通常"
+          locked: "停止中"
+          deleted: "削除済み"
+      post:
+        visibility:
+          closed: "非公開"
+          limited: "限定公開"
+          opened: "公開"
+          followers_only: "フォロワーのみ"
+          group_only: "グループのみ"
+        status:
+          normal: "通常"
+          locked: "停止中"
+          deleted: "削除済み"
+      comment:
+        status:
+          normal: "通常"
+          locked: "停止中"
+          deleted: "削除済み"
+    errors:
+      messages:
+        required: "は必須です"
+        record_invalid: "バリデーションに失敗しました: %{errors}"
+        # default
+        blank: "を入力してください"
+        too_short: "は%{count}文字以上で入力してください"
+        too_long: "は%{count}文字以内で入力してください"
+        taken: "は使用できません"
+        confirmation: "が一致しません"
+        invalid: "は正しい形式で入力してください"
+        not_a_number: "は数値で入力してください"
+        # custom
+        invalid_email_format: "はメールの形式で入力してください"
+        invalid_name_id_format: "は英字(大文字小文字区別せず)、数字、_(アンダーバー)、のみで入力してください"
+        exists_email: "は使用できません"
+        invalid_singin: "IDまたはパスワードが間違っています"
+        singin_locked: "サインインがロックされています、お問い合わせください"
+        wrong_password: "パスワードが間違っています"
+        failed_captcha: "CAPTCHAの認証に失敗しました"
+        image_blank: "がありません"
+        image_invalid: "は無効です"
+        image_invalid_format: "は未対応の形式です(png, jpeg, gif, webpのみ対応)"
+        image_too_large: "の容量が大きすぎます(最大 %{max_size_mb} MB)"
+        image_dimensions_exceeded: "の解像度が大きすぎます(最大 %{max_width}px × %{max_height}px)"
+  general:
+    subscription:
+      status:
+        expired: "期限切れ"
+        unknown: "不明"
+        basic: "ベーシック"
+        plus: "プラス"
+        premium: "プレミアム"
+        luxury: "ラグジュアリー"

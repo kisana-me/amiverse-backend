@@ -1,0 +1,22 @@
+<div class="post">
+  <div>
+    <div>
+      <%= image_tag post.account.icon_url %>
+    </div>
+    <div>
+      <div>
+        <%= post.account.name %>
+      </div>
+      <div>
+        <%= post.account.name_id %>
+      </div>
+    </div>
+  </div>
+  <hr />
+  <p><%= post.content %></p>
+  <hr />
+  <p><em><%= post.created_at.strftime("%Y-%m-%d") %></em></p>
+  <div>
+    reactions, replies, quotes, views, menu.
+  </div>
+</div>

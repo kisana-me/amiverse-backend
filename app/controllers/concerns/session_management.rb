@@ -1,5 +1,5 @@
 module SessionManagement
-  # SessionManagement Ver. 2.0.0
+  # SessionManagement Ver. 2.0.1
   # models/token_toolsが必須
   # Sessionに必要なカラム差分(名前 型)
   # - account references
@@ -17,7 +17,7 @@ module SessionManagement
 
     while tokens.any?
       token = tokens.first
-      db_session = Session.isnt_deleted.from_not_deleted_accounts.findby_token(token)
+      db_session = Session.isnt_deleted.from_not_deleted_account.findby_token(token)
       if db_session
         @current_account = db_session.account
         break
@@ -51,7 +51,7 @@ module SessionManagement
     tokens = get_tokens
     return false unless (token = tokens.shift)
 
-    db_session = Session.isnt_deleted.from_not_deleted_accounts.findby_token(token)
+    db_session = Session.isnt_deleted.from_not_deleted_account.findby_token(token)
     db_session&.update(status: :deleted)
 
     if tokens.empty?
@@ -66,7 +66,7 @@ module SessionManagement
   def signed_in_accounts
     db_sessions = Session
       .isnt_deleted
-      .from_not_deleted_accounts
+      .from_not_deleted_account
       .includes(:account)
       .find_all_by_tokens(get_tokens)
     db_sessions.map(&:account).uniq
@@ -79,7 +79,7 @@ module SessionManagement
 
     while tokens.any?
       token = tokens.first
-      db_session = Session.isnt_deleted.from_not_deleted_accounts.findby_token(token)
+      db_session = Session.isnt_deleted.from_not_deleted_account.findby_token(token)
       if db_session && db_session.account.aid == account_aid
         target_token = token
         break

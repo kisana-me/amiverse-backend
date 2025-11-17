@@ -1,0 +1,6 @@
+<% provide(:title, "はじめる") %>
+
+<h1>はじめる</h1>
+<p>ここでサインイン・サインアップができます。</p>
+
+<%= button_to "ANYUR続行", oauth_start_path, method: :post, data: { turbo: false }, class: "pages-link-button" %>

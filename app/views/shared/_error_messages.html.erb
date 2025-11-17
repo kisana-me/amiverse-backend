@@ -1,0 +1,12 @@
+<% if instead.errors.any? %>
+  <div style="color: red">
+    <div>
+      送信内容に<%= instead.errors.count %>つのエラーがあります。
+    </div>
+    <ul>
+      <% instead.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>

@@ -40,7 +40,7 @@ ActiveRecord::Schema[8.1].define(version: 12) do
     t.bigint "image_id"
     t.text "meta", size: :long, default: "{}", null: false, collation: "utf8mb4_bin"
     t.string "name", default: "", null: false
-    t.string "name_id", default: "", null: false
+    t.string "name_id", null: false
     t.integer "status", limit: 1, default: 0, null: false
     t.datetime "updated_at", null: false
     t.index ["aid"], name: "index_emojis_on_aid", unique: true
@@ -121,14 +121,15 @@ ActiveRecord::Schema[8.1].define(version: 12) do
     t.text "content", default: "", null: false
     t.datetime "created_at", null: false
     t.text "meta", size: :long, default: "{}", null: false, collation: "utf8mb4_bin"
-    t.bigint "post_id"
-    t.datetime "posted_at", null: false
+    t.bigint "quote_id"
+    t.bigint "reply_id"
     t.integer "status", limit: 1, default: 0, null: false
     t.datetime "updated_at", null: false
     t.integer "visibility", limit: 1, default: 0, null: false
     t.index ["account_id"], name: "index_posts_on_account_id"
     t.index ["aid"], name: "index_posts_on_aid", unique: true
-    t.index ["post_id"], name: "index_posts_on_post_id"
+    t.index ["quote_id"], name: "index_posts_on_quote_id"
+    t.index ["reply_id"], name: "index_posts_on_reply_id"
     t.check_constraint "json_valid(`meta`)", name: "meta"
   end
 
@@ -179,7 +180,8 @@ ActiveRecord::Schema[8.1].define(version: 12) do
   add_foreign_key "post_tags", "posts"
   add_foreign_key "post_tags", "tags"
   add_foreign_key "posts", "accounts"
-  add_foreign_key "posts", "posts"
+  add_foreign_key "posts", "posts", column: "quote_id"
+  add_foreign_key "posts", "posts", column: "reply_id"
   add_foreign_key "reactions", "accounts"
   add_foreign_key "reactions", "emojis"
   add_foreign_key "reactions", "posts"
