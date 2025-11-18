@@ -1,0 +1,22 @@
+<div class="emoji">
+  <div>
+    <div>
+      <%= image_tag @emoji.image_url %>
+    </div>
+    <div>
+      <div>
+        <%= @emoji.name %>
+      </div>
+      <div>
+        <%= @emoji.name_id %>
+      </div>
+    </div>
+  </div>
+  <hr />
+  <p><%= @emoji.description %></p>
+  <hr />
+  <p><em><%= @emoji.created_at.strftime("%Y-%m-%d") %></em></p>
+  <div>
+    reactions, posts.
+  </div>
+</div>

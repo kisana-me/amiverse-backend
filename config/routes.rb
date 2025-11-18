@@ -10,6 +10,12 @@ Rails.application.routes.draw do
   # Images
   resources :images, only: [:new, :create], param: :aid
 
+  # Emojis
+  resources :emojis, param: :aid
+
+  # Reactions
+  post 'reactions/react' => 'reactions#react', as: :react
+
   # Sessions
   get 'sessions/start'
   delete 'signout' => 'sessions#signout'

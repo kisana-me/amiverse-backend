@@ -1,0 +1,9 @@
+<div class="emojis">
+  <%= render partial: "emoji", collection: @emojis %>
+</div>
+<% if @emojis.empty? %>
+  <p>絵文字はありません</p>
+<% end %>
+<div>
+  ページネーション
+</div>

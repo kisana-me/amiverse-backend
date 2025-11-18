@@ -17,6 +17,11 @@
   <hr />
   <p><em><%= @post.created_at.strftime("%Y-%m-%d") %></em></p>
   <div>
+    <% Emoji.all.each do |emoji| %>
+    <%= button_to react_path, method: :post, params: { post_aid: @post.aid, emoji_aid: emoji.aid } do |button| %>
+      <%= emoji.name %>
+    <% end %>
+    <% end %>
     reactions, replies, quotes, views, menu.
   </div>
 </div>

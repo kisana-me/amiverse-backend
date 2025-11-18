@@ -1,6 +1,7 @@
 class Account < ApplicationRecord
   has_many :sessions
   belongs_to :icon, class_name: 'Image', foreign_key: 'icon_id', optional: true
+  has_many :oauth_accounts
 
   attribute :meta, :json, default: -> { {} }
   enum :visibility, { closed: 0, limited: 1, opened: 2 }
