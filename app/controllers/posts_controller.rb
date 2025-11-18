@@ -73,6 +73,8 @@ class PostsController < ApplicationController
   def post_params
     params.expect(
       post: [
+        :reply_aid,
+        :quote_aid,
         :content,
         :visibility
       ]

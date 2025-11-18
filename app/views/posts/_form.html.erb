@@ -1,6 +1,23 @@
 <%= form_with model: post, data: { turbo: false } do |form| %>
   <%= render "shared/error_messages", instead: post %>
 
+  <% if post.reply_aid || params[:reply_aid] %>
+    <%= form.hidden_field :reply_aid, value: post.reply_aid || params[:reply_aid] %>
+    <p class="text-gray-600">
+      返信先: <%= post.reply_aid || params[:reply_aid] %>
+    </p>
+  <% end %>
+
+  <% if post.quote_aid || params[:quote_aid] %>
+    <%= form.hidden_field :quote_aid, value: post.quote_aid || params[:quote_aid] %>
+    <div class="quote-preview">
+      <p>引用元:</p>
+      <blockquote class="border-l pl-2 text-gray-600">
+        <%= post.quote_aid || params[:quote_aid] %>
+      </blockquote>
+    </div>
+  <% end %>
+
   <div>
     <%= form.label :content %>
     <%= form.text_area :content %>

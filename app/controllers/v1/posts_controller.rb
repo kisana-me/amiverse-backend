@@ -4,7 +4,13 @@ class V1::PostsController < V1::ApplicationController
       .from_normal_account
       .is_normal
       .is_opened
-      .includes(:account)
+      .includes(
+        :account,
+        :reply,
+        :replies,
+        :quotes,
+        quote: [:account],
+      )
     render template: "v1/posts/index", formats: [:json]
   end
 
@@ -13,7 +19,13 @@ class V1::PostsController < V1::ApplicationController
       .from_normal_account
       .is_normal
       .is_opened
-      .includes(:account)
+      .includes(
+        :account,
+        reply: [:account],
+        quote: [:account],
+        replies: [:account],
+        quotes: [:account]
+      )
       .find_by(aid: params[:aid])
     if @post
       render template: "v1/posts/show", formats: [:json]
