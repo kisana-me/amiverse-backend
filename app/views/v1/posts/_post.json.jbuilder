@@ -10,7 +10,7 @@ end
 if defined? reply_to
   json.reply do
     if post.reply
-      json.partial! "v1/posts/post", post: post.reply, quote_to: true
+      json.partial! 'v1/posts/post', post: post.reply, quote_to: true
     else
       json.null!
     end
@@ -20,7 +20,7 @@ end
 if defined? quote_to
   json.quote do
     if post.quote
-      json.partial! "v1/posts/post", post: post.quote
+      json.partial! 'v1/posts/post', post: post.quote
     else
       json.null!
     end
@@ -28,5 +28,5 @@ if defined? quote_to
 end
 
 json.account do
-  json.partial! "v1/accounts/account", account: post.account
+  json.partial! 'v1/accounts/account', account: post.account
 end

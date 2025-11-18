@@ -1,4 +1,4 @@
-require "active_support/core_ext/integer/time"
+require 'active_support/core_ext/integer/time'
 
 Rails.application.configure do
   config.enable_reloading = true
@@ -6,8 +6,8 @@ Rails.application.configure do
   config.consider_all_requests_local = true
   config.server_timing = true
   config.cache_store = :memory_store
-  config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "debug")
-  config.logger = Logger.new("log/development.log", "daily")
+  config.log_level = ENV.fetch('RAILS_LOG_LEVEL', 'debug')
+  config.logger = Logger.new('log/development.log', 'daily')
   config.active_storage.service = :local
   config.active_support.deprecation = :log
   config.active_job.verbose_enqueue_logs = true
@@ -18,10 +18,10 @@ Rails.application.configure do
   config.action_controller.raise_on_missing_callback_actions = true
 
   # Action Controller caching
-  if Rails.root.join("tmp/caching-dev.txt").exist?
+  if Rails.root.join('tmp/caching-dev.txt').exist?
     config.action_controller.perform_caching = true
     config.action_controller.enable_fragment_cache_logging = true
-    config.public_file_server.headers = { "cache-control" => "public, max-age=#{2.days.to_i}" }
+    config.public_file_server.headers = { 'cache-control' => "public, max-age=#{2.days.to_i}" }
   else
     config.action_controller.perform_caching = false
   end
@@ -29,7 +29,7 @@ Rails.application.configure do
   # Action Mailer
   config.action_mailer.raise_delivery_errors = false
   config.action_mailer.perform_caching = false
-  config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
+  config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
 
   # Active Record
   config.active_record.migration_error = :page_load

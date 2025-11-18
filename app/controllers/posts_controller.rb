@@ -21,27 +21,27 @@ class PostsController < ApplicationController
     @post = Post.new(post_params)
     @post.account = @current_account
     if @post.save
-      redirect_to post_path(@post.aid), notice: "Post was successfully created."
+      redirect_to post_path(@post.aid), notice: 'Post was successfully created.'
     else
-      flash.now[:alert] = "Failed to create the post."
+      flash.now[:alert] = 'Failed to create the post.'
       render :new, status: :unprocessable_entity
     end
   end
 
   def update
     if @post.update(post_params)
-      redirect_to post_path(@post.aid), notice: "Post was successfully updated.", status: :see_other
+      redirect_to post_path(@post.aid), notice: 'Post was successfully updated.', status: :see_other
     else
-      flash.now[:alert] = "Failed to update the post."
+      flash.now[:alert] = 'Failed to update the post.'
       render :edit, status: :unprocessable_entity
     end
   end
 
   def destroy
     if @post.update(status: :deleted)
-      redirect_to post_path(@post.aid), notice: "Post was successfully deleted.", status: :see_other
+      redirect_to post_path(@post.aid), notice: 'Post was successfully deleted.', status: :see_other
     else
-      flash.now[:alert] = "Failed to delete the post."
+      flash.now[:alert] = 'Failed to delete the post.'
       render :show, status: :unprocessable_entity
     end
   end
@@ -67,7 +67,7 @@ class PostsController < ApplicationController
     @post = Post
       .isnt_deleted
       .find_by(aid: params.expect(:aid), account: @current_account)
-    return render_404 unless @post
+    render_404 unless @post
   end
 
   def post_params

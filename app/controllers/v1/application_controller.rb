@@ -8,6 +8,6 @@ class V1::ApplicationController < ApplicationController
   def require_signin
     return if @current_account
 
-    render json: { status: "error", message: "サインインしてください" }, status: :unauthorized
+    render json: { status: 'error', message: 'サインインしてください' }, status: :unauthorized
   end
 end

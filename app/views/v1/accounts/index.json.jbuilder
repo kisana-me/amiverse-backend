@@ -1,1 +1,1 @@
-json.accounts @accounts, partial: "v1/accounts/account", as: :account
+json.accounts @accounts, partial: 'v1/accounts/account', as: :account

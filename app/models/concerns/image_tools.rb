@@ -17,12 +17,12 @@ module ImageTools
     if original_image_path.blank?
       return if send(original_ext_column).blank?
 
-      downloaded_image = Tempfile.new([ 'downloaded_image' ])
+      downloaded_image = Tempfile.new(['downloaded_image'])
       original_image_path = downloaded_image.path
       s3_download(key: "/images/originals/#{aid}.#{send(original_ext_column)}",
                   response_target: original_image_path)
     end
-    converted_image = Tempfile.new([ 'converted_image' ])
+    converted_image = Tempfile.new(['converted_image'])
     resize = '2048x2048>'
     extent = '' # 切り取る
     case variant_type
@@ -94,7 +94,7 @@ module ImageTools
     end
     key = "/images/variants/#{variant_type}/#{aid}.webp"
     s3_upload(key: key, file: converted_image.path, content_type: 'image/webp')
-    update(variants_column.to_sym => (send(variants_column) + [ variant_type ]).uniq)
+    update(variants_column.to_sym => (send(variants_column) + [variant_type]).uniq)
     downloaded_image&.close
     converted_image.close
   end

@@ -11,7 +11,7 @@ class V1::PostsController < V1::ApplicationController
         :quotes,
         quote: [:account],
       )
-    render template: "v1/posts/index", formats: [:json]
+    render template: 'v1/posts/index', formats: [:json]
   end
 
   def show
@@ -28,16 +28,16 @@ class V1::PostsController < V1::ApplicationController
       )
       .find_by(aid: params[:aid])
     if @post
-      render template: "v1/posts/show", formats: [:json]
+      render template: 'v1/posts/show', formats: [:json]
     else
-      render json: { error: "Post not found" }, status: :not_found
+      render json: { error: 'Post not found' }, status: :not_found
     end
   end
 
   def create
     @post = Post.new(post_params)
     if @post.save
-      render template: "v1/posts/show", formats: [:json], status: :created
+      render template: 'v1/posts/show', formats: [:json], status: :created
     else
       render json: { errors: @post.errors.full_messages }, status: :unprocessable_entity
     end
@@ -47,16 +47,16 @@ class V1::PostsController < V1::ApplicationController
     @post = Post.find_by(aid: params[:aid])
     @post.update(post_params)
     if @post.save
-      render template: "v1/posts/show", formats: [:json]
+      render template: 'v1/posts/show', formats: [:json]
     else
       render json: { errors: @post.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
-  def destroy               
+  def destroy
     @post = Post.find_by(aid: params[:aid])
     if @post.update(visibility: :deleted)
-      render json: { status: "success" }
+      render json: { status: 'success' }
     else
       render json: { errors: @post.errors.full_messages }, status: :unprocessable_entity
     end

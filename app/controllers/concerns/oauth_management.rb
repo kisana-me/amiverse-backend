@@ -5,22 +5,22 @@ module OauthManagement
     anyur: {
       client_id: Rails.application.credentials.dig(:oauth_providers, :anyur, :client_id),
       client_secret: Rails.application.credentials.dig(:oauth_providers, :anyur, :client_secret),
-      scope: "persona_aid name name_id subscription",
-      redirect_url: URI.join(ENV.fetch("BACK_URL"), "/oauth/callback").to_s,
-      authorize_url: "https://anyur.com/oauth/authorize",
-      token_url: "https://anyur.com/oauth/token",
-      resource_url: "https://anyur.com/api/resources"
+      scope: 'persona_aid name name_id subscription',
+      redirect_url: URI.join(ENV.fetch('BACK_URL'), '/oauth/callback').to_s,
+      authorize_url: 'https://anyur.com/oauth/authorize',
+      token_url: 'https://anyur.com/oauth/token',
+      resource_url: 'https://anyur.com/api/resources'
     }
   }.freeze
 
-  require "net/http"
+  require 'net/http'
 
   def generate_authorize_url(state, provider = :anyur)
     raise "Unsupported OAuth provider: #{provider}" unless OAUTH_PROVIDERS.key?(provider)
 
     config = OAUTH_PROVIDERS.fetch(provider)
     params = {
-      response_type: "code",
+      response_type: 'code',
       client_id: config[:client_id],
       redirect_uri: config[:redirect_url],
       scope: config[:scope],
@@ -38,7 +38,7 @@ module OauthManagement
     token_response = Net::HTTP.post_form(
       URI(config[:token_url]),
       {
-        grant_type: "authorization_code",
+        grant_type: 'authorization_code',
         client_id: config[:client_id],
         client_secret: config[:client_secret],
         redirect_uri: config[:redirect_url],
@@ -59,7 +59,7 @@ module OauthManagement
     token_response = Net::HTTP.post_form(
       URI(config[:token_url]),
       {
-        grant_type: "refresh_token",
+        grant_type: 'refresh_token',
         client_id: config[:client_id],
         client_secret: config[:client_secret],
         refresh_token: refresh_token
@@ -78,9 +78,9 @@ module OauthManagement
     config = OAUTH_PROVIDERS.fetch(provider)
     info_uri = URI(config[:resource_url])
     info_request = Net::HTTP::Post.new(info_uri)
-    info_request["Authorization"] = "Bearer #{access_token}"
-    info_request["Content-Type"] = "application/json"
-    info_response = Net::HTTP.start(info_uri.hostname, info_uri.port, use_ssl: info_uri.scheme == "https") do |http|
+    info_request['Authorization'] = "Bearer #{access_token}"
+    info_request['Content-Type'] = 'application/json'
+    info_response = Net::HTTP.start(info_uri.hostname, info_uri.port, use_ssl: info_uri.scheme == 'https') do |http|
       http.request(info_request)
     end
     unless info_response.is_a?(Net::HTTPSuccess)

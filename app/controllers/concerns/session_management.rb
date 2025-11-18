@@ -6,7 +6,7 @@ module SessionManagement
   # Accountに必要なカラム(名前 型)
   # - status enum { normal: 0, locked: 1, deleted: 2 }
 
-  COOKIE_NAME = "x".freeze
+  COOKIE_NAME = 'amiverse'.freeze
   COOKIE_EXPIRES_IN = 6.months
   TOKEN_EXPIRES_IN = 6.months
 
@@ -97,7 +97,7 @@ module SessionManagement
   private
 
   def get_tokens
-    JSON.parse(cookies.encrypted[COOKIE_NAME.to_sym] || "[]")
+    JSON.parse(cookies.encrypted[COOKIE_NAME.to_sym] || '[]')
   rescue JSON::ParserError
     []
   end

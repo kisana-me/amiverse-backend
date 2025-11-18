@@ -19,7 +19,7 @@ class AccountsController < ApplicationController
     @account = Account.new(account_params)
 
     if @account.save
-      redirect_to @account, notice: "Account was successfully created."
+      redirect_to @account, notice: 'Account was successfully created.'
     else
       render :new, status: :unprocessable_entity
     end
@@ -27,7 +27,7 @@ class AccountsController < ApplicationController
 
   def update
     if @account.update(account_params)
-      redirect_to @account, notice: "Account was successfully updated.", status: :see_other
+      redirect_to @account, notice: 'Account was successfully updated.', status: :see_other
     else
       render :edit, status: :unprocessable_entity
     end
@@ -36,7 +36,7 @@ class AccountsController < ApplicationController
   def destroy
     @account.destroy!
 
-    redirect_to accounts_path, notice: "Account was successfully destroyed.", status: :see_other
+    redirect_to accounts_path, notice: 'Account was successfully destroyed.', status: :see_other
   end
 
   private

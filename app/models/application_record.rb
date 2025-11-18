@@ -13,6 +13,6 @@ class ApplicationRecord < ActiveRecord::Base
   end
 
   def full_url(path)
-    URI.join(ENV.fetch("BACK_URL"), path).to_s
+    URI.join(ENV.fetch('BACK_URL'), path).to_s
   end
 end

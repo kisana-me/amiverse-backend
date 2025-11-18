@@ -23,8 +23,8 @@ module ErrorsManagement
   def render_404(exception = nil)
     # log_error(exception)
     respond_to do |format|
-      format.html { render("errors/404", status: :not_found) rescue head :not_found }
-      format.json { render json: { error: "Not Found", request_id: request.request_id }, status: :not_found }
+      format.html { render('errors/404', status: :not_found) rescue head :not_found }
+      format.json { render json: { error: 'Not Found', request_id: request.request_id }, status: :not_found }
       format.any  { head :not_found }
     end
   end
@@ -32,15 +32,15 @@ module ErrorsManagement
   def render_500(exception = nil)
     log_error(exception)
     respond_to do |format|
-      format.html { render("errors/500", status: :internal_server_error) rescue head :internal_server_error }
-      format.json { render json: { error: "Internal Server Error", request_id: request.request_id }, status: :internal_server_error }
+      format.html { render('errors/500', status: :internal_server_error) rescue head :internal_server_error }
+      format.json { render json: { error: 'Internal Server Error', request_id: request.request_id }, status: :internal_server_error }
       format.any  { head :internal_server_error }
     end
   end
 
   def log_error(exception)
     return unless exception
-    logger.error "=== Error Occurred ==="
+    logger.error '=== Error Occurred ==='
     logger.error "Request ID: #{request.request_id}"
     logger.error "URL: #{request.original_url}"
     logger.error "Params: #{params.to_unsafe_h.except(:controller, :action).inspect}"
@@ -50,11 +50,11 @@ module ErrorsManagement
     logger.error "Current Account Aid: #{@current_account&.aid || 'Guest'}"
     logger.error "#{exception.class}: #{exception.message}"
     if exception.backtrace
-      app_trace = exception.backtrace.select { |line| line.include?("/app/") }
+      app_trace = exception.backtrace.select { |line| line.include?('/app/') }
       app_trace = app_trace.first(10)
-      logger.error "Application Trace:"
+      logger.error 'Application Trace:'
       logger.error app_trace.join("\n")
     end
-    logger.error "======================="
+    logger.error '======================='
   end
 end

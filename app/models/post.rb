@@ -1,10 +1,10 @@
 class Post < ApplicationRecord
   belongs_to :account
   # 画像 多対多
-  belongs_to :reply, class_name: "Post", optional: true
-  has_many   :replies, class_name: "Post", foreign_key: :reply_id, dependent: :nullify
-  belongs_to :quote, class_name: "Post", optional: true
-  has_many   :quotes, class_name: "Post", foreign_key: :quote_id, dependent: :nullify
+  belongs_to :reply, class_name: 'Post', optional: true
+  has_many   :replies, class_name: 'Post', foreign_key: :reply_id, dependent: :nullify
+  belongs_to :quote, class_name: 'Post', optional: true
+  has_many   :quotes, class_name: 'Post', foreign_key: :quote_id, dependent: :nullify
   # リアクション 多対多(絵文字)
 
   attr_accessor :reply_aid, :quote_aid
@@ -36,7 +36,7 @@ class Post < ApplicationRecord
       .find_by(aid: reply_aid)
 
     if reply_post.nil?
-      errors.add(:reply_aid, "リプライ先の投稿が見つかりません")
+      errors.add(:reply_aid, 'リプライ先の投稿が見つかりません')
       self.reply = nil
     else
       self.reply = reply_post
@@ -51,7 +51,7 @@ class Post < ApplicationRecord
       .find_by(aid: quote_aid)
 
     if quote_post.nil?
-      errors.add(:quote_aid, "引用先の投稿が見つかりません")
+      errors.add(:quote_aid, '引用先の投稿が見つかりません')
       self.quote = nil
     else
       self.quote = quote_post
