@@ -49,6 +49,11 @@ Rails.application.routes.draw do
 
     # Sessions
     delete 'signout' => 'sessions#signout'
+
+    # OAuth
+    post 'oauth/start' => 'oauth#start'
+    post 'oauth/callback' => 'oauth#callback'
+    post 'oauth/fetch' => 'oauth#fetch'
   end
 
   # Others
