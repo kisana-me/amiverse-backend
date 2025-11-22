@@ -5,7 +5,7 @@ class V1::AccountsController < V1::ApplicationController
   end
 
   def show
-    @account = Account.find_by(aid: params[:aid])
+    @account = Account.find_by(name_id: params[:name_id])
     if @account
       render template: 'v1/accounts/show', formats: [:json]
     else

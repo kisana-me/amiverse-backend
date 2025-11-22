@@ -33,8 +33,11 @@ Rails.application.routes.draw do
   # API v1
   namespace :v1 do
     root 'pages#index'
-    resources :accounts, param: :aid
+    resources :accounts, param: :name_id
     resources :posts, param: :aid
+
+    # Pages
+    get 'start' => 'pages#start'
   end
 
   # Others
