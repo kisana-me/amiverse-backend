@@ -50,6 +50,9 @@ Rails.application.routes.draw do
     # Sessions
     delete 'signout' => 'sessions#signout'
 
+    # Signup
+    post 'signup' => 'signup#create'
+
     # OAuth
     post 'oauth/start' => 'oauth#start'
     post 'oauth/callback' => 'oauth#callback'

@@ -13,6 +13,8 @@ class V1::PostsController < V1::ApplicationController
         quote: [:account],
         reactions: [:emoji],
       )
+      .order(id: :desc)
+      .limit(500)
     render template: 'v1/posts/index', formats: [:json]
   end
 
@@ -46,6 +48,8 @@ class V1::PostsController < V1::ApplicationController
             quote: [:account],
             reactions: [:emoji],
           )
+        .order(id: :desc)
+        .limit(500)
       end
       render template: 'v1/posts/show', formats: [:json]
     else
