@@ -1,0 +1,56 @@
+<% mode = local_assigns[:mode] || @mode %>
+<% target_id = local_assigns[:target_id] || @target_id %>
+<% frame_id = "emoji_list_frame_#{target_id || 'default'}" %>
+<% @groups ||= Emoji.where.not(group: [nil, ""]).distinct.pluck(:group) %>
+
+<div data-controller="emoji-picker" class="emoji-picker-component">
+  <div class="emoji-groups" style="display: flex; gap: 10px; overflow-x: auto; padding: 10px; border-bottom: 1px solid #eee;">
+    <% @groups.each do |group| %>
+      <%= link_to group, 
+          picker_emojis_path(group: group, mode: mode, target_id: target_id), 
+          data: { 
+            turbo_frame: frame_id,
+            emoji_picker_target: "group",
+            action: "click->emoji-picker#select"
+          },
+          class: "emoji-group-link",
+          style: "padding: 5px 10px; text-decoration: none; border-radius: 15px; background: #f0f0f0; color: #333; white-space: nowrap;"
+      %>
+    <% end %>
+  </div>
+
+  <%= turbo_frame_tag frame_id do %>
+    <div class="emoji-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)); gap: 10px; padding: 10px; max-height: 300px; overflow-y: auto;">
+      <% if @emojis %>
+        <% @emojis.each do |emoji| %>
+          <div class="emoji-item" title="<%= emoji.name %>" style="text-align: center;">
+            <% if mode == 'reaction' && target_id %>
+              <%= button_to react_path, method: :post, params: { post_aid: target_id, emoji_aid: emoji.aid }, data: { turbo: false }, style: "background: none; border: none; padding: 0; cursor: pointer;" do %>
+                <% if emoji.image %>
+                   <%= image_tag emoji.image_url, class: "emoji-img", style: "width: 32px; height: 32px; object-fit: contain;" %>
+                <% else %>
+                   <span><%= emoji.name %></span>
+                <% end %>
+              <% end %>
+            <% else %>
+              <% if emoji.image %>
+                 <%= image_tag emoji.image_url, class: "emoji-img", style: "width: 32px; height: 32px; object-fit: contain;" %>
+              <% else %>
+                 <span><%= emoji.name %></span>
+              <% end %>
+            <% end %>
+          </div>
+        <% end %>
+      <% else %>
+        <p class="text-muted" style="text-align: center; color: #888; grid-column: 1 / -1;">Select a group to see emojis</p>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+
+<style>
+  .emoji-group-link.active {
+    background-color: #007bff !important;
+    color: white !important;
+  }
+</style>

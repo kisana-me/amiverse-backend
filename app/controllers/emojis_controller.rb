@@ -1,10 +1,21 @@
 class EmojisController < ApplicationController
-  before_action :require_signin, except: %i[ index show ]
+  before_action :require_signin, except: %i[ index show picker ]
   before_action :set_emoji, only: %i[ show ]
   # before_action :set_correct_post, only: %i[ edit update destroy ]
 
   def index
     @emojis = Emoji.all
+  end
+
+  def picker
+    @groups = Emoji.where.not(group: [nil, ""]).distinct.pluck(:group)
+    
+    if params[:group].present?
+      @emojis = Emoji.where(group: params[:group])
+    end
+
+    @mode = params[:mode]
+    @target_id = params[:target_id]
   end
 
   def show

@@ -6,6 +6,8 @@ class Post < ApplicationRecord
   belongs_to :quote, class_name: 'Post', optional: true
   has_many   :quotes, class_name: 'Post', foreign_key: :quote_id, dependent: :nullify
   # リアクション 多対多(絵文字)
+  has_many :reactions, dependent: :destroy
+  has_many :emojis, through: :reactions
 
   attr_accessor :reply_aid, :quote_aid
   attribute :meta, :json, default: -> { {} }

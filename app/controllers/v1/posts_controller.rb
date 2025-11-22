@@ -10,6 +10,7 @@ class V1::PostsController < V1::ApplicationController
         :replies,
         :quotes,
         quote: [:account],
+        reactions: [:emoji],
       )
     render template: 'v1/posts/index', formats: [:json]
   end
@@ -24,10 +25,23 @@ class V1::PostsController < V1::ApplicationController
         reply: [:account],
         quote: [:account],
         replies: [:account],
-        quotes: [:account]
+        quotes: [:account],
+        reactions: [:emoji],
       )
       .find_by(aid: params[:aid])
     if @post
+      @replies = @post.replies
+        .from_normal_account
+        .is_normal
+        .is_opened
+        .includes(
+          :account,
+          :reply,
+          :replies,
+          :quotes,
+          quote: [:account],
+          reactions: [:emoji],
+        )
       render template: 'v1/posts/show', formats: [:json]
     else
       render json: { error: 'Post not found' }, status: :not_found

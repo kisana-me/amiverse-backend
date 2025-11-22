@@ -16,12 +16,24 @@
   <p><%= @post.content %></p>
   <hr />
   <p><em><%= @post.created_at.strftime("%Y-%m-%d") %></em></p>
+
+  <div class="post-reactions" style="margin-bottom: 10px;">
+    <% my_reacted_emoji_ids = @current_account ? @post.reactions.where(account: @current_account).pluck(:emoji_id) : [] %>
+    <% @post.reactions.group(:emoji).count.each do |emoji, count| %>
+      <% is_reacted_by_me = my_reacted_emoji_ids.include?(emoji.id) %>
+      <div style="display: inline-block; border: 1px solid <%= is_reacted_by_me ? '#007bff' : '#ccc' %>; background-color: <%= is_reacted_by_me ? '#e7f1ff' : 'transparent' %>; border-radius: 10px; padding: 2px 5px; margin-right: 5px;">
+          <% if emoji.image %>
+             <%= image_tag emoji.image_url, style: "width: 20px; height: 20px; vertical-align: middle;" %>
+          <% else %>
+             <%= emoji.name %>
+          <% end %>
+          <span style="margin-left: 3px;"><%= count %></span>
+      </div>
+    <% end %>
+  </div>
+
   <div>
-    <% Emoji.all.each do |emoji| %>
-    <%= button_to react_path, method: :post, params: { post_aid: @post.aid, emoji_aid: emoji.aid } do |button| %>
-      <%= emoji.name %>
-    <% end %>
-    <% end %>
+    <%= render "emojis/picker", mode: 'reaction', target_id: @post.aid %>
     reactions, replies, quotes, views, menu.
   </div>
 </div>

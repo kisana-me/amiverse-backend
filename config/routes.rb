@@ -11,7 +11,11 @@ Rails.application.routes.draw do
   resources :images, only: [:new, :create], param: :aid
 
   # Emojis
-  resources :emojis, param: :aid
+  resources :emojis, param: :aid do
+    collection do
+      get :picker
+    end
+  end
 
   # Reactions
   post 'reactions/react' => 'reactions#react', as: :react

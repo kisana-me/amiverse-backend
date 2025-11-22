@@ -5,12 +5,15 @@ json.quote_presence post.quote_id.present?
 unless defined? light # typeでは必須
   json.replies_count post.replies.size
   json.quotes_count post.quotes.size
-  # のちのち実装する
+  json.views_count 0 # のちのち実装する
+
   json.diffuses_count 0
-  json.reactions_count 0
-  json.views_count 0
   json.is_diffused false
-  json.is_reacted false
+
+  my_reacted_emoji_ids = @current_account ? post.reactions.select { |r| r.account_id == @current_account.id }.map(&:emoji_id) : []
+  emoji_counts = post.reactions.group_by(&:emoji).transform_values(&:size)
+  json.reactions_count post.reactions.size
+  json.is_reacted my_reacted_emoji_ids.any?
 end
 
 if defined? reply_to
@@ -35,8 +38,10 @@ end
 
 if defined? reactions
   json.reactions do
-    json.array! reactions do |emoji|
+    json.array! emoji_counts.keys do |emoji|
       json.partial! 'v1/emojis/emoji', emoji: emoji
+      json.reactions_count emoji_counts[emoji]
+      json.reacted my_reacted_emoji_ids.include?(emoji.id)
     end
   end
 end
