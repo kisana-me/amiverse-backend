@@ -10,10 +10,10 @@ class Emoji < ApplicationRecord
 
   validates :name,
     allow_blank: true,
-    length: { in: 1..50 }
+    length: { in: 1..100 }
   validates :name_id,
     presence: true,
-    length: { in: 1..50, allow_blank: true },
+    length: { in: 1..100, allow_blank: true },
     format: { with: NAME_ID_REGEX, allow_blank: true },
     uniqueness: { case_sensitive: false, allow_blank: true }
   validates :description,
