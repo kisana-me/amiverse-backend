@@ -20,6 +20,10 @@ Rails.application.routes.draw do
   # Reactions
   post 'reactions/react' => 'reactions#react', as: :react
 
+  # Diffuses
+  post 'diffuses/create' => 'diffuses#create', as: :diffuse
+  delete 'diffuses/destroy' => 'diffuses#destroy', as: :undiffuse
+
   # Sessions
   get 'sessions/start'
   delete 'signout' => 'sessions#signout'

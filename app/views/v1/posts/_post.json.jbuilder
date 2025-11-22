@@ -7,8 +7,8 @@ unless defined? light # typeでは必須
   json.quotes_count post.quotes.size
   json.views_count 0 # のちのち実装する
 
-  json.diffuses_count 0
-  json.is_diffused false
+  json.diffuses_count post.diffuses.size
+  json.is_diffused @current_account ? post.diffuses.any? { |d| d.account_id == @current_account.id } : false
 
   my_reacted_emoji_ids = @current_account ? post.reactions.select { |r| r.account_id == @current_account.id }.map(&:emoji_id) : []
   emoji_counts = post.reactions.group_by(&:emoji).transform_values(&:size)

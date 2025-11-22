@@ -34,6 +34,15 @@
 
   <div>
     <%= render "emojis/picker", mode: 'reaction', target_id: post.aid %>
+    
+    <% if @current_account %>
+      <% if post.diffuses.exists?(account: @current_account) %>
+        <%= button_to "Undiffuse", undiffuse_path(post_aid: post.aid), method: :delete, style: "display: inline-block; margin-left: 10px; color: green;" %>
+      <% else %>
+        <%= button_to "Diffuse", diffuse_path(post_aid: post.aid), method: :post, style: "display: inline-block; margin-left: 10px;" %>
+      <% end %>
+    <% end %>
+
     reactions, replies, quotes, views, menu.
   </div>
 </div>

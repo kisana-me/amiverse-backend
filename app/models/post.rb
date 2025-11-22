@@ -8,6 +8,8 @@ class Post < ApplicationRecord
   # リアクション 多対多(絵文字)
   has_many :reactions, dependent: :destroy
   has_many :emojis, through: :reactions
+  has_many :diffuses, dependent: :destroy
+  has_many :diffused_by, through: :diffuses, source: :account
 
   attr_accessor :reply_aid, :quote_aid
   attribute :meta, :json, default: -> { {} }

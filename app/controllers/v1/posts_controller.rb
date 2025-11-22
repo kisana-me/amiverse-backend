@@ -6,6 +6,7 @@ class V1::PostsController < V1::ApplicationController
       .is_opened
       .includes(
         :account,
+        :diffuses,
         :reply,
         :replies,
         :quotes,
@@ -22,6 +23,7 @@ class V1::PostsController < V1::ApplicationController
       .is_opened
       .includes(
         :account,
+        :diffuses,
         reply: [:account],
         quote: [:account],
         replies: [:account],
@@ -30,18 +32,21 @@ class V1::PostsController < V1::ApplicationController
       )
       .find_by(aid: params[:aid])
     if @post
-      @replies = @post.replies
-        .from_normal_account
-        .is_normal
-        .is_opened
-        .includes(
-          :account,
-          :reply,
-          :replies,
-          :quotes,
-          quote: [:account],
-          reactions: [:emoji],
-        )
+      if @post.replies.any?
+        @replies = @post.replies
+          .from_normal_account
+          .is_normal
+          .is_opened
+          .includes(
+            :account,
+            :diffuses,
+            :reply,
+            :replies,
+            :quotes,
+            quote: [:account],
+            reactions: [:emoji],
+          )
+      end
       render template: 'v1/posts/show', formats: [:json]
     else
       render json: { error: 'Post not found' }, status: :not_found
