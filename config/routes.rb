@@ -46,6 +46,9 @@ Rails.application.routes.draw do
 
     # Pages
     get 'start' => 'pages#start'
+
+    # Sessions
+    delete 'signout' => 'sessions#signout'
   end
 
   # Others

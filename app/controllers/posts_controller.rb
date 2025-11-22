@@ -2,6 +2,7 @@ class PostsController < ApplicationController
   before_action :require_signin, except: %i[ index show ]
   before_action :set_post, only: %i[ show ]
   before_action :set_correct_post, only: %i[ edit update destroy ]
+  before_action :require_admin
 
   def index
     @posts = Post.all

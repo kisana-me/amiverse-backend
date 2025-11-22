@@ -13,6 +13,7 @@ module App
     config.i18n.default_locale = :ja
     config.middleware.delete Rack::Runtime
     config.action_view.field_error_proc = Proc.new { |html_tag, instance| html_tag }
+    config.action_controller.forgery_protection_origin_check = false
     config.session_store :cookie_store,
                          key: '_amiverse',
                          domain: :all,

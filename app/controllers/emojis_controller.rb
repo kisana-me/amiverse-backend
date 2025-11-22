@@ -2,6 +2,7 @@ class EmojisController < ApplicationController
   before_action :require_signin, except: %i[ index show picker ]
   before_action :set_emoji, only: %i[ show ]
   # before_action :set_correct_post, only: %i[ edit update destroy ]
+  before_action :require_admin
 
   def index
     @emojis = Emoji.all

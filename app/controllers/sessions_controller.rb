@@ -2,6 +2,7 @@ class SessionsController < ApplicationController
   before_action :require_signin, except: %i[ start ]
   before_action :require_signout, only: %i[ start ]
   before_action :set_session, only: %i[ show edit update destroy ]
+  before_action :require_admin, except: %i[ start signout ]
 
   def start
   end

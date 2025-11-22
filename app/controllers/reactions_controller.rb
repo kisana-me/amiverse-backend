@@ -1,5 +1,6 @@
 class ReactionsController < ApplicationController
   before_action :require_signin
+  before_action :require_admin
 
   def react
     @emoji = Emoji.find_by(aid: params.expect(:emoji_aid))

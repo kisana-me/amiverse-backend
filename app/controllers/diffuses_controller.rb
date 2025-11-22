@@ -1,6 +1,7 @@
 class DiffusesController < ApplicationController
   before_action :require_signin
   before_action :set_post
+  before_action :require_admin
 
   def create
     @diffuse = @current_account.diffuses.build(post: @post)
