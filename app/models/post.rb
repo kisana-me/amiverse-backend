@@ -1,4 +1,6 @@
 class Post < ApplicationRecord
+  include MeiliSearch::Rails
+
   belongs_to :account
   # 画像 多対多
   belongs_to :reply, class_name: 'Post', optional: true
@@ -35,6 +37,17 @@ class Post < ApplicationRecord
   scope :isnt_deleted, -> { where.not(status: :deleted) }
   scope :is_opened, -> { where(visibility: :opened) }
   scope :isnt_closed, -> { where.not(visibility: :closed) }
+
+  meilisearch do
+    attribute :content
+    attribute :status
+    attribute :visibility
+    attribute :account_status do
+      account&.status
+    end
+    filterable_attributes [:created_at, :status, :visibility, :account_status]
+    sortable_attributes [:created_at]
+  end
 
   def media_files=(files)
     files.reject(&:blank?).each do |file|

@@ -56,6 +56,9 @@ Rails.application.routes.draw do
     # Posts
     resources :posts, only: [:show, :create], param: :aid
 
+    # Search
+    post 'search' => 'search#index'
+
     # Feeds
     post 'feeds/index' => 'feeds#index'
     post 'feeds/follow' => 'feeds#follow'
