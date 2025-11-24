@@ -12,7 +12,7 @@ class Account < ApplicationRecord
   has_many :diffused_posts, through: :diffuses, source: :post
 
   attribute :meta, :json, default: -> { {} }
-  enum :visibility, { closed: 0, limited: 1, opened: 2 }
+  enum :visibility, { opened: 0, limited: 1, closed: 2 }, default: :opened
   enum :status, { normal: 0, locked: 1, deleted: 2 }
   attr_accessor :icon_aid
 

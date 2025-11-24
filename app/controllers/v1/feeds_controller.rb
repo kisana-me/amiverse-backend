@@ -119,7 +119,7 @@ class V1::FeedsController < V1::ApplicationController
       .is_normal
       .is_opened
       .order(created_at: :desc)
-      .limit(50)
+      .limit(100)
 
     diffuses = Diffuse
       .includes(:account)
@@ -128,9 +128,9 @@ class V1::FeedsController < V1::ApplicationController
       .joins(:post)
       .where(posts: { status: :normal, visibility: :opened })
       .order(created_at: :desc)
-      .limit(50)
+      .limit(100)
 
-    mixed_items = (posts + diffuses).sort_by(&:created_at).reverse.first(50)
+    mixed_items = (posts + diffuses).sort_by(&:created_at).reverse.first(100)
 
     post_ids = mixed_items.map { |item| item.is_a?(Post) ? item.id : item.post_id }.uniq
 
