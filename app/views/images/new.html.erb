@@ -1,0 +1,6 @@
+<% provide(:title, '作成') %>
+<% provide(:robots, 'false') %>
+<% provide(:layout_style, '') %>
+<% provide(:ga4, 'false') %>
+
+<%= render 'images/form', image: @image, url: images_path, method: :post, new: true %>

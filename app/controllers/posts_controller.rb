@@ -77,7 +77,8 @@ class PostsController < ApplicationController
         :reply_aid,
         :quote_aid,
         :content,
-        :visibility
+        :visibility,
+        media_files: []
       ]
     )
   end

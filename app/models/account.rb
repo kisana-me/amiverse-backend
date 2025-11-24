@@ -1,7 +1,13 @@
 class Account < ApplicationRecord
   has_many :sessions
+  has_many :images
+  has_many :videos
   belongs_to :icon, class_name: 'Image', foreign_key: 'icon_id', optional: true
   has_many :oauth_accounts
+  has_many :active_relationships, class_name: 'Follow', foreign_key: 'follower_id', dependent: :destroy
+  has_many :passive_relationships, class_name: 'Follow', foreign_key: 'followed_id', dependent: :destroy
+  has_many :following, through: :active_relationships, source: :followed
+  has_many :followers, through: :passive_relationships, source: :follower
   has_many :diffuses, dependent: :destroy
   has_many :diffused_posts, through: :diffuses, source: :post
 
@@ -37,6 +43,15 @@ class Account < ApplicationRecord
   scope :isnt_deleted, -> { where.not(status: :deleted) }
   scope :is_opened, -> { where(visibility: :opened) }
   scope :isnt_closed, -> { where.not(visibility: :closed) }
+
+  def icon_file=(file)
+    if file.present? && file.content_type.start_with?('image/')
+      new_icon = Image.new
+      new_icon.account = self
+      new_icon.image = file
+      self.icon = new_icon
+    end
+  end
 
   def icon_url
     icon&.image_url(variant_type: 'icon') || full_url('/static_assets/images/amiverse-logo.png')

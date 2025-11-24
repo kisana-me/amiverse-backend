@@ -28,6 +28,12 @@
     <%= form.select :visibility, Post.visibilities.keys.map { |k| [t("activerecord.enums.post.visibility.#{k}"), k] }, {} %>
   </div>
 
+  <div class="field">
+    <%= form.label :media_files, "画像・動画（複数選択可）" %>
+    <%# multiple: true で複数選択を可能にします %>
+    <%= form.file_field :media_files, multiple: true, accept: 'image/*,video/*' %>
+  </div>
+
   <div>
     <%= form.submit %>
   </div>

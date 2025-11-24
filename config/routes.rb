@@ -8,7 +8,12 @@ Rails.application.routes.draw do
   resources :posts, param: :aid
 
   # Images
-  resources :images, only: [:new, :create], param: :aid
+  resources :images, param: :aid do
+    member do
+      post "variants_create" => "images#variants_create", as: "variants_create"
+      delete "variants_destroy" => "images#variants_destroy", as: "variants_destroy"
+    end
+  end
 
   # Emojis
   resources :emojis, param: :aid do
@@ -47,11 +52,19 @@ Rails.application.routes.draw do
     # Pages
     get 'start' => 'pages#start'
 
+    # Feeds
+    get 'feeds/index' => 'feeds#index'
+    get 'feeds/follow' => 'feeds#follow'
+    get 'feeds/current' => 'feeds#current'
+
     # Sessions
     delete 'signout' => 'sessions#signout'
 
     # Signup
     post 'signup' => 'signup#create'
+
+    # Settings
+    post 'settings/account' => 'settings#post_account'
 
     # OAuth
     post 'oauth/start' => 'oauth#start'

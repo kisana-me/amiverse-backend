@@ -10,6 +10,7 @@ class V1::PostsController < V1::ApplicationController
         :reply,
         :replies,
         :quotes,
+        :images,
         quote: [:account],
         reactions: [:emoji],
       )
@@ -26,6 +27,7 @@ class V1::PostsController < V1::ApplicationController
       .includes(
         :account,
         :diffuses,
+        :images,
         reply: [:account],
         quote: [:account],
         replies: [:account],
@@ -59,6 +61,7 @@ class V1::PostsController < V1::ApplicationController
 
   def create
     @post = Post.new(post_params)
+    @post.account = @current_account
     if @post.save
       render template: 'v1/posts/show', formats: [:json], status: :created
     else
@@ -90,8 +93,11 @@ class V1::PostsController < V1::ApplicationController
   def post_params
     params.expect(
       post: [
+        :reply_aid,
+        :quote_aid,
         :content,
-        :visibility
+        :visibility,
+        media_files: []
       ]
     )
   end

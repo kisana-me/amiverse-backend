@@ -1,0 +1,10 @@
+<% provide(:robots, 'false') %>
+<% provide(:layout_style, '') %>
+<% provide(:ga4, 'false') %>
+<% if @image.variants.include?('images') %>
+  <%= image_tag(@image.image_url('images')) %>
+<% end %>
+<% if @image.variants.include?('tb-images') %>
+  <%= image_tag(@image.image_url('tb-images')) %>
+<% end %>
+

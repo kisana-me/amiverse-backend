@@ -11,6 +11,12 @@ class Post < ApplicationRecord
   has_many :diffuses, dependent: :destroy
   has_many :diffused_by, through: :diffuses, source: :account
 
+  has_many :post_images
+  has_many :images, through: :post_images
+
+  has_many :post_videos
+  has_many :videos, through: :post_videos
+
   attr_accessor :reply_aid, :quote_aid
   attribute :meta, :json, default: -> { {} }
   enum :visibility, { closed: 0, limited: 1, opened: 2 }
@@ -29,6 +35,22 @@ class Post < ApplicationRecord
   scope :isnt_deleted, -> { where.not(status: :deleted) }
   scope :is_opened, -> { where(visibility: :opened) }
   scope :isnt_closed, -> { where.not(visibility: :closed) }
+
+  def media_files=(files)
+    files.reject(&:blank?).each do |file|
+      if file.content_type.start_with?('image/')
+        new_image = Image.new
+        new_image.account = self.account
+        new_image.image = file
+        self.post_images.build(image: new_image)
+      elsif file.content_type.start_with?('video/')
+        new_video = Video.new
+        new_video.account = self.account
+        new_video.video = file
+        self.post_videos.build(video: new_video)
+      end
+    end
+  end
 
   private
 
