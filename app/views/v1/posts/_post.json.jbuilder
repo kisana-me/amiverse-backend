@@ -46,37 +46,37 @@ if defined? reactions
   end
 end
 
-json.media do
-  media_items = []
-  post.images.each do |image|
-    media_items << {
-      type: "image",
-      aid: image.aid,
-      name: image.name,
-      description: image.description,
-      url: image.image_url
-    }
-  end
-  post.videos.each do |video|
-    media_items << {
-      type: "video",
-      aid: video.aid,
-      name: video.name,
-      description: video.description,
-      url: video.video_url
-    }
-  end
+if defined? display_media
+  json.media do
+    media_items = []
+    post.images.each do |image|
+      media_items << {
+        type: "image",
+        aid: image.aid,
+        name: image.name,
+        description: image.description,
+        url: image.image_url
+      }
+    end
+    post.videos.each do |video|
+      media_items << {
+        type: "video",
+        aid: video.aid,
+        name: video.name,
+        description: video.description,
+        url: video.video_url
+      }
+    end
 
-  json.array! media_items do |item|
-    json.type item[:type]
-    json.aid item[:aid]
-    json.name item[:name]
-    json.description item[:description]
-    json.url item[:url]
+    json.array! media_items do |item|
+      json.type item[:type]
+      json.aid item[:aid]
+      json.name item[:name]
+      json.description item[:description]
+      json.url item[:url]
+    end
   end
 end
-
-json.videos []
 
 json.account do
   json.partial! 'v1/accounts/account', account: post.account

@@ -47,6 +47,18 @@ class Video < ApplicationRecord
 
   def video_validation
     return unless new_record?
-    # Add validation logic here if needed
+
+    if video.blank?
+      errors.add(:video, :blank)
+      return
+    end
+
+    if video.size > 1.gigabyte
+      errors.add(:video, "must be 1GB or less")
+    end
+
+    unless video.content_type&.start_with?('video/')
+      errors.add(:video, "must be a video file")
+    end
   end
 end

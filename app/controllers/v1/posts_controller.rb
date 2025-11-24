@@ -28,11 +28,13 @@ class V1::PostsController < V1::ApplicationController
         :account,
         :diffuses,
         :images,
+        :videos,
         reply: [:account],
         quote: [:account],
         replies: [:account],
         quotes: [:account],
         reactions: [:emoji],
+        account: [:icon],
       )
       .find_by(aid: params[:aid])
     if @post
@@ -47,8 +49,11 @@ class V1::PostsController < V1::ApplicationController
             :reply,
             :replies,
             :quotes,
+            :images,
+            :videos,
             quote: [:account],
             reactions: [:emoji],
+            account: [:icon],
           )
         .order(id: :desc)
         .limit(500)

@@ -46,16 +46,21 @@ Rails.application.routes.draw do
   # API v1
   namespace :v1 do
     root 'pages#index'
-    resources :accounts, param: :name_id
-    resources :posts, param: :aid
 
     # Pages
     get 'start' => 'pages#start'
 
+    # Accounts
+    post 'accounts' => 'accounts#show'
+
+    # Posts
+    resources :posts, only: [:show, :create], param: :aid
+
     # Feeds
-    get 'feeds/index' => 'feeds#index'
-    get 'feeds/follow' => 'feeds#follow'
-    get 'feeds/current' => 'feeds#current'
+    post 'feeds/index' => 'feeds#index'
+    post 'feeds/follow' => 'feeds#follow'
+    post 'feeds/current' => 'feeds#current'
+    post 'feeds/account' => 'feeds#account'
 
     # Sessions
     delete 'signout' => 'sessions#signout'

@@ -1,7 +1,6 @@
-
 json.posts do
   json.array! @posts do |post|
-    json.partial! 'v1/posts/post', post: post
+    json.partial! 'v1/posts/post', post: post, quote_to: true, reactions: true, display_media: true
   end
 end
 
