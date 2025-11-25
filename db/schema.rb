@@ -13,6 +13,7 @@
 ActiveRecord::Schema[8.1].define(version: 15) do
   create_table "accounts", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
     t.string "aid", limit: 14, null: false
+    t.bigint "banner_id"
     t.datetime "birthdate"
     t.datetime "created_at", null: false
     t.text "description", default: "", null: false
@@ -27,6 +28,7 @@ ActiveRecord::Schema[8.1].define(version: 15) do
     t.datetime "updated_at", null: false
     t.integer "visibility", limit: 1, default: 0, null: false
     t.index ["aid"], name: "index_accounts_on_aid", unique: true
+    t.index ["banner_id"], name: "index_accounts_on_banner_id"
     t.index ["email"], name: "index_accounts_on_email", unique: true
     t.index ["icon_id"], name: "index_accounts_on_icon_id"
     t.index ["name_id"], name: "index_accounts_on_name_id", unique: true
@@ -209,6 +211,7 @@ ActiveRecord::Schema[8.1].define(version: 15) do
     t.check_constraint "json_valid(`variants`)", name: "variants"
   end
 
+  add_foreign_key "accounts", "images", column: "banner_id"
   add_foreign_key "accounts", "images", column: "icon_id"
   add_foreign_key "diffuses", "accounts"
   add_foreign_key "diffuses", "posts"

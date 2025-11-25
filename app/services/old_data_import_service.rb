@@ -1,4 +1,6 @@
 class OldDataImportService
+  # 使い方: OldDataImportService.new.call
+
   def call
     json_path = Rails.root.join('storage', 'old_data', 'data.json')
     unless File.exist?(json_path)
