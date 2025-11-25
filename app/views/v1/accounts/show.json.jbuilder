@@ -15,3 +15,4 @@ json.is_following @current_account.present? ? @current_account.following.exists?
 json.is_followed @current_account.present? ? @account.following.exists?(@current_account.id) : false
 
 json.icon_url @account.icon_url
+json.banner_url @account.banner_url

@@ -4,6 +4,7 @@ class Account < ApplicationRecord
   has_many :images
   has_many :videos
   belongs_to :icon, class_name: 'Image', foreign_key: 'icon_id', optional: true
+  belongs_to :banner, class_name: 'Image', foreign_key: 'banner_id', optional: true
   has_many :oauth_accounts
   has_many :active_relationships, class_name: 'Follow', foreign_key: 'follower_id', dependent: :destroy
   has_many :passive_relationships, class_name: 'Follow', foreign_key: 'followed_id', dependent: :destroy
@@ -54,8 +55,21 @@ class Account < ApplicationRecord
     end
   end
 
+  def banner_file=(file)
+    if file.present? && file.content_type.start_with?('image/')
+      new_banner = Image.new
+      new_banner.account = self
+      new_banner.image = file
+      self.banner = new_banner
+    end
+  end
+
   def icon_url
     icon&.image_url(variant_type: 'icon') || full_url('/static_assets/images/amiverse-logo.png')
+  end
+
+  def banner_url
+    banner&.image_url(variant_type: 'banner') || full_url('/static_assets/images/amiverse-1.png')
   end
 
   def subscription_plan
