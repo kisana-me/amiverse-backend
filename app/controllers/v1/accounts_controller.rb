@@ -1,9 +1,4 @@
 class V1::AccountsController < V1::ApplicationController
-  def index
-    @accounts = Account.all
-    render template: 'v1/accounts/index', formats: [:json]
-  end
-
   def show
     @account = Account
       .is_normal

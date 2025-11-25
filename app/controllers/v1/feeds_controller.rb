@@ -116,7 +116,12 @@ class V1::FeedsController < V1::ApplicationController
         {
           type: 'diffuse',
           post_aid: post.aid,
-          account_aid: item.account.aid,
+          account: {
+            aid: item.account.aid,
+            name: item.account.name,
+            name_id: item.account.name_id,
+            icon_url: item.account.icon_url
+          },
           created_at: item.created_at
         }
       end
@@ -218,7 +223,12 @@ class V1::FeedsController < V1::ApplicationController
         {
           type: 'diffuse',
           post_aid: post.aid,
-          account_aid: diffuse.account.aid,
+          account: {
+            aid: diffuse.account.aid,
+            name: diffuse.account.name,
+            name_id: diffuse.account.name_id,
+            icon_url: diffuse.account.icon_url
+          },
           created_at: diffuse.created_at
         }
       end
@@ -236,8 +246,35 @@ class V1::FeedsController < V1::ApplicationController
     cursor_time = params[:cursor].present? ? Time.at(params[:cursor].to_f) : Time.current
 
     posts = Post
+      .where(account_id: @account.id)
       .is_normal
       .isnt_closed
+      .where('created_at < ?', cursor_time)
+      .order(created_at: :desc)
+      .limit(30)
+
+    diffuses = Diffuse
+      .where(account_id: @account.id)
+      .includes(:account)
+      .joins(:account)
+      .where(accounts: { status: :normal })
+      .joins(:post)
+      .where(posts: { status: :normal })
+      .where.not(posts: { visibility: :closed })
+      .where('diffuses.created_at < ?', cursor_time)
+      .order(created_at: :desc)
+      .limit(30)
+
+    mixed_items = (posts + diffuses).sort_by(&:created_at).reverse.first(30)
+
+    if mixed_items.present?
+      response.headers['X-Next-Cursor'] = mixed_items.last.created_at.to_f.to_s
+    end
+
+    post_ids = mixed_items.map { |item| item.is_a?(Post) ? item.id : item.post_id }.uniq
+
+    @posts = Post
+      .from_normal_account
       .includes(
         :account,
         :diffuses,
@@ -248,28 +285,38 @@ class V1::FeedsController < V1::ApplicationController
         :videos,
         quote: [:account],
         reactions: [:emoji],
+        account: [:icon],
       )
-      .where('created_at < ?', cursor_time)
-      .where(account_id: @account.id)
-      .order(created_at: :desc)
-      .limit(30)
+      .where(id: post_ids)
 
-    @posts = posts.includes(
-      :account,
-      :diffuses,
-      :reply,
-      :replies,
-      :quotes,
-      :images,
-      :videos,
-      quote: [:account],
-      reactions: [:emoji],
-    )
+    posts_by_id = @posts.index_by(&:id)
 
-    if @posts.present?
-      response.headers['X-Next-Cursor'] = @posts.last.created_at.to_f.to_s
-    end
+    @feeds = mixed_items.map do |item|
+      if item.is_a?(Post)
+        post = posts_by_id[item.id]
+        next unless post
 
-    render template: 'v1/feeds/feed_only_posts', formats: [:json]
+        {
+          type: 'post',
+          post_aid: post.aid
+        }
+      else
+        post = posts_by_id[item.post_id]
+        next unless post
+
+        {
+          type: 'diffuse',
+          post_aid: post.aid,
+          account: {
+            aid: item.account.aid,
+            name: item.account.name,
+            name_id: item.account.name_id,
+            icon_url: item.account.icon_url
+          },
+          created_at: item.created_at
+        }
+      end
+    end.compact
+    render template: 'v1/feeds/feed', formats: [:json]
   end
 end

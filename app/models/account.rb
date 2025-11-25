@@ -1,5 +1,6 @@
 class Account < ApplicationRecord
   has_many :sessions
+  has_many :posts, dependent: :destroy
   has_many :images
   has_many :videos
   belongs_to :icon, class_name: 'Image', foreign_key: 'icon_id', optional: true

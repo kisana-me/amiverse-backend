@@ -9,7 +9,12 @@ json.feed do
     json.type feed[:type]
     json.post_aid feed[:post_aid]
     if feed[:type] == 'diffuse'
-      json.account_aid feed[:account_aid]
+      json.account do
+        json.aid feed[:account][:aid]
+        json.name feed[:account][:name]
+        json.name_id feed[:account][:name_id]
+        json.icon_url feed[:account][:icon_url]
+      end
       json.created_at feed[:created_at]
     end
   end

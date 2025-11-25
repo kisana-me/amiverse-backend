@@ -52,6 +52,9 @@ Rails.application.routes.draw do
 
     # Accounts
     post 'accounts' => 'accounts#show'
+    resources :accounts, only: [], param: :aid do
+      resource :follow, only: [:create, :destroy]
+    end
 
     # Posts
     resources :posts, only: [:show, :create], param: :aid do
@@ -59,13 +62,13 @@ Rails.application.routes.draw do
       #   post 'show' => 'posts#show'
       # end
       resource :reaction, only: [:create, :destroy]
-      # resource :diffuse, only: [:create, :destroy]
+      resource :diffuse, only: [:create, :destroy]
     end
 
     # Emojis
-    post 'emojis' => 'emojis#index'
-    post 'emojis/categories/:category_name' => 'emojis#categories', as: 'emojis_category'
-    post 'emojis/:aid' => 'emojis#show', as: 'emoji'
+    post 'emojis/groups' => 'emojis#groups_index'
+    post 'emojis/groups/:group_name' => 'emojis#groups_show'
+    post 'emojis/:aid' => 'emojis#show'
 
     # Search
     post 'search' => 'search#index'
