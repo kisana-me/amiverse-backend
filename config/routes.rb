@@ -54,7 +54,18 @@ Rails.application.routes.draw do
     post 'accounts' => 'accounts#show'
 
     # Posts
-    resources :posts, only: [:show, :create], param: :aid
+    resources :posts, only: [:show, :create], param: :aid do
+      # member do
+      #   post 'show' => 'posts#show'
+      # end
+      resource :reaction, only: [:create, :destroy]
+      # resource :diffuse, only: [:create, :destroy]
+    end
+
+    # Emojis
+    post 'emojis' => 'emojis#index'
+    post 'emojis/categories/:category_name' => 'emojis#categories', as: 'emojis_category'
+    post 'emojis/:aid' => 'emojis#show', as: 'emoji'
 
     # Search
     post 'search' => 'search#index'
