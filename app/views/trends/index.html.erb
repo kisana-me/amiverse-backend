@@ -1,0 +1,32 @@
+<h1>Current Trends</h1>
+
+<div style="margin-bottom: 20px;">
+  <p><strong>Last Updated:</strong> <%= @last_updated_at ? @last_updated_at.strftime("%Y-%m-%d %H:%M:%S") : 'Never' %></p>
+  
+  <%= button_to "Regenerate Trends", trends_path, method: :post, class: "button" %>
+</div>
+
+<% if @trends.present? %>
+  <table border="1" cellpadding="5" cellspacing="0">
+    <thead>
+      <tr>
+        <th>Rank</th>
+        <th>Word</th>
+        <th>Search Count</th>
+        <th>Sample Frequency</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @trends.each_with_index do |(word, counts), index| %>
+        <tr>
+          <td><%= index + 1 %></td>
+          <td><%= word %></td>
+          <td><%= counts[0] %></td>
+          <td><%= counts[1] %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p>No trends cached yet.</p>
+<% end %>

@@ -43,6 +43,9 @@ Rails.application.routes.draw do
   get 'oauth/callback' => 'oauth#callback'
   post 'oauth/fetch' => 'oauth#fetch'
 
+  # Trends
+  resources :trends, only: [:index, :create]
+
 
 
 
@@ -95,6 +98,9 @@ Rails.application.routes.draw do
     post 'oauth/start' => 'oauth#start'
     post 'oauth/callback' => 'oauth#callback'
     post 'oauth/fetch' => 'oauth#fetch'
+
+    # Trends
+    post 'trends' => 'trends#index'
   end
 
   # Others
