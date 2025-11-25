@@ -1,23 +1,5 @@
 class V1::PostsController < V1::ApplicationController
-  def index
-    @posts = Post
-      .from_normal_account
-      .is_normal
-      .is_opened
-      .includes(
-        :account,
-        :diffuses,
-        :reply,
-        :replies,
-        :quotes,
-        :images,
-        quote: [:account],
-        reactions: [:emoji],
-      )
-      .order(id: :desc)
-      .limit(500)
-    render template: 'v1/posts/index', formats: [:json]
-  end
+  before_action :require_signin, except: %i[ show ]
 
   def show
     @post = Post
@@ -56,11 +38,14 @@ class V1::PostsController < V1::ApplicationController
             account: [:icon],
           )
         .order(id: :desc)
-        .limit(500)
+        .limit(50)
       end
       render template: 'v1/posts/show', formats: [:json]
     else
-      render json: { error: 'Post not found' }, status: :not_found
+      render json: {
+        status: 'error',
+        message: '投稿が見つかりませんでした',
+      }, status: :not_found
     end
   end
 
@@ -70,26 +55,24 @@ class V1::PostsController < V1::ApplicationController
     if @post.save
       render template: 'v1/posts/show', formats: [:json], status: :created
     else
-      render json: { errors: @post.errors.full_messages }, status: :unprocessable_entity
-    end
-  end
-
-  def update
-    @post = Post.find_by(aid: params[:aid])
-    @post.update(post_params)
-    if @post.save
-      render template: 'v1/posts/show', formats: [:json]
-    else
-      render json: { errors: @post.errors.full_messages }, status: :unprocessable_entity
+      render json: {
+        status: 'error',
+        message: '投稿に失敗しました',
+        error: @post.errors.full_messages
+      }, status: :unprocessable_entity
     end
   end
 
   def destroy
-    @post = Post.find_by(aid: params[:aid])
-    if @post.update(visibility: :deleted)
-      render json: { status: 'success' }
+    @post = @current_account.posts.find_by(aid: params[:aid])
+    if @post.update(status: :deleted)
+      render json: { status: 'success', message: '投稿を削除しました' }, status: :ok
     else
-      render json: { errors: @post.errors.full_messages }, status: :unprocessable_entity
+      render json: {
+        status: 'error',
+        message: '投稿の削除に失敗しました',
+        errors: @post.errors.full_messages
+      }, status: :unprocessable_entity
     end
   end
 

@@ -43,6 +43,10 @@ Rails.application.routes.draw do
   get 'oauth/callback' => 'oauth#callback'
   post 'oauth/fetch' => 'oauth#fetch'
 
+
+
+
+
   # API v1
   namespace :v1 do
     root 'pages#index'
@@ -51,16 +55,14 @@ Rails.application.routes.draw do
     get 'start' => 'pages#start'
 
     # Accounts
-    post 'accounts' => 'accounts#show'
+    post 'accounts/:name_id' => 'accounts#show'
     resources :accounts, only: [], param: :aid do
       resource :follow, only: [:create, :destroy]
     end
 
     # Posts
-    resources :posts, only: [:show, :create], param: :aid do
-      # member do
-      #   post 'show' => 'posts#show'
-      # end
+    post 'posts/:aid' => 'posts#show'
+    resources :posts, only: [:create, :destroy], param: :aid do
       resource :reaction, only: [:create, :destroy]
       resource :diffuse, only: [:create, :destroy]
     end
@@ -86,7 +88,8 @@ Rails.application.routes.draw do
     post 'signup' => 'signup#create'
 
     # Settings
-    post 'settings/account' => 'settings#post_account'
+    post 'settings/account' => 'settings#account'
+    delete 'settings/leave' => 'settings#leave'
 
     # OAuth
     post 'oauth/start' => 'oauth#start'

@@ -47,7 +47,7 @@ class V1::FeedsController < V1::ApplicationController
       )
       .where(id: post_ids)
       .in_order_of(:id, post_ids)
-    render template: 'v1/posts/index', formats: [:json]
+    render template: 'v1/feeds/feed_only_posts', formats: [:json]
   end
 
   def follow

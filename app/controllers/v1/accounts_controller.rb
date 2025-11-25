@@ -7,21 +7,10 @@ class V1::AccountsController < V1::ApplicationController
     if @account
       render template: 'v1/accounts/show', formats: [:json]
     else
-      render json: { error: 'Account not found' }, status: :not_found
+      render json: {
+        status: 'error',
+        message: 'アカウントが見つかりませんでした',
+      }, status: :not_found
     end
-  end
-
-  private
-
-  def account_params
-    params.expect(
-      account: [
-        :name,
-        :name_id,
-        :email,
-        :password,
-        :password_confirmation
-      ]
-    )
   end
 end

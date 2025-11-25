@@ -26,19 +26,19 @@ class V1::SearchController < V1::ApplicationController
     ids = results['hits'].map { |h| h['id'] }
 
     @posts = Post.where(id: ids)
-                  .includes(
-                    :account,
-                    :diffuses,
-                    :reply,
-                    :replies,
-                    :quotes,
-                    :images,
-                    :videos,
-                    quote: [:account],
-                    reactions: [:emoji],
-                    account: [:icon],
-                  )
-                  .order(created_at: :desc)
+      .includes(
+        :account,
+        :diffuses,
+        :reply,
+        :replies,
+        :quotes,
+        :images,
+        :videos,
+        quote: [:account],
+        reactions: [:emoji],
+        account: [:icon],
+      )
+      .order(created_at: :desc)
 
     if @posts.present?
       response.headers['X-Next-Cursor'] = @posts.last.created_at.to_f.to_s
