@@ -1,10 +1,11 @@
 class ImagesController < ApplicationController
   before_action :require_signin
+  before_action :require_admin
   before_action :set_image, only: %i[show]
-  before_action :set_correct_image, only: %i[edit update destroy variants_create variants_destroy]
+  before_action :set_correct_image, only: %i[edit update destroy create_variant delete_variant delete_original]
 
   def index
-    images = Image.all
+    images = Image.all.order(id: :desc)
     @images = set_pagination_for(images)
   end
 
@@ -45,22 +46,30 @@ class ImagesController < ApplicationController
     end
   end
 
-  def variants_create
-    url = @image.image_url(variant_type: params[:variant_type])
-    if url
-      redirect_to image_path(@image.aid), notice: "画像を生成しました#{url}"
+  def create_variant
+    if @image.create_variant(params[:variant_type])
+      redirect_to image_path(@image.aid), notice: "画像を生成しました"
     else
       flash.now[:alert] = "画像を生成できませんでした"
-      render :edit
+      render :show
     end
   end
 
-  def variants_destroy
-    if @image.delete_variants
-      redirect_to image_path(@image.aid), notice: "variantsを削除しました"
+  def delete_variant
+    if @image.delete_variant
+      redirect_to image_path(@image.aid), notice: "variantを削除しました"
     else
-      flash.now[:alert] = "variantsを削除できませんでした"
-      render :edit
+      flash.now[:alert] = "variantを削除できませんでした"
+      render :show
+    end
+  end
+
+  def delete_original
+    if @image.delete_original
+      redirect_to image_path(@image.aid), notice: "originalを削除しました"
+    else
+      flash.now[:alert] = "originalを削除できませんでした"
+      render :show
     end
   end
 
@@ -68,11 +77,11 @@ class ImagesController < ApplicationController
 
   def image_params
     params.expect(
-      image: %i[
-        image
-        name
-        description
-        visibility
+      image: [
+        :name,
+        :description,
+        :visibility,
+        :status,
       ]
     )
   end

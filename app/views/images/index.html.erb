@@ -4,20 +4,5 @@
 <% provide(:ga4, 'false') %>
 
 <h1>画像一覧</h1>
-<% @images.each do |image| %>
-<div>
-  <p>ID:<%= image.aid %></p>
-  <p>画像名:<%= image.name %></p>
-  <p>variants:<%= image.variants.join(" ") %></p>
-  <%# image_tag(image.image_url) %>
-  <%= link_to('見る', image_path(image.aid)) %>
-  <%= link_to('編集', edit_image_path(image.aid)) %>
-  <% if image.variants.include?('normal') %>
-    variants/normalがあります
-    <%= image_tag(image.image_url(variant_type: 'normal'), alt: "#{image.name}") %>
-  <% else %>
-    variants/normalはない
-  <% end %>
-</div>
-<% end %>
+<%= render partial: 'images/image', collection: @images, as: 'image' %>
 <%= render 'shared/paging', pages: @total_pages, page: @page, page_to: '/images' %>

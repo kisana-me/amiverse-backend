@@ -51,6 +51,7 @@ class Account < ApplicationRecord
       new_icon = Image.new
       new_icon.account = self
       new_icon.image = file
+      new_icon.variant_type = 'icon'
       self.icon = new_icon
     end
   end
@@ -60,16 +61,17 @@ class Account < ApplicationRecord
       new_banner = Image.new
       new_banner.account = self
       new_banner.image = file
+      new_banner.variant_type = 'banner'
       self.banner = new_banner
     end
   end
 
   def icon_url
-    icon&.image_url(variant_type: 'icon') || full_url('/static_assets/images/amiverse-logo.png')
+    icon&.image_url || full_url('/static_assets/images/amiverse-logo.png')
   end
 
   def banner_url
-    banner&.image_url(variant_type: 'banner') || full_url('/static_assets/images/amiverse-1.png')
+    banner&.image_url || full_url('/static_assets/images/amiverse-1.png')
   end
 
   def subscription_plan

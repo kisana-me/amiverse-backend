@@ -10,7 +10,7 @@ Rails.application.configure do
   config.public_file_server.headers = { 'cache-control' => "public, max-age=#{10.days.to_i}" }
   config.active_storage.service = :minio
   config.assume_ssl = true
-  config.force_ssl = true
+  config.force_ssl = false # true
 
   # Skip http-to-https redirect for the default health check endpoint.
   # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }

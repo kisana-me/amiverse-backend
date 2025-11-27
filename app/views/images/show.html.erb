@@ -4,33 +4,6 @@
 <% provide(:ga4, 'false') %>
 
 <h1>画像</h1>
-<div>
-  <p>ID:<%= @image.aid %></p>
-  <p>画像名:<%= @image.name %></p>
-  <p>variants:<%= @image.variants.join(" ") %></p>
-  <p>
-    <%= form_with url: variants_create_image_path(@image.aid), method: :post, data: { turbo: false } do %>
-      <div>
-        <%= label_tag :variant_type, "variant" %>
-        <%= select_tag :variant_type, options_for_select(['icon', 'q-icon', 'banner', 'q-banner', 'normal', 'q-normal', 'd-normal', 'emoji', 'q-emoji']) %>
-      </div>
-      <div>
-        <%= submit_tag "送信" %>
-      </div>
-    <% end %>
-  </p>
-  <p>
-    <% @image.variants.each do |variant| %>
-      variant:<%= variant %>
-      <%= image_tag(@image.image_url(variant_type: variant), alt: "#{@image.name}") %>
-    <% end %>
-    <% if @image.variants.blank? %>
-      variantはない
-    <% end %>
-  </p>
-  <p>
-    <%= link_to('編集', edit_image_path(@image.aid)) %>
-    <%= button_to('variantsを削除', variants_destroy_image_path(@image.aid), method: :delete, data: { turbo: false }) %>
-    <%= button_to('画像を削除', image_path(@image.aid), method: :delete, data: { turbo: false }) %>
-  </p>
-</div>
+<%= image_tag(@image.image_url, alt: "#{@image.name}") %>
+<hr />
+<%= render 'images/image', image: @image %>

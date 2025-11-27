@@ -82,9 +82,10 @@ ActiveRecord::Schema[8.1].define(version: 15) do
     t.text "description", default: "", null: false
     t.text "meta", size: :long, default: "{}", null: false, collation: "utf8mb4_bin"
     t.string "name", default: "", null: false
-    t.string "original_ext", null: false
+    t.string "original_ext"
     t.integer "status", limit: 1, default: 0, null: false
     t.datetime "updated_at", null: false
+    t.string "variant_type"
     t.text "variants", size: :long, default: "[]", null: false, collation: "utf8mb4_bin"
     t.integer "visibility", limit: 1, default: 0, null: false
     t.index ["account_id"], name: "index_images_on_account_id"
@@ -200,9 +201,10 @@ ActiveRecord::Schema[8.1].define(version: 15) do
     t.text "description", default: "", null: false
     t.text "meta", size: :long, default: "{}", null: false, collation: "utf8mb4_bin"
     t.string "name", default: "", null: false
-    t.string "original_ext", null: false
+    t.string "original_ext"
     t.integer "status", limit: 1, default: 0, null: false
     t.datetime "updated_at", null: false
+    t.string "variant_type"
     t.text "variants", size: :long, default: "[]", null: false, collation: "utf8mb4_bin"
     t.integer "visibility", limit: 1, default: 0, null: false
     t.index ["account_id"], name: "index_videos_on_account_id"

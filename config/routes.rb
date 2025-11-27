@@ -10,8 +10,9 @@ Rails.application.routes.draw do
   # Images
   resources :images, param: :aid do
     member do
-      post "variants_create" => "images#variants_create", as: "variants_create"
-      delete "variants_destroy" => "images#variants_destroy", as: "variants_destroy"
+      post "create_variant" => "images#create_variant", as: "create_variant"
+      delete "delete_variant" => "images#delete_variant", as: "delete_variant"
+      delete "delete_original" => "images#delete_original", as: "delete_original"
     end
   end
 

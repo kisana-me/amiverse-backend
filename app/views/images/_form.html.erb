@@ -1,16 +1,25 @@
 <%= form_with model: @image, url: url, data: { turbo: false } do |f| %>
   <%= render 'shared/error_messages', instead: @image %>
-  <% if new %>
   <div>
     <%= f.label :image, 'image' %>
     <%= f.file_field :image %>
   </div>
-  <% end %>
+
   <div>
     <%= f.label :name, '名前' %>
     <%= f.text_field :name, placeholder: '名前' %>
   </div>
+
+  <div>
+    <%= f.label :visibility %>
+    <%= f.select :visibility, Image.visibilities.keys.map { |k| [t("activerecord.enums.image.visibility.#{k}"), k] }, {} %>
+  </div>
+
+  <div>
+    <%= f.label :status %>
+    <%= f.select :status, Image.statuses.keys.map { |k| [t("activerecord.enums.image.status.#{k}"), k] }, {} %>
+  </div>
   <br/>
   <br/>
-  <%= f.submit 'アップロード' %>
+  <%= f.submit '送信' %>
 <% end %>

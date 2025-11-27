@@ -1,7 +1,6 @@
 class ApplicationRecord < ActiveRecord::Base
   primary_abstract_class
   include S3Tools
-  include ImageTools
   include TokenTools
   include Paginatable
 
