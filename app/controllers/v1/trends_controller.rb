@@ -1,5 +1,7 @@
 module V1
   class TrendsController < ApplicationController
+    include ApplicationHelper
+
     def index
       trends = TrendService.current_trends
       last_updated = TrendService.last_updated_at
@@ -19,7 +21,7 @@ module V1
       response_data = [
         {
           category: "general",
-          image_url: "https://kisana.me/images/amiverse/amiverse-1.webp",
+          image_url: full_url('/static_assets/images/amiverse-1.webp'),
           title: "#{last_updated.strftime('%-H')}時台のトレンド",
           overview: "最新トレンド情報です。",
           last_updated_at: last_updated,
