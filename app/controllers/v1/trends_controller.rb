@@ -19,7 +19,7 @@ module V1
       response_data = [
         {
           category: "general",
-          image_url: "https://kisana.me/images/amiverse/amiverse-1.png",
+          image_url: "https://kisana.me/images/amiverse/amiverse-1.webp",
           title: "#{last_updated.strftime('%-H')}時台のトレンド",
           overview: "最新トレンド情報です。",
           last_updated_at: last_updated,

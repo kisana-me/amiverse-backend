@@ -67,11 +67,11 @@ class Account < ApplicationRecord
   end
 
   def icon_url
-    icon&.image_url || full_url('/static_assets/images/amiverse-logo.png')
+    icon&.image_url || full_url('/static_assets/images/amiverse-logo.webp')
   end
 
   def banner_url
-    banner&.image_url || full_url('/static_assets/images/amiverse-1.png')
+    banner&.image_url || full_url('/static_assets/images/amiverse-1.webp')
   end
 
   def subscription_plan

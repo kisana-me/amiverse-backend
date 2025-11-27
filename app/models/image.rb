@@ -30,7 +30,7 @@ class Image < ApplicationRecord
     if normal? && variant_type.present?
       object_url(key: "/images/variants/#{aid}.webp")
     else
-      full_url('/static_assets/images/amiverse-1.png')
+      full_url('/static_assets/images/amiverse-1.webp')
     end
   end
 

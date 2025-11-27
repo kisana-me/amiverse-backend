@@ -1,11 +1,20 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "App" %></title>
+    <title><%= full_title(content_for(:title)) %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="App">
+    <meta name="application-name" content="Amiverse API">
     <meta name="mobile-web-app-capable" content="yes">
+
+    <meta name="generator" content="Amiverse API" />
+    <meta name="description" content="Amiverse API" />
+    <meta name="keywords" content="Amiverse API" />
+    <meta name="robots" content="noindex, nofollow, noarchive" />
+
+    <meta property="og:image" content="<%= full_url("/static_assets/images/amiverse-1.webp") %>" />
+    <meta name="twitter:card" content="summary_large_image" />
+
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
@@ -14,9 +23,7 @@
     <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
     <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
 
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
+    <link rel="icon" href="/favicon.ico" />
 
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
