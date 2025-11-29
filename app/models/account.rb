@@ -48,21 +48,21 @@ class Account < ApplicationRecord
 
   def icon_file=(file)
     if file.present? && file.content_type.start_with?('image/')
-      new_icon = Image.new
-      new_icon.account = self
-      new_icon.image = file
-      new_icon.variant_type = 'icon'
-      self.icon = new_icon
+      new_image = Image.new
+      new_image.account = self
+      new_image.image = file
+      new_image.variant_type = 'icon'
+      self.icon = new_image
     end
   end
 
   def banner_file=(file)
     if file.present? && file.content_type.start_with?('image/')
-      new_banner = Image.new
-      new_banner.account = self
-      new_banner.image = file
-      new_banner.variant_type = 'banner'
-      self.banner = new_banner
+      new_image = Image.new
+      new_image.account = self
+      new_image.image = file
+      new_image.variant_type = 'banner'
+      self.banner = new_image
     end
   end
 

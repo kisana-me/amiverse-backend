@@ -4,6 +4,7 @@ class Image < ApplicationRecord
   belongs_to :account, optional: true
   has_many :post_images
 
+  attribute :variants, :json, default: -> { [] }
   attribute :meta, :json, default: -> { {} }
   enum :visibility, { opened: 0, limited: 1, closed: 2 }, default: :opened
   enum :status, { normal: 0, locked: 1, deleted: 2 }
