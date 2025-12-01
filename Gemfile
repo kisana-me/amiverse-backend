@@ -42,3 +42,5 @@ group :test do
   gem 'capybara'
   gem 'selenium-webdriver'
 end
+
+gem "chunky_png", "~> 1.4"

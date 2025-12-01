@@ -11,6 +11,7 @@ class V1::PostsController < V1::ApplicationController
         :diffuses,
         :images,
         :videos,
+        :drawings,
         reply: [:account],
         quote: [:account],
         replies: [:account],
@@ -33,6 +34,7 @@ class V1::PostsController < V1::ApplicationController
             :quotes,
             :images,
             :videos,
+            :drawings,
             quote: [:account],
             reactions: [:emoji],
             account: [:icon],
@@ -50,8 +52,9 @@ class V1::PostsController < V1::ApplicationController
   end
 
   def create
-    @post = Post.new(post_params)
+    @post = Post.new
     @post.account = @current_account
+    @post.assign_attributes(post_params)
     if @post.save
       render template: 'v1/posts/show', formats: [:json], status: :created
     else
@@ -85,7 +88,8 @@ class V1::PostsController < V1::ApplicationController
         :quote_aid,
         :content,
         :visibility,
-        media_files: []
+        media_files: [],
+        drawing_attributes: [:data, :name, :description]
       ]
     )
   end

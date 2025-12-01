@@ -19,6 +19,9 @@ class Post < ApplicationRecord
   has_many :post_videos
   has_many :videos, through: :post_videos
 
+  has_many :post_drawings
+  has_many :drawings, through: :post_drawings
+
   attr_accessor :reply_aid, :quote_aid
   attribute :meta, :json, default: -> { {} }
   enum :visibility, { opened: 0, limited: 1, closed: 2 }, default: :opened
@@ -28,9 +31,8 @@ class Post < ApplicationRecord
   before_validation :assign_quote_from_aid
   before_create :set_aid
 
-  validates :content,
-    presence: true,
-    length: { in: 1..5000, allow_blank: true }
+  validates :content, length: { maximum: 5000, allow_blank: true }
+  validates :content, presence: true, unless: :media_attached?
 
   scope :from_normal_account, -> { joins(:account).where(accounts: { status: :normal }) }
   scope :is_normal, -> { where(status: :normal) }
@@ -65,6 +67,24 @@ class Post < ApplicationRecord
     end
   end
 
+  def drawing_attributes=(attributes)
+    return if attributes.blank?
+
+    attributes_collection = attributes.is_a?(Array) ? attributes : [attributes]
+
+    attributes_collection.each do |attrs|
+      data = attrs[:data] || attrs['data']
+      next if data.blank?
+
+      new_drawing = Drawing.new
+      new_drawing.account = self.account
+      new_drawing.data = data
+      new_drawing.name = attrs[:name] || attrs['name'] || ""
+      new_drawing.description = attrs[:description] || attrs['description'] || ""
+      self.post_drawings.build(drawing: new_drawing)
+    end
+  end
+
   private
 
   def assign_reply_from_aid
@@ -95,5 +115,9 @@ class Post < ApplicationRecord
     else
       self.quote = quote_post
     end
+  end
+
+  def media_attached?
+    post_images.present? || post_videos.present? || post_drawings.present?
   end
 end

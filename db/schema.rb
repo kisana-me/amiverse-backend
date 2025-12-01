@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 15) do
+ActiveRecord::Schema[8.1].define(version: 17) do
   create_table "accounts", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
     t.string "aid", limit: 14, null: false
     t.bigint "banner_id"
@@ -42,6 +42,23 @@ ActiveRecord::Schema[8.1].define(version: 15) do
     t.datetime "updated_at", null: false
     t.index ["account_id"], name: "index_diffuses_on_account_id"
     t.index ["post_id"], name: "index_diffuses_on_post_id"
+  end
+
+  create_table "drawings", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.string "aid", limit: 14, null: false
+    t.datetime "created_at", null: false
+    t.text "data", null: false
+    t.text "description", default: "", null: false
+    t.text "meta", size: :long, default: "{}", null: false, collation: "utf8mb4_bin"
+    t.string "name", default: "", null: false
+    t.integer "status", limit: 1, default: 0, null: false
+    t.integer "style", limit: 1, default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.integer "visibility", limit: 1, default: 0, null: false
+    t.index ["account_id"], name: "index_drawings_on_account_id"
+    t.index ["aid"], name: "index_drawings_on_aid", unique: true
+    t.check_constraint "json_valid(`meta`)", name: "meta"
   end
 
   create_table "emojis", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
@@ -111,6 +128,15 @@ ActiveRecord::Schema[8.1].define(version: 15) do
     t.index ["aid"], name: "index_oauth_accounts_on_aid", unique: true
     t.index ["provider", "uid"], name: "index_oauth_accounts_on_provider_and_uid", unique: true
     t.check_constraint "json_valid(`meta`)", name: "meta"
+  end
+
+  create_table "post_drawings", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "drawing_id", null: false
+    t.bigint "post_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["drawing_id"], name: "index_post_drawings_on_drawing_id"
+    t.index ["post_id"], name: "index_post_drawings_on_post_id"
   end
 
   create_table "post_images", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
@@ -217,11 +243,14 @@ ActiveRecord::Schema[8.1].define(version: 15) do
   add_foreign_key "accounts", "images", column: "icon_id"
   add_foreign_key "diffuses", "accounts"
   add_foreign_key "diffuses", "posts"
+  add_foreign_key "drawings", "accounts"
   add_foreign_key "emojis", "images"
   add_foreign_key "follows", "accounts", column: "followed_id"
   add_foreign_key "follows", "accounts", column: "follower_id"
   add_foreign_key "images", "accounts"
   add_foreign_key "oauth_accounts", "accounts"
+  add_foreign_key "post_drawings", "drawings"
+  add_foreign_key "post_drawings", "posts"
   add_foreign_key "post_images", "images"
   add_foreign_key "post_images", "posts"
   add_foreign_key "post_tags", "posts"

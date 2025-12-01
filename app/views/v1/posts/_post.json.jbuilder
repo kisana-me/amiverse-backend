@@ -76,6 +76,13 @@ if defined? display_media
       json.url item[:url]
     end
   end
+
+  json.drawings do
+    json.array! post.drawings do |drawing|
+      json.extract! drawing, :aid, :name, :description, :created_at
+      json.image_url drawing.image_url
+    end
+  end
 end
 
 json.account do
