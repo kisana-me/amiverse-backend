@@ -4,7 +4,11 @@ class V1::SettingsController < V1::ApplicationController
 
   def account
     if @account.update(account_params)
-      render json: { status: 'success', message: '更新しました' }, status: :ok
+      render json: {
+        status: 'success',
+        message: '更新しました',
+        account: JSON.parse(render_to_string(partial: 'v1/accounts/current_account', locals: { account: @account }, formats: :json))
+      }, status: :ok
     else
       render json: {
         status: 'error',
