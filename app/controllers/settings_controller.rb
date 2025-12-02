@@ -17,9 +17,9 @@ class SettingsController < ApplicationController
 
   def post_account
     if @account.update(account_params)
-      redirect_to settings_account_path, notice: "更新しました"
+      redirect_to settings_account_path, notice: '更新しました'
     else
-      flash.now[:alert] = "更新できませんでした"
+      flash.now[:alert] = '更新できませんでした'
       render :account
     end
   end
@@ -27,7 +27,7 @@ class SettingsController < ApplicationController
   def leave
     @current_account.update(status: :deleted)
     sign_out
-    redirect_to root_url, notice: "ご利用いただきありがとうございました"
+    redirect_to root_url, notice: 'ご利用いただきありがとうございました'
   end
 
   private
@@ -47,7 +47,7 @@ class SettingsController < ApplicationController
         # password
         # password_confirmation
         # icon_aid
-        :icon_file,
+        :icon_file
       ]
     )
   end

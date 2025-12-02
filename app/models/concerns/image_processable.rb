@@ -7,7 +7,7 @@ module ImageProcessable
       .source(image.path)
       .gravity('center')
       .strip
-      .colorspace("sRGB")
+      .colorspace('sRGB')
       .coalesce
       .resize(resize)
 
@@ -17,7 +17,7 @@ module ImageProcessable
 
     processor
       .quality(80)
-      .convert("webp")
+      .convert('webp')
       .call
   end
 

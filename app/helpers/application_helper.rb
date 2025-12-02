@@ -1,6 +1,6 @@
 module ApplicationHelper
-  def full_title(page_title = "")
-    base_title = "Amiverse API"
+  def full_title(page_title = '')
+    base_title = 'Amiverse API'
     if page_title.empty?
       base_title
     else
@@ -9,6 +9,6 @@ module ApplicationHelper
   end
 
   def full_url(path)
-    URI.join(ENV.fetch("BACK_URL"), path).to_s
+    URI.join(ENV.fetch('BACK_URL'), path).to_s
   end
 end

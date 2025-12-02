@@ -20,10 +20,10 @@ module V1
 
       response_data = [
         {
-          category: "general",
+          category: 'general',
           image_url: full_url('/static_assets/images/amiverse-1.webp'),
           title: "#{last_updated.strftime('%-H')}時台のトレンド",
-          overview: "最新トレンド情報です。",
+          overview: '最新トレンド情報です。',
           last_updated_at: last_updated,
           ranking: ranking
         }

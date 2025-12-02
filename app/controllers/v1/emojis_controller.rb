@@ -1,6 +1,6 @@
 class V1::EmojisController < V1::ApplicationController
   def groups_index
-    groups = Emoji.is_normal.where.not(group: [nil, ""]).distinct.pluck(:group)
+    groups = Emoji.is_normal.where.not(group: [nil, '']).distinct.pluck(:group)
     render json: { groups: groups }, status: :ok
   end
 

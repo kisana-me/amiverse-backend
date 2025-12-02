@@ -61,7 +61,7 @@ class Drawing < ApplicationRecord
     end
 
     # Save to temp file and upload
-    Tempfile.create(["drawing_#{aid}", ".png"]) do |file|
+    Tempfile.create(["drawing_#{aid}", '.png']) do |file|
       png.save(file.path)
 
       s3_upload(

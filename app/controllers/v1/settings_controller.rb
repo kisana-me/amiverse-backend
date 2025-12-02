@@ -44,7 +44,7 @@ class V1::SettingsController < V1::ApplicationController
         # password
         # password_confirmation
         :icon_file,
-        :banner_file,
+        :banner_file
       ]
     )
   end

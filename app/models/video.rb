@@ -54,11 +54,11 @@ class Video < ApplicationRecord
     end
 
     if video.size > 1.gigabyte
-      errors.add(:video, "must be 1GB or less")
+      errors.add(:video, 'must be 1GB or less')
     end
 
     unless video.content_type&.start_with?('video/')
-      errors.add(:video, "must be a video file")
+      errors.add(:video, 'must be a video file')
     end
   end
 end

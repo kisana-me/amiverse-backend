@@ -9,7 +9,7 @@ class V1::AccountsController < V1::ApplicationController
     else
       render json: {
         status: 'error',
-        message: 'アカウントが見つかりませんでした',
+        message: 'アカウントが見つかりませんでした'
       }, status: :not_found
     end
   end

@@ -12,7 +12,7 @@ class OldDataImportService
     account = Account.first
 
     unless account
-      puts "No account found. Please create an account first."
+      puts 'No account found. Please create an account first.'
       return
     end
 
@@ -25,12 +25,12 @@ class OldDataImportService
 
   def import_post(item, account)
     aid = item['aid'][0...14]
-    
+
     post = Post.find_or_initialize_by(aid: aid)
     post.account = account
     post.content = item['content']
     post.created_at = item['created_at']
-    
+
     if post.save
       puts "Imported Post: #{aid}"
     else
@@ -52,12 +52,12 @@ class OldDataImportService
   def import_image(post, img_data, account)
     original_aid = img_data['aid']
     img_aid = original_aid[0...14]
-    
+
     # Check if image already linked
     return if post.images.exists?(aid: img_aid)
 
     image = Image.find_or_initialize_by(aid: img_aid)
-    
+
     if image.new_record?
       file_path = find_file('images', original_aid)
       unless file_path
@@ -67,7 +67,7 @@ class OldDataImportService
 
       image.account = account
       image.image = create_uploaded_file(file_path)
-      
+
       if image.save
         puts "  Imported Image: #{img_aid}"
       else
@@ -75,7 +75,7 @@ class OldDataImportService
         return
       end
     end
-    
+
     post.images << image
   end
 

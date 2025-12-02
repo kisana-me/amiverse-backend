@@ -19,7 +19,7 @@ class V1::PostsController < V1::ApplicationController
     else
       render json: {
         status: 'error',
-        message: '投稿が見つかりませんでした',
+        message: '投稿が見つかりませんでした'
       }, status: :not_found
     end
   end

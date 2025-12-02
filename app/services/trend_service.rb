@@ -4,7 +4,7 @@ class TrendService
   CACHE_KEY = 'current_trends'
   CACHE_TIME_KEY = 'current_trends_updated_at'
   CACHE_EXPIRY = 1.hour
-  
+
   # Defaults if config is missing
   TREND_SEARCH_WORDS_LIMIT = 50
   TREND_DISPLAY_LIMIT = 30
@@ -24,14 +24,14 @@ class TrendService
   end
 
   def update_trends
-    Rails.logger.info "Starting trend update..."
-    
+    Rails.logger.info 'Starting trend update...'
+
     items = get_newer_items
     trends = frequent_words(items: items)
-    
+
     Rails.cache.write(CACHE_KEY, trends, expires_in: CACHE_EXPIRY)
     Rails.cache.write(CACHE_TIME_KEY, Time.current, expires_in: CACHE_EXPIRY)
-    
+
     Rails.logger.info "Trends updated: #{trends.keys.join(', ')}"
     trends
   end
@@ -42,36 +42,36 @@ class TrendService
     # Use config if available, else defaults
     interval = Rails.application.config.try(:x).try(:server_property).try(:trend_interval) || TREND_INTERVAL_MINUTES
     base_limit = Rails.application.config.try(:x).try(:server_property).try(:trend_samplings) || TREND_SAMPLING_LIMIT
-    
+
     base_time = Time.current - interval.minutes
-    
+
     # Assuming Post model is what we want (user code used Item, but context shows Post)
     recent_items = Post.isnt_deleted.where('created_at > ?', base_time).order(created_at: :desc)
-    
+
     if recent_items.count < base_limit
       return Post.isnt_deleted.order(created_at: :desc).limit(base_limit)
     end
-    
+
     recent_items
   end
 
   def frequent_words(items:)
     natto = Natto::MeCab.new
     word_count = Hash.new(0)
-    
+
     items.each do |item|
       next if item.content.blank?
-      
+
       natto.parse(item.content) do |n|
         surface = n.surface
         feature = n.feature.split(',')
-        
-        if surface.length <= 3 || 
-           surface.match?(/[!?！？　「」\s.,\/#@&"'$%()=\-~^\\|_{}\[\]。、*+;:`]/) || 
-           (surface.match?(/\A[a-zA-Z]+\z/) && !(feature[0] == "名詞" && feature[1] == "固有名詞"))
+
+        if surface.length <= 3 ||
+           surface.match?(/[!?！？　「」\s.,\/#@&"'$%()=\-~^\\|_{}\[\]。、*+;:`]/) ||
+           (surface.match?(/\A[a-zA-Z]+\z/) && !(feature[0] == '名詞' && feature[1] == '固有名詞'))
           next
         end
-        
+
         word_count[surface] += 1
       end
     end

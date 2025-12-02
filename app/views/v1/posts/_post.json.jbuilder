@@ -51,7 +51,7 @@ if defined? display_media
     media_items = []
     post.images.each do |image|
       media_items << {
-        type: "image",
+        type: 'image',
         aid: image.aid,
         name: image.name,
         description: image.description,
@@ -60,7 +60,7 @@ if defined? display_media
     end
     post.videos.each do |video|
       media_items << {
-        type: "video",
+        type: 'video',
         aid: video.aid,
         name: video.name,
         description: video.description,

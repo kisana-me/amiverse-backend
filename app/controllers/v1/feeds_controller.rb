@@ -112,9 +112,9 @@ class V1::FeedsController < V1::ApplicationController
 
     sql = <<~SQL
       (
-        SELECT 
-          posts.id AS id, 
-          'Post' AS type, 
+        SELECT
+          posts.id AS id,
+          'Post' AS type,
           posts.created_at AS created_at
         FROM posts
         INNER JOIN accounts ON accounts.id = posts.account_id
@@ -125,9 +125,9 @@ class V1::FeedsController < V1::ApplicationController
       )
       UNION ALL
       (
-        SELECT 
-          diffuses.id AS id, 
-          'Diffuse' AS type, 
+        SELECT
+          diffuses.id AS id,
+          'Diffuse' AS type,
           diffuses.created_at AS created_at
         FROM diffuses
         INNER JOIN accounts ON accounts.id = diffuses.account_id
@@ -160,7 +160,7 @@ class V1::FeedsController < V1::ApplicationController
     end
 
     diffuses_by_id = Diffuse.where(id: diffuse_ids).includes(:account).index_by(&:id)
-    
+
     diffuse_post_ids = diffuses_by_id.values.map(&:post_id)
     all_post_ids = (post_ids + diffuse_post_ids).uniq
 
@@ -183,7 +183,7 @@ class V1::FeedsController < V1::ApplicationController
       else
         diffuse = diffuses_by_id[row['id']]
         next unless diffuse
-        
+
         post = posts_by_id[diffuse.post_id]
         next unless post
 

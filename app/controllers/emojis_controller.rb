@@ -9,8 +9,8 @@ class EmojisController < ApplicationController
   end
 
   def picker
-    @groups = Emoji.where.not(group: [nil, ""]).distinct.pluck(:group)
-    
+    @groups = Emoji.where.not(group: [nil, '']).distinct.pluck(:group)
+
     if params[:group].present?
       @emojis = Emoji.where(group: params[:group])
     end

@@ -21,54 +21,54 @@ class ImagesController < ApplicationController
     @image = Image.new(image_params)
     @image.account = @current_account
     if @image.save
-      redirect_to images_path, notice: "作成しました"
+      redirect_to images_path, notice: '作成しました'
     else
-      flash.now[:alert] = "作成できませんでした"
+      flash.now[:alert] = '作成できませんでした'
       render :new
     end
   end
 
   def update
     if @image.update(image_params)
-      redirect_to image_path(@image.aid), notice: "更新しました"
+      redirect_to image_path(@image.aid), notice: '更新しました'
     else
-      flash.now[:alert] = "更新できませんでした"
+      flash.now[:alert] = '更新できませんでした'
       render :edit
     end
   end
 
   def destroy
     if @image.update(status: :deleted)
-      redirect_to images_path, notice: "削除しました"
+      redirect_to images_path, notice: '削除しました'
     else
-      flash.now[:alert] = "削除できませんでした"
+      flash.now[:alert] = '削除できませんでした'
       render :edit
     end
   end
 
   def create_variant
     if @image.create_variant(params[:variant_type])
-      redirect_to image_path(@image.aid), notice: "画像を生成しました"
+      redirect_to image_path(@image.aid), notice: '画像を生成しました'
     else
-      flash.now[:alert] = "画像を生成できませんでした"
+      flash.now[:alert] = '画像を生成できませんでした'
       render :show
     end
   end
 
   def delete_variant
     if @image.delete_variant
-      redirect_to image_path(@image.aid), notice: "variantを削除しました"
+      redirect_to image_path(@image.aid), notice: 'variantを削除しました'
     else
-      flash.now[:alert] = "variantを削除できませんでした"
+      flash.now[:alert] = 'variantを削除できませんでした'
       render :show
     end
   end
 
   def delete_original
     if @image.delete_original
-      redirect_to image_path(@image.aid), notice: "originalを削除しました"
+      redirect_to image_path(@image.aid), notice: 'originalを削除しました'
     else
-      flash.now[:alert] = "originalを削除できませんでした"
+      flash.now[:alert] = 'originalを削除できませんでした'
       render :show
     end
   end
@@ -81,7 +81,7 @@ class ImagesController < ApplicationController
         :name,
         :description,
         :visibility,
-        :status,
+        :status
       ]
     )
   end

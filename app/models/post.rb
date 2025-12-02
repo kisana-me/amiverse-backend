@@ -98,8 +98,8 @@ class Post < ApplicationRecord
       new_drawing = Drawing.new
       new_drawing.account = self.account
       new_drawing.data = data
-      new_drawing.name = attrs[:name] || attrs['name'] || ""
-      new_drawing.description = attrs[:description] || attrs['description'] || ""
+      new_drawing.name = attrs[:name] || attrs['name'] || ''
+      new_drawing.description = attrs[:description] || attrs['description'] || ''
       self.post_drawings.build(drawing: new_drawing)
     end
   end
