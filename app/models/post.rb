@@ -2,11 +2,15 @@ class Post < ApplicationRecord
   include MeiliSearch::Rails
 
   belongs_to :account
-  # 画像 多対多
-  belongs_to :reply, class_name: 'Post', optional: true
-  has_many   :replies, class_name: 'Post', foreign_key: :reply_id, dependent: :nullify
-  belongs_to :quote, class_name: 'Post', optional: true
-  has_many   :quotes, class_name: 'Post', foreign_key: :quote_id, dependent: :nullify
+
+  belongs_to :reply, -> { from_normal_account.is_normal.is_opened }, class_name: 'Post', optional: true
+  has_many   :replies, -> { from_normal_account.is_normal.is_opened }, class_name: 'Post', foreign_key: :reply_id
+  has_many   :all_replies, class_name: 'Post', foreign_key: :reply_id, dependent: :nullify
+
+  belongs_to :quote, -> { from_normal_account.is_normal.is_opened }, class_name: 'Post', optional: true
+  has_many   :quotes, -> { from_normal_account.is_normal.is_opened }, class_name: 'Post', foreign_key: :quote_id
+  has_many   :all_quotes, class_name: 'Post', foreign_key: :quote_id, dependent: :nullify
+
   # リアクション 多対多(絵文字)
   has_many :reactions, dependent: :destroy
   has_many :emojis, through: :reactions
@@ -39,6 +43,21 @@ class Post < ApplicationRecord
   scope :isnt_deleted, -> { where.not(status: :deleted) }
   scope :is_opened, -> { where(visibility: :opened) }
   scope :isnt_closed, -> { where.not(visibility: :closed) }
+
+  scope :with_associations, -> {
+    preload(
+      :diffuses,
+      :images,
+      :videos,
+      :drawings,
+      reply: :account,
+      quote: :account,
+      replies: :account,
+      quotes: :account,
+      reactions: :emoji,
+      account: :icon
+    )
+  }
 
   meilisearch do
     attribute :content

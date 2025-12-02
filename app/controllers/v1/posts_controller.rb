@@ -6,41 +6,14 @@ class V1::PostsController < V1::ApplicationController
       .from_normal_account
       .is_normal
       .is_opened
-      .includes(
-        :account,
-        :diffuses,
-        :images,
-        :videos,
-        :drawings,
-        reply: [:account],
-        quote: [:account],
-        replies: [:account],
-        quotes: [:account],
-        reactions: [:emoji],
-        account: [:icon],
-      )
+      .with_associations
       .find_by(aid: params[:aid])
     if @post
       if @post.replies.any?
         @replies = @post.replies
-          .from_normal_account
-          .is_normal
-          .is_opened
-          .includes(
-            :account,
-            :diffuses,
-            :reply,
-            :replies,
-            :quotes,
-            :images,
-            :videos,
-            :drawings,
-            quote: [:account],
-            reactions: [:emoji],
-            account: [:icon],
-          )
-        .order(id: :desc)
-        .limit(50)
+          .with_associations
+          .order(id: :desc)
+          .limit(50)
       end
       render template: 'v1/posts/show', formats: [:json]
     else

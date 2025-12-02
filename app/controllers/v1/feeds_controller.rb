@@ -33,19 +33,7 @@ class V1::FeedsController < V1::ApplicationController
       .from_normal_account
       .is_normal
       .is_opened
-      .includes(
-        :account,
-        :diffuses,
-        :reply,
-        :replies,
-        :quotes,
-        :images,
-        :videos,
-        :drawings,
-        quote: [:account],
-        reactions: [:emoji],
-        account: [:icon],
-      )
+      .with_associations
       .where(id: post_ids)
       .in_order_of(:id, post_ids)
     render template: 'v1/feeds/feed_only_posts', formats: [:json]
@@ -85,19 +73,7 @@ class V1::FeedsController < V1::ApplicationController
 
     @posts = Post
       .from_normal_account
-      .includes(
-        :account,
-        :diffuses,
-        :reply,
-        :replies,
-        :quotes,
-        :images,
-        :videos,
-        :drawings,
-        quote: [:account],
-        reactions: [:emoji],
-        account: [:icon],
-      )
+      .with_associations
       .where(id: post_ids)
 
     posts_by_id = @posts.index_by(&:id)
@@ -190,19 +166,7 @@ class V1::FeedsController < V1::ApplicationController
 
     @posts = Post
       .from_normal_account
-      .includes(
-        :account,
-        :diffuses,
-        :reply,
-        :replies,
-        :quotes,
-        :images,
-        :videos,
-        :drawings,
-        quote: [:account],
-        reactions: [:emoji],
-        account: [:icon],
-      )
+      .with_associations
       .where(id: all_post_ids)
 
     posts_by_id = @posts.index_by(&:id)
@@ -278,19 +242,7 @@ class V1::FeedsController < V1::ApplicationController
 
     @posts = Post
       .from_normal_account
-      .includes(
-        :account,
-        :diffuses,
-        :reply,
-        :replies,
-        :quotes,
-        :images,
-        :videos,
-        :drawings,
-        quote: [:account],
-        reactions: [:emoji],
-        account: [:icon],
-      )
+      .with_associations
       .where(id: post_ids)
 
     posts_by_id = @posts.index_by(&:id)
