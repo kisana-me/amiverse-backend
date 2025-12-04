@@ -1,0 +1,26 @@
+<h1>システム通知配信</h1>
+
+<% if flash[:notice] %>
+  <div style="color: green; margin-bottom: 1rem; padding: 0.5rem; border: 1px solid green; border-radius: 4px;">
+    <%= flash[:notice] %>
+  </div>
+<% end %>
+
+<% if flash[:alert] %>
+  <div style="color: red; margin-bottom: 1rem; padding: 0.5rem; border: 1px solid red; border-radius: 4px;">
+    <%= flash[:alert] %>
+  </div>
+<% end %>
+
+<div style="max-width: 600px; margin-top: 20px;">
+  <%= form_with url: notifications_path, local: true do |form| %>
+    <div style="margin-bottom: 15px;">
+      <%= form.label :content, "通知内容", style: "display: block; margin-bottom: 5px; font-weight: bold;" %>
+      <%= form.text_area :content, rows: 5, style: "width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" %>
+    </div>
+    
+    <div>
+      <%= form.submit "全ユーザーに配信する", data: { confirm: "本当に全ユーザーに配信しますか？" }, style: "background-color: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;" %>
+    </div>
+  <% end %>
+</div>

@@ -47,9 +47,8 @@ Rails.application.routes.draw do
   # Trends
   resources :trends, only: [:index, :create]
 
-
-
-
+  # Notifications
+  resources :notifications, only: [:new, :create]
 
   # API v1
   namespace :v1 do
