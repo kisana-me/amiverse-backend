@@ -85,6 +85,10 @@ Rails.application.routes.draw do
     post 'feeds/current' => 'feeds#current'
     post 'feeds/account' => 'feeds#account'
 
+    # Notifications
+    post 'notifications' => 'notifications#index'
+    post 'notifications/unread_count' => 'notifications#unread_count'
+
     # Sessions
     delete 'signout' => 'sessions#signout'
 
