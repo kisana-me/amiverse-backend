@@ -26,6 +26,8 @@ class Post < ApplicationRecord
   has_many :post_drawings
   has_many :drawings, through: :post_drawings
 
+  has_many :notifications, as: :notifiable, dependent: :destroy
+
   attr_accessor :reply_aid, :quote_aid
   attribute :meta, :json, default: -> { {} }
   enum :visibility, { opened: 0, limited: 1, closed: 2 }, default: :opened

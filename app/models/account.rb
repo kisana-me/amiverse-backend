@@ -12,6 +12,9 @@ class Account < ApplicationRecord
   has_many :followers, through: :passive_relationships, source: :follower
   has_many :diffuses, dependent: :destroy
   has_many :diffused_posts, through: :diffuses, source: :post
+  has_many :notifications, dependent: :destroy
+  has_many :act_notifications, class_name: 'Notification', foreign_key: :actor_id, dependent: :nullify
+  has_one :notification_setting, dependent: :destroy
 
   attribute :meta, :json, default: -> { {} }
   enum :visibility, { opened: 0, limited: 1, closed: 2 }, default: :opened
@@ -87,6 +90,10 @@ class Account < ApplicationRecord
 
   def admin?
     self.meta['roles']&.include?('admin')
+  end
+
+  def notification_setting
+    super || create_notification_setting!
   end
 
   private
