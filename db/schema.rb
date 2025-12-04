@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 17) do
+ActiveRecord::Schema[8.1].define(version: 19) do
   create_table "accounts", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
     t.string "aid", limit: 14, null: false
     t.bigint "banner_id"
@@ -109,6 +109,37 @@ ActiveRecord::Schema[8.1].define(version: 17) do
     t.index ["aid"], name: "index_images_on_aid", unique: true
     t.check_constraint "json_valid(`meta`)", name: "meta"
     t.check_constraint "json_valid(`variants`)", name: "variants"
+  end
+
+  create_table "notification_settings", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.datetime "created_at", null: false
+    t.boolean "diffuse", default: true, null: false
+    t.boolean "follow", default: true, null: false
+    t.boolean "mention", default: true, null: false
+    t.boolean "quote", default: true, null: false
+    t.boolean "reaction", default: true, null: false
+    t.boolean "reply", default: true, null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_notification_settings_on_account_id"
+  end
+
+  create_table "notifications", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.integer "action", limit: 1, default: 0, null: false
+    t.bigint "actor_id"
+    t.string "aid", limit: 14, null: false
+    t.boolean "checked", default: false, null: false
+    t.string "content", default: ""
+    t.datetime "created_at", null: false
+    t.bigint "notifiable_id"
+    t.string "notifiable_type"
+    t.integer "status", limit: 1, default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_notifications_on_account_id"
+    t.index ["actor_id"], name: "index_notifications_on_actor_id"
+    t.index ["aid"], name: "index_notifications_on_aid", unique: true
+    t.index ["notifiable_type", "notifiable_id"], name: "index_notifications_on_notifiable"
   end
 
   create_table "oauth_accounts", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
@@ -248,6 +279,9 @@ ActiveRecord::Schema[8.1].define(version: 17) do
   add_foreign_key "follows", "accounts", column: "followed_id"
   add_foreign_key "follows", "accounts", column: "follower_id"
   add_foreign_key "images", "accounts"
+  add_foreign_key "notification_settings", "accounts"
+  add_foreign_key "notifications", "accounts"
+  add_foreign_key "notifications", "accounts", column: "actor_id"
   add_foreign_key "oauth_accounts", "accounts"
   add_foreign_key "post_drawings", "drawings"
   add_foreign_key "post_drawings", "posts"
