@@ -9,6 +9,13 @@ class V1::FollowsController < V1::ApplicationController
     follow = @current_account.active_relationships.find_or_initialize_by(followed: @account)
 
     if follow.save
+      NotificationCreator.call(
+        actor: @current_account,
+        recipient: @account,
+        action: :follow,
+        notifiable: follow
+      )
+
       render json: {
         status: 'success',
         message: 'フォローしました',

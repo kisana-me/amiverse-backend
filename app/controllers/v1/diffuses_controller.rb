@@ -7,6 +7,13 @@ class V1::DiffusesController < V1::ApplicationController
     diffuse = @post.diffuses.find_or_initialize_by(account: @current_account)
 
     if diffuse.save
+      NotificationCreator.call(
+        actor: @current_account,
+        recipient: @post.account,
+        action: :diffuse,
+        notifiable: @post
+      )
+
       render json: {
         status: 'success',
         message: '拡散しました',

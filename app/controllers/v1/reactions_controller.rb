@@ -11,6 +11,13 @@ class V1::ReactionsController < V1::ApplicationController
     reaction.emoji = emoji
 
     if reaction.save
+      NotificationCreator.call(
+        actor: @current_account,
+        recipient: @post.account,
+        action: :reaction,
+        notifiable: @post
+      )
+
       render json: {
         status: 'success',
         message: 'リアクションしました',

@@ -114,6 +114,11 @@ class V1::OauthController < V1::ApplicationController
       )
       update_subscription_info(provider, account, resources)
       sign_in(account)
+      NotificationCreator.call(
+        actor: nil,
+        recipient: account,
+        action: :signin
+      )
       render json: { status: 'success', message: 'サインインしました' }, status: :ok
     elsif !@current_account && !account
       # 連携済みのアカウントが存在せず、現在のアカウントが未サインインの場合、新規登録へ

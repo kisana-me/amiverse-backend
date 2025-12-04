@@ -8,6 +8,11 @@ class V1::SignupController < V1::ApplicationController
 
     if @account.save
       sign_in(@account)
+      NotificationCreator.call(
+        actor: nil,
+        recipient: @account,
+        action: :signin
+      )
       OauthAccount.create!(
         account: @account,
         provider: session[:oauth_signup]['provider'],

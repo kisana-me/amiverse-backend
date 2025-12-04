@@ -29,6 +29,9 @@ class V1::PostsController < V1::ApplicationController
     @post.account = @current_account
     @post.assign_attributes(post_params)
     if @post.save
+      # 通知の作成
+      create_notifications
+
       render template: 'v1/posts/show', formats: [:json], status: :created
     else
       render json: {
@@ -53,6 +56,41 @@ class V1::PostsController < V1::ApplicationController
   end
 
   private
+
+  def create_notifications
+    # リプライ
+    if @post.reply.present?
+      NotificationCreator.call(
+        actor: @current_account,
+        recipient: @post.reply.account,
+        action: :reply,
+        notifiable: @post
+      )
+    end
+
+    # 引用
+    if @post.quote.present?
+      NotificationCreator.call(
+        actor: @current_account,
+        recipient: @post.quote.account,
+        action: :quote,
+        notifiable: @post
+      )
+    end
+
+    # メンション
+    mentions = @post.content.scan(/@([a-zA-Z0-9_]+)/).flatten.uniq
+    if mentions.any?
+      Account.where(name_id: mentions).find_each do |recipient|
+        NotificationCreator.call(
+          actor: @current_account,
+          recipient: recipient,
+          action: :mention,
+          notifiable: @post
+        )
+      end
+    end
+  end
 
   def post_params
     params.expect(
