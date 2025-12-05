@@ -88,6 +88,9 @@ Rails.application.routes.draw do
     post 'notifications' => 'notifications#index'
     post 'notifications/unread_count' => 'notifications#unread_count'
 
+    # Push Subscriptions
+    post 'push_subscriptions' => 'push_subscriptions#create'
+
     # Sessions
     delete 'signout' => 'sessions#signout'
 

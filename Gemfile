@@ -26,6 +26,8 @@ gem 'rack-cors', '~> 3.0'
 gem 'meilisearch-rails'
 gem 'mecab'
 gem 'natto'
+gem 'chunky_png', '~> 1.4'
+gem 'web-push', '~> 3.0'
 
 group :development, :test do
   gem 'debug', platforms: %i[ mri windows ], require: 'debug/prelude'
@@ -42,5 +44,3 @@ group :test do
   gem 'capybara'
   gem 'selenium-webdriver'
 end
-
-gem "chunky_png", "~> 1.4"
