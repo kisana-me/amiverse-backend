@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_05_050741) do
+ActiveRecord::Schema[8.1].define(version: 20) do
   create_table "accounts", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
     t.string "aid", limit: 14, null: false
     t.bigint "banner_id"
@@ -215,16 +215,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_050741) do
     t.check_constraint "json_valid(`meta`)", name: "meta"
   end
 
-  create_table "push_subscriptions", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
-    t.bigint "account_id", null: false
-    t.string "auth_key"
-    t.datetime "created_at", null: false
-    t.text "endpoint"
-    t.string "p256dh"
-    t.datetime "updated_at", null: false
-    t.index ["account_id"], name: "index_push_subscriptions_on_account_id"
-  end
-
   create_table "reactions", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.datetime "created_at", null: false
@@ -280,6 +270,16 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_050741) do
     t.check_constraint "json_valid(`variants`)", name: "variants"
   end
 
+  create_table "webpush_subscriptions", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.string "auth_key"
+    t.datetime "created_at", null: false
+    t.text "endpoint"
+    t.string "p256dh"
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_webpush_subscriptions_on_account_id"
+  end
+
   add_foreign_key "accounts", "images", column: "banner_id"
   add_foreign_key "accounts", "images", column: "icon_id"
   add_foreign_key "diffuses", "accounts"
@@ -304,10 +304,10 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_050741) do
   add_foreign_key "posts", "accounts"
   add_foreign_key "posts", "posts", column: "quote_id"
   add_foreign_key "posts", "posts", column: "reply_id"
-  add_foreign_key "push_subscriptions", "accounts"
   add_foreign_key "reactions", "accounts"
   add_foreign_key "reactions", "emojis"
   add_foreign_key "reactions", "posts"
   add_foreign_key "sessions", "accounts"
   add_foreign_key "videos", "accounts"
+  add_foreign_key "webpush_subscriptions", "accounts"
 end

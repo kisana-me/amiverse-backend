@@ -15,7 +15,7 @@ class Account < ApplicationRecord
   has_many :notifications, dependent: :destroy
   has_many :act_notifications, class_name: 'Notification', foreign_key: :actor_id, dependent: :nullify
   has_one :notification_setting, dependent: :destroy
-  has_many :push_subscriptions, dependent: :destroy
+  has_many :webpush_subscriptions, dependent: :destroy
 
   attribute :meta, :json, default: -> { {} }
   enum :visibility, { opened: 0, limited: 1, closed: 2 }, default: :opened
