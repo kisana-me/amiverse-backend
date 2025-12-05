@@ -53,6 +53,20 @@ class NotificationCreator
     end
   end
 
+  def webpush_allowed?(notification)
+    # システム通知は設定に関係なく常に許可
+    return true if notification.action == 'system'
+
+    setting = recipient.notification_setting
+    column_name = "wp_#{notification.action}"
+
+    if setting.respond_to?(column_name)
+      setting.public_send(column_name)
+    else
+      true # 設定項目がないアクション種別はデフォルト許可とする
+    end
+  end
+
   def find_duplicate
     # 同一Actor、同一Notifiable、同一Action、かつ「未読」のものが既にあるか？
     Notification.unread.find_by(
@@ -76,6 +90,9 @@ class NotificationCreator
   end
 
   def send_webpush(notification)
+    # WebPush設定をチェック
+    return unless webpush_allowed?(notification)
+
     message = build_webpush_message(notification)
     return unless message
 

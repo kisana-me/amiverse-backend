@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 20) do
+ActiveRecord::Schema[8.1].define(version: 21) do
   create_table "accounts", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
     t.string "aid", limit: 14, null: false
     t.bigint "banner_id"
@@ -121,6 +121,12 @@ ActiveRecord::Schema[8.1].define(version: 20) do
     t.boolean "reaction", default: true, null: false
     t.boolean "reply", default: true, null: false
     t.datetime "updated_at", null: false
+    t.boolean "wp_diffuse", default: true, null: false
+    t.boolean "wp_follow", default: true, null: false
+    t.boolean "wp_mention", default: true, null: false
+    t.boolean "wp_quote", default: true, null: false
+    t.boolean "wp_reaction", default: true, null: false
+    t.boolean "wp_reply", default: true, null: false
     t.index ["account_id"], name: "index_notification_settings_on_account_id"
   end
 

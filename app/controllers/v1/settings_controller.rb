@@ -18,6 +18,31 @@ class V1::SettingsController < V1::ApplicationController
     end
   end
 
+  def notification
+    setting = @current_account.notification_setting
+    render json: {
+      status: 'success',
+      setting: setting
+    }, status: :ok
+  end
+
+  def update_notification
+    setting = @current_account.notification_setting
+    if setting.update(notification_params)
+      render json: {
+        status: 'success',
+        message: '更新しました',
+        setting: setting
+      }, status: :ok
+    else
+      render json: {
+        status: 'error',
+        message: '更新できませんでした',
+        errors: setting.errors.full_messages
+      }, status: :unprocessable_entity
+    end
+  end
+
   def leave
     if @current_account.update(status: :deleted)
       sign_out
@@ -49,6 +74,15 @@ class V1::SettingsController < V1::ApplicationController
         # password_confirmation
         :icon_file,
         :banner_file
+      ]
+    )
+  end
+
+  def notification_params
+    params.expect(
+      setting: [
+        :reaction, :diffuse, :reply, :quote, :follow, :mention,
+        :wp_reaction, :wp_diffuse, :wp_reply, :wp_quote, :wp_follow, :wp_mention
       ]
     )
   end

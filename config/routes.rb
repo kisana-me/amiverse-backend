@@ -99,6 +99,8 @@ Rails.application.routes.draw do
 
     # Settings
     post 'settings/account' => 'settings#account'
+    post 'settings/notification' => 'settings#notification'
+    post 'settings/update_notification' => 'settings#update_notification'
     delete 'settings/leave' => 'settings#leave'
 
     # OAuth
