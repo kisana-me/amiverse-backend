@@ -1,5 +1,5 @@
 class V1::FeedsController < V1::ApplicationController
-  before_action :require_signin, except: %i[ index current ]
+  before_action :require_signin, only: %i[ follow ]
   # index: おすすめ
   # follow: フォロー中
   # current: 最新順
