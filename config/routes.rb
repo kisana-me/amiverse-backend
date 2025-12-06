@@ -68,6 +68,9 @@ Rails.application.routes.draw do
     resources :posts, only: [:create, :destroy], param: :aid do
       resource :reaction, only: [:create, :destroy]
       resource :diffuse, only: [:create, :destroy]
+      post 'quotes'
+      post 'diffusions'
+      post 'reactions'
     end
 
     # Emojis

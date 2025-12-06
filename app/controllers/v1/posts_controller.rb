@@ -1,5 +1,5 @@
 class V1::PostsController < V1::ApplicationController
-  before_action :require_signin, except: %i[ show ]
+  before_action :require_signin, except: %i[ show quotes diffusions reactions ]
 
   def show
     @post = Post
@@ -22,6 +22,66 @@ class V1::PostsController < V1::ApplicationController
         message: '投稿が見つかりませんでした'
       }, status: :not_found
     end
+  end
+
+  def quotes
+    @post = Post.find_by(aid: params[:post_aid])
+    unless @post
+      render json: { status: 'error', message: '投稿が見つかりません' }, status: :not_found
+      return
+    end
+
+    @posts = @post.quotes
+      .from_normal_account
+      .is_normal
+      .is_opened
+      .with_associations
+      .order(id: :desc)
+      .limit(50)
+
+    render template: 'v1/posts/index', formats: [:json]
+  end
+
+  def diffusions
+    @post = Post.find_by(aid: params[:post_aid])
+    unless @post
+      render json: { status: 'error', message: '投稿が見つかりません' }, status: :not_found
+      return
+    end
+
+    @accounts = @post.diffused_by
+      .where(status: :normal)
+      .includes(:icon)
+      .order('diffuses.id DESC')
+      .limit(50)
+
+    render template: 'v1/accounts/index', formats: [:json]
+  end
+
+  def reactions
+    @post = Post.find_by(aid: params[:post_aid])
+    unless @post
+      render json: { status: 'error', message: '投稿が見つかりません' }, status: :not_found
+      return
+    end
+
+    @reactions = @post.reactions
+      .joins(:account)
+      .where(accounts: { status: :normal })
+      .includes(account: :icon, emoji: :image)
+      .order(id: :desc)
+
+    if params[:emoji_aid]
+      @reactions = @reactions.joins(:emoji).where(emojis: { aid: params[:emoji_aid] })
+    end
+
+    @reactions = @reactions.limit(50)
+
+    # Get unique emojis used for tabs
+    emoji_ids = @post.reactions.select(:emoji_id).distinct
+    @emojis = Emoji.where(id: emoji_ids).includes(:image)
+
+    render template: 'v1/posts/reactions', formats: [:json]
   end
 
   def create
