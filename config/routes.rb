@@ -6,7 +6,7 @@ Rails.application.routes.draw do
     get '.well-known/webfinger', to: 'well_known/webfinger#show'
     get '.well-known/nodeinfo', to: 'well_known/nodeinfo#index'
     get '.well-known/host-meta', to: 'well_known/host_meta#show'
-    get 'nodeinfo/2.0', to: 'well_known/nodeinfo#show'
+    get 'nodeinfo/2.1', to: 'well_known/nodeinfo#show', as: 'nodeinfo_2_1'
 
     post 'inbox', to: 'inboxes#create'
 
