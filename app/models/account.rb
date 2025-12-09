@@ -17,6 +17,9 @@ class Account < ApplicationRecord
   has_one :notification_setting, dependent: :destroy
   has_many :webpush_subscriptions, dependent: :destroy
 
+  belongs_to :activity_pub_instance, class_name: 'ActivityPub::Instance', optional: true
+  has_one :activity_pub_profile, class_name: 'ActivityPub::Profile', dependent: :destroy
+
   attribute :meta, :json, default: -> { {} }
   enum :visibility, { opened: 0, limited: 1, closed: 2 }, default: :opened
   enum :status, { normal: 0, locked: 1, deleted: 2 }
@@ -48,6 +51,14 @@ class Account < ApplicationRecord
   scope :is_normal, -> { where(status: :normal) }
   scope :isnt_deleted, -> { where.not(status: :deleted) }
   scope :is_opened, -> { where(visibility: :opened) }
+
+  def local?
+    activity_pub_instance_id.nil?
+  end
+
+  def remote?
+    !local?
+  end
   scope :isnt_closed, -> { where.not(visibility: :closed) }
 
   def icon_file=(file)
@@ -95,6 +106,29 @@ class Account < ApplicationRecord
 
   def notification_setting
     super || create_notification_setting!
+  end
+
+  def enable_activity_pub!
+    return if activity_pub_profile.present?
+
+    front_uri = URI.parse(ENV.fetch('FRONT_URL'))
+    host_options = { host: front_uri.host, protocol: front_uri.scheme }
+    host_options[:port] = front_uri.port unless [80, 443].include?(front_uri.port)
+
+    key = OpenSSL::PKey::RSA.new(2048)
+
+    create_activity_pub_profile!(
+      uri: Rails.application.routes.url_helpers.account_url(aid, host_options),
+      inbox_url: Rails.application.routes.url_helpers.inbox_account_url(aid, host_options),
+      outbox_url: Rails.application.routes.url_helpers.outbox_account_url(aid, host_options),
+      shared_inbox_url: Rails.application.routes.url_helpers.inbox_url(host_options),
+      followers_url: Rails.application.routes.url_helpers.followers_account_url(aid, host_options),
+      following_url: Rails.application.routes.url_helpers.following_account_url(aid, host_options),
+      featured_url: Rails.application.routes.url_helpers.collections_featured_account_url(aid, host_options),
+      url: "#{ENV.fetch('FRONT_URL')}/@#{name_id}",
+      public_key: key.public_key.to_pem,
+      private_key: key.to_pem
+    )
   end
 
   private
