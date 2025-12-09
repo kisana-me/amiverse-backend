@@ -36,15 +36,13 @@
       <nav>
         <%= link_to "ホーム", root_path %> |
         <%= link_to "セッション", sessions_path %> |
-        <%= link_to "アカウント", accounts_path %> |
-        <%= link_to "画像", images_path %> |
-        <%= link_to "投稿", posts_path %>
+        <%= link_to "画像", images_path %>
       </nav>
       <div>
         <% if @current_account %>
           サインイン中: <%= @current_account.name %> <small>@<%= @current_account.name_id %></small>
         <% else %>
-          <%= link_to "サインイン/サインアップ", sessions_start_path %>
+          サインインしていません
         <% end %>
       </div>
     </header>
