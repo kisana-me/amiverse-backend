@@ -1,11 +1,33 @@
 Rails.application.routes.draw do
   root 'pages#index'
 
+  # ActivityPub
+  scope module: 'activity_pub' do
+    get '.well-known/webfinger', to: 'well_known/webfinger#show'
+    get '.well-known/nodeinfo', to: 'well_known/nodeinfo#index'
+    get '.well-known/host-meta', to: 'well_known/host_meta#show'
+    get 'nodeinfo/2.0', to: 'well_known/nodeinfo#show'
+
+    post 'inbox', to: 'inboxes#create'
+
+    resources :accounts, only: [:show], param: :aid do
+      member do
+        post 'inbox', to: 'inboxes#create'
+        get 'outbox', to: 'outboxes#show'
+        get 'followers', to: 'followers#index'
+        get 'following', to: 'following#index'
+        get 'collections/featured', to: 'collections#featured'
+      end
+
+      resources :posts, only: [:show], param: :aid
+    end
+  end
+
   # Accounts
-  resources :accounts, param: :aid
+  # resources :accounts, param: :aid
 
   # Posts
-  resources :posts, param: :aid
+  # resources :posts, param: :aid
 
   # Images
   resources :images, param: :aid do
