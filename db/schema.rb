@@ -10,8 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 21) do
+ActiveRecord::Schema[8.1].define(version: 24) do
   create_table "accounts", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
+    t.bigint "activity_pub_instance_id"
     t.string "aid", limit: 14, null: false
     t.bigint "banner_id"
     t.datetime "birthdate"
@@ -27,11 +28,65 @@ ActiveRecord::Schema[8.1].define(version: 21) do
     t.integer "status", limit: 1, default: 0, null: false
     t.datetime "updated_at", null: false
     t.integer "visibility", limit: 1, default: 0, null: false
+    t.index ["activity_pub_instance_id"], name: "index_accounts_on_activity_pub_instance_id"
     t.index ["aid"], name: "index_accounts_on_aid", unique: true
     t.index ["banner_id"], name: "index_accounts_on_banner_id"
     t.index ["email"], name: "index_accounts_on_email", unique: true
     t.index ["icon_id"], name: "index_accounts_on_icon_id"
     t.index ["name_id"], name: "index_accounts_on_name_id", unique: true
+    t.check_constraint "json_valid(`meta`)", name: "meta"
+  end
+
+  create_table "activity_pub_instances", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "domain", null: false
+    t.string "favicon_url"
+    t.datetime "first_retrieved_at"
+    t.integer "followers", default: 0, null: false
+    t.integer "following", default: 0, null: false
+    t.string "icon_url"
+    t.datetime "last_fetched_at"
+    t.datetime "last_received_at"
+    t.string "maintainer_email"
+    t.string "maintainer_name"
+    t.text "meta", size: :long, default: "{}", null: false, collation: "utf8mb4_bin"
+    t.string "name"
+    t.boolean "open_registrations", default: false
+    t.integer "posts", default: 0, null: false
+    t.string "software_homepage"
+    t.string "software_name"
+    t.string "software_repository"
+    t.string "software_version"
+    t.integer "status", limit: 1, default: 0, null: false
+    t.string "theme_color"
+    t.datetime "updated_at", null: false
+    t.integer "users", default: 0, null: false
+    t.index ["domain"], name: "index_activity_pub_instances_on_domain", unique: true
+    t.check_constraint "json_valid(`meta`)", name: "meta"
+  end
+
+  create_table "activity_pub_profiles", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.string "actor_type", default: "Person"
+    t.datetime "created_at", null: false
+    t.string "featured_url"
+    t.string "followers_url"
+    t.string "following_url"
+    t.string "icon_url"
+    t.string "image_url"
+    t.string "inbox_url"
+    t.datetime "last_fetched_at"
+    t.text "meta", size: :long, default: "{}", null: false, collation: "utf8mb4_bin"
+    t.string "outbox_url"
+    t.text "private_key"
+    t.text "public_key"
+    t.string "shared_inbox_url"
+    t.datetime "updated_at", null: false
+    t.string "uri", null: false
+    t.string "url"
+    t.index ["account_id"], name: "index_activity_pub_profiles_on_account_id"
+    t.index ["uri"], name: "index_activity_pub_profiles_on_uri", unique: true
     t.check_constraint "json_valid(`meta`)", name: "meta"
   end
 
@@ -213,11 +268,14 @@ ActiveRecord::Schema[8.1].define(version: 21) do
     t.bigint "reply_id"
     t.integer "status", limit: 1, default: 0, null: false
     t.datetime "updated_at", null: false
+    t.string "uri"
+    t.string "url"
     t.integer "visibility", limit: 1, default: 0, null: false
     t.index ["account_id"], name: "index_posts_on_account_id"
     t.index ["aid"], name: "index_posts_on_aid", unique: true
     t.index ["quote_id"], name: "index_posts_on_quote_id"
     t.index ["reply_id"], name: "index_posts_on_reply_id"
+    t.index ["uri"], name: "index_posts_on_uri", unique: true
     t.check_constraint "json_valid(`meta`)", name: "meta"
   end
 
@@ -286,8 +344,10 @@ ActiveRecord::Schema[8.1].define(version: 21) do
     t.index ["account_id"], name: "index_webpush_subscriptions_on_account_id"
   end
 
+  add_foreign_key "accounts", "activity_pub_instances"
   add_foreign_key "accounts", "images", column: "banner_id"
   add_foreign_key "accounts", "images", column: "icon_id"
+  add_foreign_key "activity_pub_profiles", "accounts"
   add_foreign_key "diffuses", "accounts"
   add_foreign_key "diffuses", "posts"
   add_foreign_key "drawings", "accounts"
