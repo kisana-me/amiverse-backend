@@ -1,10 +1,17 @@
-<p style="color: green"><%= notice %></p>
+<h1>Profile: <%= @account.name %></h1>
+<p>ID: <%= @account.name_id %></p>
+<p>Type: <%= @account.local? ? 'Local' : 'Remote' %></p>
 
-<%= render @account %>
+<% if @account.remote? %>
+  <div style="background: #f0f0f0; padding: 10px; margin: 10px 0;">
+    <h3>Remote Info</h3>
+    <p><strong>Domain:</strong> <%= @account.activity_pub_instance&.domain %></p>
+    <p><strong>URI:</strong> <a href="<%= @account.activity_pub_profile&.uri %>" target="_blank"><%= @account.activity_pub_profile&.uri %></a></p>
+    <p><strong>Inbox:</strong> <%= @account.activity_pub_profile&.inbox_url %></p>
+  </div>
+<% end %>
 
-<div>
-  <%= link_to "Edit this account", edit_account_path(@account) %> |
-  <%= link_to "Back to accounts", accounts_path %>
-
-  <%= button_to "Destroy this account", @account, method: :delete %>
+<div style="margin-top: 20px;">
+  <h3>Raw Data</h3>
+  <pre style="background: #333; color: #fff; padding: 10px; overflow: auto;"><%= JSON.pretty_generate(@account.as_json(include: [:activity_pub_profile, :activity_pub_instance])) %></pre>
 </div>

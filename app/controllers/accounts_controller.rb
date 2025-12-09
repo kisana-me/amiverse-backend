@@ -1,60 +1,52 @@
 class AccountsController < ApplicationController
-  before_action :set_account, only: %i[ show edit update destroy ]
   before_action :require_admin
 
-  def index
-    @accounts = Account.all
-  end
-
   def show
-  end
+    username, domain = NormalizeNameIdService.call(params[:name_id])
 
-  def new
-    @account = Account.new
-  end
-
-  def edit
-  end
-
-  def create
-    @account = Account.new(account_params)
-
-    if @account.save
-      redirect_to @account, notice: 'Account was successfully created.'
+    if domain.nil?
+      # ローカルユーザー
+      @account = Account.find_by(name_id: username)
     else
-      render :new, status: :unprocessable_entity
+      # リモートユーザー
+      remote_name_id = "#{username}@#{domain}"
+      @account = Account.find_by(name_id: remote_name_id)
+
+      if @account.nil?
+        # WebFingerでURIを引く
+        uri = fetch_uri_from_webfinger(username, domain)
+        if uri
+          # ResolveActorServiceを使って取得・保存
+          profile = ActivityPub::ResolveActorService.call(uri)
+          @account = profile&.account
+        end
+      end
     end
-  end
 
-  def update
-    if @account.update(account_params)
-      redirect_to @account, notice: 'Account was successfully updated.', status: :see_other
-    else
-      render :edit, status: :unprocessable_entity
+    if @account.nil?
+      render plain: "Account not found: #{params[:name_id]}", status: 404
     end
-  end
-
-  def destroy
-    @account.destroy!
-
-    redirect_to accounts_path, notice: 'Account was successfully destroyed.', status: :see_other
   end
 
   private
 
-  def set_account
-    @account = Account.find(params.expect(:id))
-  end
-
-  def account_params
-    params.expect(
-      account: [
-        :name,
-        :name_id,
-        :email,
-        :password,
-        :password_confirmation
-      ]
-    )
+  def fetch_uri_from_webfinger(username, domain)
+    resource = "acct:#{username}@#{domain}"
+    uri = URI("https://#{domain}/.well-known/webfinger?resource=#{resource}")
+    
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
+    
+    # タイムアウト設定などを入れるとより安全ですが、簡易実装として省略
+    response = http.get(uri.request_uri)
+    
+    return nil unless response.is_a?(Net::HTTPSuccess)
+    
+    json = JSON.parse(response.body)
+    link = json['links'].find { |l| l['type'] == 'application/activity+json' && l['rel'] == 'self' }
+    link ? link['href'] : nil
+  rescue => e
+    Rails.logger.error "WebFinger failed: #{e.message}"
+    nil
   end
 end

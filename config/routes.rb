@@ -24,7 +24,7 @@ Rails.application.routes.draw do
   end
 
   # Accounts
-  # resources :accounts, param: :aid
+  get '/@:name_id', to: 'accounts#show', constraints: { name_id: /.*/ }, as: :profile_viewer
 
   # Posts
   # resources :posts, param: :aid
