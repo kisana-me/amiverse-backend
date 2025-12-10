@@ -14,6 +14,7 @@ gem 'tzinfo-data', platforms: %i[ windows jruby ]
 
 gem 'solid_cache'
 gem 'solid_queue'
+gem 'mission_control-jobs'
 gem 'solid_cable'
 
 gem 'bootsnap', require: false
@@ -28,6 +29,7 @@ gem 'mecab'
 gem 'natto'
 gem 'chunky_png', '~> 1.4'
 gem 'web-push', '~> 3.0'
+gem "streamio-ffmpeg", "~> 3.0"
 
 group :development, :test do
   gem 'debug', platforms: %i[ mri windows ], require: 'debug/prelude'
