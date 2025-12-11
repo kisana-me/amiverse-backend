@@ -1,7 +1,45 @@
 module S3Tools
   # ver 1.0.1
 
+  extend ActiveSupport::Concern
+
   require 'aws-sdk-s3'
+
+  included do
+    def s3_upload(key:, file:, content_type:)
+      s3 = Aws::S3::Resource.new(
+        endpoint: ENV.fetch('S3_LOCAL_ENDPOINT'),
+        region: ENV.fetch('S3_REGION'),
+        access_key_id: ENV.fetch('S3_USERNAME'),
+        secret_access_key: ENV.fetch('S3_PASSWORD'),
+        force_path_style: true
+      )
+      obj = s3.bucket(ENV.fetch('S3_BUCKET')).object(key)
+      obj.upload_file(file, content_type: content_type, acl: 'readonly')
+    end
+
+    def s3_download(key:, response_target:)
+      s3 = Aws::S3::Client.new(
+        endpoint: ENV.fetch('S3_LOCAL_ENDPOINT'),
+        region: ENV.fetch('S3_REGION'),
+        access_key_id: ENV.fetch('S3_USERNAME'),
+        secret_access_key: ENV.fetch('S3_PASSWORD'),
+        force_path_style: true
+      )
+      s3.get_object(bucket: ENV.fetch('S3_BUCKET'), key: key, response_target: response_target)
+    end
+
+    def s3_delete(key:)
+      s3 = Aws::S3::Client.new(
+        endpoint: ENV.fetch('S3_LOCAL_ENDPOINT'),
+        region: ENV.fetch('S3_REGION'),
+        access_key_id: ENV.fetch('S3_USERNAME'),
+        secret_access_key: ENV.fetch('S3_PASSWORD'),
+        force_path_style: true
+      )
+      s3.delete_object(bucket: ENV.fetch('S3_BUCKET'), key: key)
+    end
+  end
 
   private
 
