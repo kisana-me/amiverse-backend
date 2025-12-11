@@ -1,4 +1,6 @@
 class Video < ApplicationRecord
+  include VideoProcessable
+
   belongs_to :account, optional: true
   has_many :post_videos
 
@@ -10,6 +12,7 @@ class Video < ApplicationRecord
 
   after_initialize :set_aid, if: :new_record?
   before_create :video_upload
+  # after_create_commit :enqueue_processing
 
   validates :name,
     allow_blank: true,
@@ -25,24 +28,45 @@ class Video < ApplicationRecord
   scope :is_opened, -> { where(visibility: :opened) }
   scope :isnt_closed, -> { where.not(visibility: :closed) }
 
-  def video_url(variant_type: 'normal')
-    return '/no-video.png' unless normal?
-
-    # process_video(variant_type: variant_type) if variants.exclude?(variant_type) && original_ext.present?
-    object_url(key: "/videos/originals/#{aid}.#{original_ext}")
+  def video_url
+    if normal? && variant_type.present?
+      object_url(key: "/videos/variants/#{aid}.#{original_ext}")
+    else
+      full_url('/static_assets/videos/amiverse-1.mp4')
+    end
   end
 
   private
+
+  def enqueue_processing
+    VideoProcessingJob.set(priority: -10).perform_later(id)
+  end
 
   def video_upload
     self.name = video.original_filename.split('.').first if name.blank?
     extension = video.original_filename.split('.').last.downcase
     self.original_ext = extension
+
     s3_upload(
       key: "/videos/originals/#{aid}.#{extension}",
       file: video.path,
       content_type: video.content_type
     )
+
+    Tempfile.create(['video_clean', ".#{extension}"]) do |temp_file|
+      temp_file.close
+
+      movie = FFMPEG::Movie.new(video.path)
+      movie.transcode(temp_file.path, { video_codec: 'copy', audio_codec: 'copy', custom: %w[-map_metadata -1] })
+
+      s3_upload(
+        key: "/videos/variants/#{aid}.#{extension}",
+        file: temp_file.path,
+        content_type: video.content_type
+      )
+    end
+  rescue FFMPEG::Error => e
+    Rails.logger.error("Metadata removal failed: #{e.message}")
   end
 
   def video_validation
