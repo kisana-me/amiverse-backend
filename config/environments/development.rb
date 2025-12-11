@@ -10,7 +10,6 @@ Rails.application.configure do
   config.logger = Logger.new('log/development.log', 'daily')
   config.active_storage.service = :local
   config.active_support.deprecation = :log
-  config.active_job.verbose_enqueue_logs = true
   config.action_dispatch.verbose_redirect_logs = true # ???
   config.assets.quiet = true # !!!
   config.i18n.raise_on_missing_translations = true
@@ -35,4 +34,12 @@ Rails.application.configure do
   config.active_record.migration_error = :page_load
   config.active_record.verbose_query_logs = true
   config.active_record.query_log_tags_enabled = true
+
+  # Active Job
+  config.active_job.queue_adapter = :solid_queue
+  config.solid_queue.connects_to = { database: { writing: :queue } }
+  config.active_job.verbose_enqueue_logs = true
+
+  # Mission Control Jobs
+  config.mission_control.jobs.http_basic_auth_enabled = false
 end
