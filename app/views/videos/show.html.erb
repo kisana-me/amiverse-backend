@@ -1,0 +1,9 @@
+<% provide(:title, '動画を見る') %>
+<% provide(:robots, 'false') %>
+<% provide(:layout_style, '') %>
+<% provide(:ga4, 'false') %>
+
+<h1>動画</h1>
+<%= video_tag(@video.video_url, alt: "#{@video.name}", controls: true) %>
+<hr />
+<%= render 'videos/video', video: @video %>

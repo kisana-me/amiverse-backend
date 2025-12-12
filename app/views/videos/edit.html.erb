@@ -1,0 +1,6 @@
+<% provide(:title, '編集') %>
+<% provide(:robots, 'false') %>
+<% provide(:layout_style, '') %>
+<% provide(:ga4, 'false') %>
+
+<%= render 'videos/form', video: @video, url: video_path(@video.aid), method: :post, new: true %>

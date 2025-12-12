@@ -36,6 +36,23 @@ class Video < ApplicationRecord
     end
   end
 
+  def create_variant(next_variant_type = 'normal')
+    return false if original_ext.blank?
+    VideoProcessingJob.perform_later(id, next_variant_type)
+  end
+
+  def delete_variant
+    s3_delete(key: "/videos/variants/#{aid}.mp4")
+    self.variant_type = nil
+    save
+  end
+
+  def delete_original
+    s3_delete(key: "/videos/originals/#{aid}.#{original_ext}")
+    self.original_ext = nil
+    save
+  end
+
   private
 
   def enqueue_processing

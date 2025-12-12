@@ -17,6 +17,15 @@ Rails.application.routes.draw do
     end
   end
 
+  # Videos
+  resources :videos, param: :aid do
+    member do
+      post "create_variant" => "videos#create_variant", as: "create_variant"
+      delete "delete_variant" => "videos#delete_variant", as: "delete_variant"
+      delete "delete_original" => "videos#delete_original", as: "delete_original"
+    end
+  end
+
   # Emojis
   resources :emojis, param: :aid do
     collection do
