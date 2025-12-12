@@ -12,7 +12,7 @@ class Video < ApplicationRecord
 
   after_initialize :set_aid, if: :new_record?
   before_create :video_upload
-  # after_create_commit :enqueue_processing
+  after_create_commit :enqueue_processing
 
   validates :name,
     allow_blank: true,
@@ -30,7 +30,9 @@ class Video < ApplicationRecord
 
   def video_url
     if normal? && variant_type.present?
-      object_url(key: "/videos/variants/#{aid}.#{original_ext}")
+      object_url(key: "/videos/variants/#{aid}.mp4")
+    elsif normal?
+      full_url('/static_assets/videos/loading.mp4')
     else
       full_url('/static_assets/videos/amiverse-1.mp4')
     end
@@ -56,7 +58,7 @@ class Video < ApplicationRecord
   private
 
   def enqueue_processing
-    VideoProcessingJob.set(priority: -10).perform_later(id)
+    VideoProcessingJob.perform_later(id)
   end
 
   def video_upload
@@ -70,20 +72,12 @@ class Video < ApplicationRecord
       content_type: video.content_type
     )
 
-    Tempfile.create(['video_clean', ".#{extension}"]) do |temp_file|
-      temp_file.close
-
-      movie = FFMPEG::Movie.new(video.path)
-      movie.transcode(temp_file.path, { video_codec: 'copy', audio_codec: 'copy', custom: %w[-map_metadata -1] })
-
-      s3_upload(
-        key: "/videos/variants/#{aid}.#{extension}",
-        file: temp_file.path,
-        content_type: video.content_type
-      )
-    end
-  rescue FFMPEG::Error => e
-    Rails.logger.error("Metadata removal failed: #{e.message}")
+    # processed_file = video.process_video(input_path: video.path, video: self, variant_type: 'copy')
+    # s3_upload(
+    #   key: "/videos/variants/#{aid}.mp4",
+    #   file: processed_file.path,
+    #   content_type: 'video/mp4'
+    # )
   end
 
   def video_validation
@@ -94,12 +88,24 @@ class Video < ApplicationRecord
       return
     end
 
-    if video.size > 1.gigabyte
-      errors.add(:video, 'must be 1GB or less')
+    if video.size > 500.megabytes
+      errors.add(:video, 'must be 500MB or less')
     end
 
-    unless video.content_type&.start_with?('video/')
-      errors.add(:video, 'must be a video file')
+    allowed_types = %w[video/mp4 video/quicktime video/x-msvideo video/x-matroska video/webm]
+    unless allowed_types.include?(video.content_type)
+      errors.add(:video, 'must be a supported video format (mp4, mov, avi, mkv, webm)')
+    end
+
+    begin
+      movie = FFMPEG::Movie.new(video.path)
+      if movie.duration < 3
+        errors.add(:video, 'must be at least 3 seconds')
+      elsif movie.duration > 5.minutes
+        errors.add(:video, 'must be 5 minutes or less')
+      end
+    rescue StandardError
+      errors.add(:video, 'could not be processed')
     end
   end
 end

@@ -9,26 +9,19 @@ class VideoProcessingJob < ApplicationJob
     original_key = "/videos/originals/#{video.aid}.#{video.original_ext}"
     temp_input = Tempfile.new(['original', ".#{video.original_ext}"])
     temp_input.binmode
-    
+
     begin
-      video.send(:s3_download, key: original_key, response_target: temp_input)
+      video.s3_download(key: original_key, response_target: temp_input)
     rescue Aws::S3::Errors::NoSuchKey
       Rails.logger.error "Video original file not found: #{original_key}"
       temp_input.close
       temp_input.unlink
       return
     end
-    
-    # 処理実行
+
     begin
-      processed_file = video.process_video(input_path: temp_input.path, variant_type: variant_type)
-      
-      # アップロード
-      # variant_typeがnormalの場合はメインのURLとして扱われるようにキーを設定するか、
-      # あるいはvariantsの中に含めるか。
-      # Imageモデルでは /images/variants/#{aid}.webp となっている。
-      # Videoモデルでも同様に /videos/variants/#{aid}.mp4 (normalの場合) とするか。
-      
+      processed_file = video.process_video(input_path: temp_input.path, video: video, variant_type: variant_type)
+
       upload_key = if variant_type == 'normal'
                      "/videos/variants/#{video.aid}.mp4"
                    else
@@ -47,8 +40,7 @@ class VideoProcessingJob < ApplicationJob
         variants << variant_type
       end
 
-      # variant_typeカラムも更新（メインのバリアントとして設定）
-      video.variant_type = variant_type if variant_type == 'normal' || video.variant_type.blank?
+      video.variant_type = variant_type
       video.variants = variants
       video.save!
 

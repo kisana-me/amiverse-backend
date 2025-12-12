@@ -1,37 +1,80 @@
 module VideoProcessable
+  # VideoProcessable Ver. 1.0.0
+
   extend ActiveSupport::Concern
 
-  def process_video(input_path:, variant_type:)
+  def process_video(input_path:, video:, variant_type:)
     movie = FFMPEG::Movie.new(input_path)
-    output_path = "#{File.dirname(input_path)}/#{SecureRandom.uuid}.mp4"
+    tempfile = Tempfile.new([SecureRandom.uuid, ".mp4"])
+    tempfile.binmode
 
-    options = set_video_options(variant_type, movie)
+    options = set_video_options(variant_type)
 
-    movie.transcode(output_path, options)
+    if video.nil?
+      movie.transcode(tempfile.path, options)
+    else
+      last_progress = 0.0
+      movie.transcode(tempfile.path, options) do |progress|
+        if progress - last_progress >= 0.05
+          video.meta["progress"] = (progress * 100).to_i
+          video.save
+          last_progress = progress
+        end
+      end
+      video.meta["progress"] = 100
+      video.save
+    end
 
-    File.open(output_path)
+    tempfile
   end
 
   private
 
-  def set_video_options(variant_type, movie)
-    options = {
+  def set_video_options(variant_type)
+    case variant_type
+    when 'copy'
+      return copy_options
+    when 'normal'
+      return normal_options
+    else
+      return normal_options
+    end
+  end
+
+  def normal_options
+    {
       video_codec: 'libx264',
       audio_codec: 'aac',
-      custom: %w[-movflags +faststart -pix_fmt yuv420p]
+      custom: [
+        "-crf", "24",
+        "-preset", "fast",
+
+        "-maxrate", "6M",
+        "-bufsize", "12M",
+
+        "-vf", "scale='if(gt(iw,ih),trunc(min(1920,iw)/2)*2,-2)':'if(gt(iw,ih),-2,trunc(min(1920,ih)/2)*2)'",
+
+        "-pix_fmt", "yuv420p",
+        "-movflags", "+faststart",
+        "-map_metadata", "-1",
+        "-profile:v", "high",
+        "-level:v", "4.2",
+
+        "-ac", "2",
+        "-ar", "44100",
+        "-b:a", "128k"
+      ]
     }
+  end
 
-    case variant_type
-    when 'normal'
-      if movie.width > 1920 || movie.height > 1080
-        options[:resolution] = '1920x1080'
-      end
-    when '480p'
-      options[:resolution] = '854x480'
-      options[:video_bitrate] = 1000
-    else
-    end
-
-    options
+  def copy_options
+    {
+      video_codec: 'copy',
+      audio_codec: 'copy',
+      custom: [
+        "-map_metadata", "-1",
+        "-movflags", "+faststart"
+      ]
+    }
   end
 end
