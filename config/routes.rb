@@ -60,6 +60,10 @@ Rails.application.routes.draw do
   # Notifications
   resources :notifications, only: [:new, :create]
 
+  # OG
+  get 'og/posts/:aid' => 'og_images#post', as: :og_post
+  # get 'og/accounts/:aid' => 'og_images#account', as: :og_account
+
   # API v1
   namespace :v1 do
     root 'pages#index'
