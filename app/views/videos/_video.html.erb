@@ -1,0 +1,27 @@
+<div>
+  <strong>ID:</strong> <%= video.aid %><br />
+  <strong>動画名:</strong> <%= video.name %><br />
+  <strong>公開状態:</strong> <%= video.visibility %><br />
+  <strong>状態:</strong> <%= video.status %><br />
+  <strong>variant_type:</strong>
+    <%= video.variant_type.present? ? 'あり: ' + video.variant_type : 'なし' %>
+    <%= button_to('削除', delete_variant_video_path(video.aid), method: :delete, data: { turbo: false }) %>
+  <strong>original_ext:</strong>
+    <%= video.original_ext.present? ? 'あり: ' + video.original_ext : 'なし' %>
+    <%= button_to('削除', delete_original_video_path(video.aid), method: :delete, data: { turbo: false }) %>
+  <strong>操作:</strong>
+  <%= form_with url: create_variant_video_path(video.aid), method: :post, data: { turbo: false } do %>
+    <div>
+      <%= label_tag :variant_type, "variant_type" %>
+      <%= select_tag :variant_type, options_for_select(['normal', 'copy']) %>
+    </div>
+    <div>
+      <%= submit_tag "送信" %>
+    </div>
+  <% end %>
+  <%= link_to('見る', video_path(video.aid)) %>
+  <%= link_to('編集', edit_video_path(video.aid)) %>
+  <br />
+  <%= video_tag(video.video_url, alt: "#{video.name}", style: 'width: 140px;', controls: true) %>
+  <hr />
+</div>

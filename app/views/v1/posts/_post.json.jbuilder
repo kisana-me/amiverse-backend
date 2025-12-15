@@ -38,10 +38,20 @@ end
 
 if defined? reactions
   json.reactions do
-    json.array! emoji_counts.keys do |emoji|
-      json.partial! 'v1/emojis/emoji', emoji: emoji
-      json.reactions_count emoji_counts[emoji]
-      json.reacted my_reacted_emoji_ids.include?(emoji.id)
+    if emoji_counts.empty?
+      json.child! do
+        json.aid '3g2a62o0pwxlc7' # 仮(本番でのAIDを直)
+        json.name '❤️'
+        json.name_id 'red_heart'
+        json.reactions_count 0
+        json.reacted false
+      end
+    else
+      json.array! emoji_counts.keys do |emoji|
+        json.partial! 'v1/emojis/emoji', emoji: emoji
+        json.reactions_count emoji_counts[emoji]
+        json.reacted my_reacted_emoji_ids.include?(emoji.id)
+      end
     end
   end
 end

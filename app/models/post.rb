@@ -39,6 +39,7 @@ class Post < ApplicationRecord
 
   validates :content, length: { maximum: 5000, allow_blank: true }
   validates :content, presence: true, unless: :media_attached?
+  validate :validate_media_files
 
   scope :from_normal_account, -> { joins(:account).where(accounts: { status: :normal }) }
   scope :is_normal, -> { where(status: :normal) }
@@ -84,6 +85,8 @@ class Post < ApplicationRecord
         new_video.account = self.account
         new_video.video = file
         self.post_videos.build(video: new_video)
+      else
+        @media_upload_error = 'サポートされていないメディアタイプです'
       end
     end
   end
@@ -140,5 +143,21 @@ class Post < ApplicationRecord
 
   def media_attached?
     post_images.present? || post_videos.present? || post_drawings.present?
+  end
+
+  def validate_media_files
+    if @media_upload_error
+      errors.add(:base, @media_upload_error)
+    end
+
+    media_objects = post_images.map(&:image) + post_videos.map(&:video)
+
+    media_objects.compact.each do |media|
+      next if media.valid?
+
+      media.errors.full_messages.each do |msg|
+        errors.add(:base, msg)
+      end
+    end
   end
 end

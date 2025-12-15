@@ -1,0 +1,8 @@
+<% provide(:title, '動画一覧') %>
+<% provide(:robots, 'false') %>
+<% provide(:layout_style, '') %>
+<% provide(:ga4, 'false') %>
+
+<h1>動画一覧</h1>
+<%= render partial: 'videos/video', collection: @videos, as: 'video' %>
+<%= render 'shared/paging', pages: @total_pages, page: @page, page_to: '/videos' %>
