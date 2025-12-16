@@ -19,7 +19,8 @@ module ActivityPub
         'Host' => uri.host
       }
       signer = ActivityPub::Signature.new(key_id, private_key)
-      signed_headers = signer.sign('POST', uri.path, base_headers, @activity_json)
+      path = uri.path.empty? ? '/' : uri.path
+      signed_headers = signer.sign('POST', path, base_headers, @activity_json)
       request_headers = base_headers.merge(signed_headers || {})
       response = HttpService.post_request(@target_inbox_url, request_headers, @activity_json)
 

@@ -12,7 +12,6 @@ module ActivityPub
     def sign(method, path, headers, body = nil)
       headers = headers.dup
       headers['Date'] = Time.now.utc.httpdate
-      headers['Host'] = URI(headers['Host'] || '').host
 
       if body
         digest = OpenSSL::Digest::SHA256.digest(body)
