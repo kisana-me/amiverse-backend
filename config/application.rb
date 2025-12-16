@@ -7,6 +7,8 @@ Bundler.require(*Rails.groups)
 module App
   class Application < Rails::Application
     config.load_defaults 8.1
+    config.autoload_paths << Rails.root.join('app', 'lib')
+    config.eager_load_paths << Rails.root.join('app', 'lib')
     config.autoload_lib(ignore: %w[assets tasks])
     config.time_zone = 'Tokyo'
     config.active_record.default_timezone = :local
