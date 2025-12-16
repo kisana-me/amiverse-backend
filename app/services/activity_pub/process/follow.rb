@@ -20,15 +20,16 @@ module ActivityPub
 
         # Follow
         follow = Follow.find_or_initialize_by(follower: remote_account, followed: local_account)
+        follow.activity_id =@json['id']
         follow.save!
 
         # Accept if auto-accepted
-        # accept_activity = ActivityPub::Serializer::Accept.new(follow).to_json
-        # ActivityPub::DeliveryJob.perform_later(
-        #   local_account.id,
-        #   remote_profile.inbox_url,
-        #   accept_activity
-        # )
+        accept_activity = ActivityPub::Serializer::Accept.new(follow).to_json
+        ActivityPub::DeliveryJob.perform_later(
+          local_account.id,
+          remote_profile.inbox_url,
+          accept_activity
+        )
 
         # 通知
         NotificationCreator.call(

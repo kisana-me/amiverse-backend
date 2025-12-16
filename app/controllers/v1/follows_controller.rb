@@ -8,6 +8,10 @@ class V1::FollowsController < V1::ApplicationController
 
     follow = @current_account.active_relationships.find_or_initialize_by(followed: @account)
 
+    if @account.remote? && @current_account.activity_pub_profile.present?
+      follow.activity_id ||= @current_account.activity_pub_profile.uri + '/follows/' + SecureRandom.base36(14)
+    end
+
     if follow.save
       NotificationCreator.call(
         actor: @current_account,
@@ -15,6 +19,16 @@ class V1::FollowsController < V1::ApplicationController
         action: :follow,
         notifiable: follow
       )
+
+      # ActivityPub Delivery
+      if @account.activity_pub_instance.present? && @current_account.activity_pub_profile.present?
+        activity = ActivityPub::Serializer::Follow.new(follow).to_json
+        ActivityPub::DeliveryJob.perform_later(
+          @current_account.id,
+          @account.activity_pub_profile.inbox_url,
+          activity
+        )
+      end
 
       render json: {
         status: 'success',
@@ -30,6 +44,17 @@ class V1::FollowsController < V1::ApplicationController
   def destroy
     follow = @current_account.active_relationships.find_by(followed: @account)
     return render_error('フォローしていません', :not_found) unless follow
+
+    # ActivityPub Delivery (Undo Follow)
+    if @account.activity_pub_instance.present? && @current_account.activity_pub_profile.present?
+      undo_activity = ActivityPub::Serializer::Undo.new(follow).to_json
+
+      ActivityPub::DeliveryJob.perform_later(
+        @current_account.id,
+        @account.activity_pub_profile.inbox_url,
+        undo_activity
+      )
+    end
 
     if follow.destroy
       render json: { status: 'success', message: 'フォローを解除しました' }, status: :ok
