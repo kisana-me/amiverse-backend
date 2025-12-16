@@ -72,7 +72,7 @@ Rails.application.routes.draw do
     get 'start' => 'pages#start'
 
     # Accounts
-    post 'accounts/:name_id' => 'accounts#show'
+    post 'accounts/@:name_id' => 'accounts#show', constraints: { name_id: /.*/ }
     resources :accounts, only: [], param: :aid do
       resource :follow, only: [:create, :destroy]
     end
