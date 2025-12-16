@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 24) do
+ActiveRecord::Schema[8.1].define(version: 25) do
   create_table "accounts", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
     t.bigint "activity_pub_instance_id"
     t.string "aid", limit: 14, null: false
@@ -138,10 +138,12 @@ ActiveRecord::Schema[8.1].define(version: 24) do
 
   create_table "follows", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
     t.boolean "accepted", default: false, null: false
+    t.string "activity_id", comment: "Remote ActivityPub activity id (e.g. the Follow activity id)"
     t.datetime "created_at", null: false
     t.bigint "followed_id", null: false
     t.bigint "follower_id", null: false
     t.datetime "updated_at", null: false
+    t.index ["activity_id"], name: "index_follows_on_activity_id"
     t.index ["followed_id", "follower_id"], name: "index_follows_on_followed_id_and_follower_id", unique: true
     t.index ["followed_id"], name: "index_follows_on_followed_id"
     t.index ["follower_id"], name: "index_follows_on_follower_id"
