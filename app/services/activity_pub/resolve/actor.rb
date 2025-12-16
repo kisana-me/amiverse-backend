@@ -78,7 +78,7 @@ module ActivityPub
           account.name = json['name'] || username
           account.save!(validate: false)
 
-          profile = account.build_activity_pub_profile
+          profile = account.activity_pub_profile || account.build_activity_pub_profile
           profile.uri = json['id']
           profile.inbox_url = json['inbox']
           profile.outbox_url = json['outbox']
