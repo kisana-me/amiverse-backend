@@ -40,10 +40,15 @@ Rails.application.configure do
   # }
 
   # Enable DNS rebinding protection and other `Host` header attacks.
-  config.hosts = [
-    'amiverse.net',
-    'api.amiverse.net',
-  ]
+  env_hosts = [ENV['BACK_URL'], ENV['FRONT_URL']].compact.map do |u|
+    begin
+      uri = URI.parse(u)
+      uri.host || u
+    rescue URI::InvalidURIError
+      u
+    end
+  end
+  config.hosts += env_hosts
 
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
