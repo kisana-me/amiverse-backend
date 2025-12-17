@@ -29,7 +29,7 @@ module ActivityPub
           .is_opened
           .find_by(name_id: username)
 
-        if account.nil? || account.remote?
+        if account.nil? || account.remote? || account.activity_pub_profile.nil?
           render json: { error: 'Not Found' }, status: :not_found
           return
         end
@@ -40,7 +40,7 @@ module ActivityPub
             {
               rel: 'self',
               type: 'application/activity+json',
-              href: account_url(account.aid, host: front_uri.host, protocol: front_uri.scheme, port: (front_uri.port unless [80, 443].include?(front_uri.port)))
+              href: account.activity_pub_profile.uri
             },
             {
               rel: 'http://webfinger.net/rel/profile-page',
