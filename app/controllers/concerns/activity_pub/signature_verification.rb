@@ -52,7 +52,8 @@ module ActivityPub
       headers = (signature_header['headers'] || '(request-target) date').split(' ')
       headers.map do |header|
         if header == '(request-target)'
-          "(request-target): #{request.method.downcase} #{request.path}"
+          path = request.path.sub(/^\/ap\//, '/')
+          "(request-target): #{request.method.downcase} #{path}"
         elsif header == 'host'
           "host: #{request.host}"
         else
