@@ -19,8 +19,6 @@ Rails.application.routes.draw do
         get 'following', to: 'following#index'
         get 'collections/featured', to: 'collections#featured'
       end
-
-      resources :posts, only: [:show], param: :aid
     end
   end
 

@@ -17,54 +17,42 @@ module ActivityPub
     private
 
     def serialize_account(account)
-      front_uri = URI.parse(ENV.fetch('FRONT_URL'))
-      host_options = { host: front_uri.host, protocol: front_uri.scheme }
-      host_options[:port] = front_uri.port unless [80, 443].include?(front_uri.port)
-
       {
         '@context': [
           'https://www.w3.org/ns/activitystreams',
           'https://w3id.org/security/v1'
         ],
-        id: account_url(account.aid, host_options),
+        id: account.activity_pub_profile.uri,
         type: 'Person',
-        following: following_account_url(account.aid, host_options),
-        followers: followers_account_url(account.aid, host_options),
-        inbox: inbox_account_url(account.aid, host_options),
-        outbox: outbox_account_url(account.aid, host_options),
-        featured: collections_featured_account_url(account.aid, host_options),
+        following: account.activity_pub_profile.following_url,
+        followers: account.activity_pub_profile.followers_url,
+        inbox: account.activity_pub_profile.inbox_url,
+        outbox: account.activity_pub_profile.outbox_url,
+        sharedInbox: account.activity_pub_profile.shared_inbox_url,
+        endpoints: {
+          sharedInbox: account.activity_pub_profile.shared_inbox_url
+        },
+        featured: account.activity_pub_profile.featured_url,
         preferredUsername: account.name_id,
         name: account.name,
         summary: account.description,
-        url: "https://#{front_uri.host}/@#{account.name_id}",
+        url: account.activity_pub_profile.url,
         manuallyApprovesFollowers: false,
         discoverable: true,
         published: account.created_at.iso8601,
         publicKey: {
-          id: "#{account_url(account.aid, host_options)}#main-key",
-          owner: account_url(account.aid, host_options),
+          id: "#{account.activity_pub_profile.uri}#main-key",
+          owner: account.activity_pub_profile.uri,
           publicKeyPem: account.activity_pub_profile.public_key
         },
-        icon:
-          if account.icon.present?
-            {
-              type: 'Image',
-              mediaType: 'image/webp',
-              url: account.icon_url
-            }
-          else
-            nil
-          end,
-        image:
-          if account.banner.present?
-            {
-              type: 'Image',
-              mediaType: 'image/webp',
-              url: account.banner_url
-            }
-          else
-            nil
-          end
+        icon: {
+          type: 'Image',
+          url: account.icon_url
+        },
+        image: {
+          type: 'Image',
+          url: account.banner_url
+        }
       }
     end
   end
