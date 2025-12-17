@@ -21,7 +21,7 @@ module ActivityPub
           local_account = ActivityPub::Resolve::Actor.by_uri(object['actor'])
 
           if local_account
-            follow = Follow.find_by(follower: local_account, followed: remote_account)
+            follow = ::Follow.find_by(follower: local_account, followed: remote_account)
             if follow
               follow.update!(accepted: true)
               Rails.logger.info "Follow accepted for account #{local_account.id} -> #{remote_account.id}"

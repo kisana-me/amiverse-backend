@@ -19,7 +19,7 @@ module ActivityPub
         return unless local_account&.local?
 
         # Follow
-        follow = Follow.find_or_initialize_by(follower: remote_account, followed: local_account)
+        follow = ::Follow.find_or_initialize_by(follower: remote_account, followed: local_account)
         follow.activity_id =@json['id']
         follow.save!
 
@@ -27,7 +27,7 @@ module ActivityPub
         accept_activity = ActivityPub::Serializer::Accept.new(follow).to_json
         ActivityPub::DeliveryJob.perform_later(
           local_account.id,
-          remote_profile.inbox_url,
+          remote_account.activity_pub_profile.inbox_url,
           accept_activity
         )
 

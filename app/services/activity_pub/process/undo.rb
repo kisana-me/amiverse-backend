@@ -21,7 +21,7 @@ module ActivityPub
           local_account = ActivityPub::Resolve::Actor.by_uri(object['object'])
           return unless local_account&.local?
 
-          follow = Follow.find_by(follower: remote_account, followed: local_account)
+          follow = ::Follow.find_by(follower: remote_account, followed: local_account)
           if follow
             follow.destroy
             Rails.logger.info "Follow undone (destroyed) for #{remote_account.id} -> #{local_account.id}"
