@@ -1,6 +1,6 @@
 module ActivityPub
   class InboxesController < ApplicationController
-    include SignatureVerification
+    include ActivityPub::SignatureVerification
 
     skip_before_action :verify_authenticity_token
 

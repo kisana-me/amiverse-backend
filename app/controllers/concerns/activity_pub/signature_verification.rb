@@ -12,68 +12,59 @@ module ActivityPub
       return if request.headers['Signature'].blank?
 
       signature_header = parse_signature_header(request.headers['Signature'])
-      return render_unauthorized unless signature_header
+      unless signature_header
+        render_unauthorized('Invalid signature header')
+        return
+      end
 
       key_id = signature_header['keyId']
       actor = fetch_actor(key_id)
-      return render_unauthorized unless actor
+      unless actor
+        render_unauthorized('Actor not found')
+        return
+      end
 
-      public_key = OpenSSL::PKey::RSA.new(actor['publicKey']['publicKeyPem'])
+      public_key = OpenSSL::PKey::RSA.new(actor.public_key)
       
       comparison_string = build_comparison_string(signature_header, request)
       signature = Base64.decode64(signature_header['signature'])
 
       unless public_key.verify(OpenSSL::Digest::SHA256.new, signature, comparison_string)
-        render_unauthorized
+        render_unauthorized('Verification failed')
       end
     rescue => e
       Rails.logger.error "Signature verification failed: #{e.message}"
-      render_unauthorized
+      render_unauthorized('Verification error')
     end
 
     def parse_signature_header(header)
-      header.split(',').map { |part| part.split('=', 2) }.to_h.transform_values { |v| v.delete('"') }
-    end
-
-    def fetch_actor(key_id)
-      # In a real implementation, we should cache this.
-      # Also, we need to handle the case where key_id is the actor URL or a key URL.
-      # Usually key_id is like https://example.com/users/alice#main-key
-      
-      # For simplicity, we'll just fetch the key_id URL.
-      # If it returns a Key object, use owner. If it returns Person, use publicKey.
-      
-      uri = URI(key_id)
-      response = Net::HTTP.get_response(uri)
-      return nil unless response.is_a?(Net::HTTPSuccess)
-
-      json = JSON.parse(response.body)
-      
-      if json['type'] == 'Person' || json['type'] == 'Service' || json['type'] == 'Application'
-        json
-      elsif json['owner']
-        # It's a Key object, fetch the owner
-        fetch_actor(json['owner'])
-      else
-        nil
-      end
+      header.split(',').map { |part| part.split('=', 2) }.to_h.transform_values { |v| v.gsub(/^"(.*)"$/, '\1') }
     rescue
       nil
     end
 
+    def fetch_actor(key_id)
+      uri = key_id.split('#').first
+      ActivityPub::Resolve::Actor.by_uri(uri)
+    end
+
     def build_comparison_string(signature_header, request)
-      headers = signature_header['headers'].split(' ')
+      headers = (signature_header['headers'] || '(request-target) date').split(' ')
       headers.map do |header|
         if header == '(request-target)'
           "(request-target): #{request.method.downcase} #{request.path}"
+        elsif header == 'host'
+          "host: #{request.host}"
         else
-          "#{header}: #{request.headers[header]}"
+          value = request.headers[header] || request.headers[header.split('-').map(&:capitalize).join('-')]
+          "#{header}: #{value}"
         end
       end.join("\n")
     end
 
-    def render_unauthorized
-      render json: { error: 'Unauthorized' }, status: :unauthorized
+    def render_unauthorized(message = 'Unauthorized')
+      Rails.logger.warn "AP signature verification unauthorized access: #{message}"
+      render json: { error: message }, status: :unauthorized
     end
   end
 end
