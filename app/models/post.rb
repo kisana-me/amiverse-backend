@@ -36,6 +36,7 @@ class Post < ApplicationRecord
   before_validation :assign_reply_from_aid
   before_validation :assign_quote_from_aid
   before_create :set_aid
+  after_create_commit :distribute_to_followers
 
   validates :content, length: { maximum: 5000, allow_blank: true }
   validates :content, presence: true, unless: :media_attached?
@@ -159,5 +160,11 @@ class Post < ApplicationRecord
         errors.add(:base, msg)
       end
     end
+  end
+
+  def distribute_to_followers
+    return unless self.account.local?
+    return unless self.account.activity_pub_profile
+    ActivityPub::DistributePostJob.perform_later(self.id)
   end
 end
