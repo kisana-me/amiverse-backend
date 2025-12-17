@@ -2,9 +2,8 @@ module ActivityPub
   class ProcessInboxJob < ApplicationJob
     queue_as :default
 
-    def perform(body)
-      json = JSON.parse(body)
-      ActivityPub::InboxService.new(json).process
+    def perform(payload)
+      ActivityPub::InboxService.new(payload).process
     end
   end
 end
