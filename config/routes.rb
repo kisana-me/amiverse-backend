@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   root 'pages#index'
 
   # ActivityPub
-  scope module: 'activity_pub' do
+  scope 'ap', module: 'activity_pub' do
     get '.well-known/webfinger', to: 'well_known/webfinger#show'
     get '.well-known/nodeinfo', to: 'well_known/nodeinfo#index'
     get '.well-known/host-meta', to: 'well_known/host_meta#show'
