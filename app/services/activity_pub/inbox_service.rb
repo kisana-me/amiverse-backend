@@ -1,19 +1,21 @@
 module ActivityPub
   class InboxService
-    def initialize(json)
-      @json = json
+    def initialize(payload)
+      @payload = payload
     end
 
     def process
-      case @json['type']
+      case @payload['type']
+      when 'Create'
+        ActivityPub::Process::Create.new(@payload).call
       when 'Follow'
-        ActivityPub::Process::Follow.new(@json).call
+        ActivityPub::Process::Follow.new(@payload).call
       when 'Undo'
-        ActivityPub::Process::Undo.new(@json).call
+        ActivityPub::Process::Undo.new(@payload).call
       when 'Accept'
-        ActivityPub::Process::Accept.new(@json).call
+        ActivityPub::Process::Accept.new(@payload).call
       else
-        Rails.logger.info "Unhandled ActivityPub type: #{@json['type']}"
+        Rails.logger.info "Unhandled ActivityPub type: #{@payload['type']}"
       end
     end
   end

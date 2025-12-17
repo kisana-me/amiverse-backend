@@ -1,26 +1,24 @@
 module ActivityPub
   module Process
     class Follow
-      def initialize(json)
-        @json = json
+      def initialize(payload)
+        @payload = payload
       end
 
       def call
-        return unless @json['type'] == 'Follow'
-
         # フォロー元
-        actor_uri = @json['actor']
+        actor_uri = @payload['actor']
         remote_account = ActivityPub::Resolve::Actor.by_uri(actor_uri)
         return unless remote_account&.remote?
 
         # フォロー先
-        object_uri = @json['object']
+        object_uri = @payload['object']
         local_account = ActivityPub::Resolve::Actor.by_uri(object_uri)
         return unless local_account&.local?
 
         # Follow
         follow = ::Follow.find_or_initialize_by(follower: remote_account, followed: local_account)
-        follow.activity_id =@json['id']
+        follow.activity_id =@payload['id']
         follow.save!
 
         # Accept if auto-accepted

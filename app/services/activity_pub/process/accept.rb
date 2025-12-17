@@ -1,20 +1,18 @@
 module ActivityPub
   module Process
     class Accept
-      def initialize(json)
-        @json = json
+      def initialize(payload)
+        @payload = payload
       end
 
       def call
-        return unless @json['type'] == 'Accept'
-
         # 許可元
-        actor_uri = @json['actor']
+        actor_uri = @payload['actor']
         remote_account = ActivityPub::Resolve::Actor.by_uri(actor_uri)
         return unless remote_account&.remote?
 
         # 許可先
-        object = @json['object']
+        object = @payload['object']
 
         # フォローの許可
         if object.is_a?(Hash) && object['type'] == 'Follow'
