@@ -76,7 +76,7 @@ module ActivityPub
           account = Account.find_or_initialize_by(name_id: full_username)
           account.activity_pub_instance = instance
           account.name = json['name'] || username
-          account.description = json['summary']
+          account.description = json['summary'] || ''
           account.save!(validate: false)
 
           profile = account.activity_pub_profile || account.build_activity_pub_profile
