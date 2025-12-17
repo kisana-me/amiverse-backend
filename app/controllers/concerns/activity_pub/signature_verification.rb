@@ -24,7 +24,7 @@ module ActivityPub
         return
       end
 
-      public_key = OpenSSL::PKey::RSA.new(actor.public_key)
+      public_key = OpenSSL::PKey::RSA.new(actor.activity_pub_profile.public_key)
       
       comparison_string = build_comparison_string(signature_header, request)
       signature = Base64.decode64(signature_header['signature'])
