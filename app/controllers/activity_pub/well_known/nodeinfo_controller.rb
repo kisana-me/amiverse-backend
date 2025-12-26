@@ -1,12 +1,14 @@
 module ActivityPub
   module WellKnown
     class NodeinfoController < ApplicationController
+      include ApplicationHelper
+
       def index
         render json: {
           links: [
             {
               rel: 'http://nodeinfo.diaspora.software/ns/schema/2.1',
-              href: nodeinfo_2_1_url(host: request.host, protocol: request.scheme)
+              href: full_front_url('/nodeinfo/2.1')
             }
           ]
         }, content_type: 'application/json; charset=utf-8'
@@ -52,8 +54,8 @@ module ActivityPub
               email: 'kisana@kisana.me'
             },
             langs: ['ja'],
-            tosUrl: "https://#{request.host}/terms-of-service",
-            privacyPolicyUrl: "https://#{request.host}/privacy-policy",
+            tosUrl: full_front_url('/terms-of-service'),
+            privacyPolicyUrl: full_front_url('/privacy-policy'),
             inquiryUrl: 'https://anyur.com/inquiries/new',
             impressumUrl: nil,
             repositoryUrl: 'https://github.com/kisana-me/amiverse',

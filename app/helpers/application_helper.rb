@@ -11,4 +11,7 @@ module ApplicationHelper
   def full_url(path)
     URI.join(ENV.fetch('BACK_URL'), path).to_s
   end
+  def full_front_url(path)
+    URI.join(ENV.fetch('FRONT_URL'), path).to_s
+  end
 end

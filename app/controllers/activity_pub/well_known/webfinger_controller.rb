@@ -45,7 +45,7 @@ module ActivityPub
             {
               rel: 'http://webfinger.net/rel/profile-page',
               type: 'text/html',
-              href: "https://#{front_uri.host}/@#{account.name_id}"
+              href: account.activity_pub_profile.url
             }
           ]
         }, content_type: 'application/jrd+json'
