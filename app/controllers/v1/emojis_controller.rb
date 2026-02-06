@@ -15,7 +15,7 @@ class V1::EmojisController < V1::ApplicationController
   end
 
   def show
-    emoji = Emoji.is_normal.find_by(aid: params[:aid])
+    emoji = Emoji.is_normal.find_by(name_id: params[:name_id])
     if emoji
       render partial: 'v1/emojis/emoji', locals: { emoji: emoji }, formats: [:json]
     else

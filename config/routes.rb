@@ -90,7 +90,7 @@ Rails.application.routes.draw do
     # Emojis
     post 'emojis/groups' => 'emojis#groups_index'
     post 'emojis/groups/:group_name' => 'emojis#groups_show'
-    post 'emojis/:aid' => 'emojis#show'
+    post 'emojis/:name_id' => 'emojis#show'
 
     # Search
     post 'search' => 'search#index'

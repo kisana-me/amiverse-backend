@@ -4,7 +4,7 @@ class V1::ReactionsController < V1::ApplicationController
 
   # POST /v1/posts/:aid/reaction
   def create
-    emoji = Emoji.is_normal.find_by(aid: params[:emoji_aid])
+    emoji = Emoji.is_normal.find_by(name_id: params[:emoji_name_id])
     return render_error('絵文字が見つかりません', :not_found) unless emoji
 
     reaction = @post.reactions.find_or_initialize_by(account: @current_account)
@@ -21,7 +21,7 @@ class V1::ReactionsController < V1::ApplicationController
       render json: {
         status: 'success',
         message: 'リアクションしました',
-        data: { emoji_aid: emoji.aid, post_aid: @post.aid }
+        data: { emoji_name_id: emoji.name_id, post_aid: @post.aid }
       }, status: :ok
     else
       render_error('リアクションの保存に失敗しました', :unprocessable_entity, reaction.errors.full_messages)

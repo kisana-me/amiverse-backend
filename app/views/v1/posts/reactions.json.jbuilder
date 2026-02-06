@@ -3,12 +3,12 @@ json.reactions @reactions do |reaction|
     json.partial! 'v1/accounts/account', account: reaction.account
   end
   json.emoji do
-    json.extract! reaction.emoji, :aid, :name
+    json.extract! reaction.emoji, :aid, :name, :name_id
     json.image_url reaction.emoji.image ? reaction.emoji.emoji_url : nil
   end
 end
 
 json.emojis @emojis do |emoji|
-  json.extract! emoji, :aid, :name
+  json.extract! emoji, :aid, :name, :name_id
   json.image_url emoji.image ? emoji.emoji_url : nil
 end

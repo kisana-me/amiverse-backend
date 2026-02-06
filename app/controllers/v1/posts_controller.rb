@@ -71,8 +71,8 @@ class V1::PostsController < V1::ApplicationController
       .includes(account: :icon, emoji: :image)
       .order(id: :desc)
 
-    if params[:emoji_aid]
-      @reactions = @reactions.joins(:emoji).where(emojis: { aid: params[:emoji_aid] })
+    if params[:emoji_name_id]
+      @reactions = @reactions.joins(:emoji).where(emojis: { name_id: params[:emoji_name_id] })
     end
 
     @reactions = @reactions.limit(50)
