@@ -109,6 +109,7 @@ Rails.application.routes.draw do
     post 'webpush_subscriptions' => 'webpush_subscriptions#create'
 
     # Sessions
+    post 'sessions/create' => 'sessions#create'
     delete 'signout' => 'sessions#signout'
 
     # Signup

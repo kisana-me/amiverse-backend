@@ -1,5 +1,5 @@
 module SessionManagement
-  # SessionManagement Ver. 2.0.1
+  # SessionManagement Ver. 2.0.2
   # models/token_toolsが必須
   # Sessionに必要なカラム差分(名前 型)
   # - account references
@@ -97,7 +97,16 @@ module SessionManagement
   private
 
   def get_tokens
-    JSON.parse(cookies.encrypted[COOKIE_NAME.to_sym] || '[]')
+    cookie_raw = cookies.encrypted[COOKIE_NAME.to_sym]
+    if cookie_raw.present?
+      JSON.parse(cookie_raw)
+    else
+      auth = authorization_header_value
+      return [] if auth.blank?
+
+      token = auth.sub(/\ABearer\s+/i, '')
+      token.present? ? [token] : []
+    end
   rescue JSON::ParserError
     []
   end
@@ -112,5 +121,11 @@ module SessionManagement
       secure: Rails.env.production?,
       httponly: true
     }
+  end
+
+  def authorization_header_value
+    return nil unless respond_to?(:request) && request
+
+    request.headers['Authorization'].presence
   end
 end
