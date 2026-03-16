@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 21) do
+ActiveRecord::Schema[8.1].define(version: 22) do
   create_table "accounts", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
     t.string "aid", limit: 14, null: false
     t.bigint "banner_id"
@@ -232,6 +232,24 @@ ActiveRecord::Schema[8.1].define(version: 21) do
     t.index ["post_id"], name: "index_reactions_on_post_id"
   end
 
+  create_table "reports", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
+    t.bigint "account_id"
+    t.string "aid", limit: 14, null: false
+    t.text "announcement", default: "", null: false
+    t.integer "category", limit: 1, default: 0, null: false
+    t.datetime "created_at", null: false
+    t.text "description", default: "", null: false
+    t.text "meta", size: :long, default: "{}", null: false, collation: "utf8mb4_bin"
+    t.bigint "reportable_id", null: false
+    t.string "reportable_type", null: false
+    t.integer "status", limit: 1, default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_reports_on_account_id"
+    t.index ["aid"], name: "index_reports_on_aid", unique: true
+    t.index ["reportable_type", "reportable_id"], name: "index_reports_on_reportable"
+    t.check_constraint "json_valid(`meta`)", name: "meta"
+  end
+
   create_table "sessions", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.string "aid", limit: 14, null: false
@@ -313,6 +331,7 @@ ActiveRecord::Schema[8.1].define(version: 21) do
   add_foreign_key "reactions", "accounts"
   add_foreign_key "reactions", "emojis"
   add_foreign_key "reactions", "posts"
+  add_foreign_key "reports", "accounts"
   add_foreign_key "sessions", "accounts"
   add_foreign_key "videos", "accounts"
   add_foreign_key "webpush_subscriptions", "accounts"

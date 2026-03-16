@@ -128,6 +128,9 @@ Rails.application.routes.draw do
 
     # Trends
     post 'trends' => 'trends#index'
+
+    # Reports
+    post 'reports' => 'reports#create'
   end
 
   # Others
