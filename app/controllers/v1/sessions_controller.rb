@@ -2,7 +2,7 @@ class V1::SessionsController < V1::ApplicationController
   include OauthManagement
 
   # POST /v1/sessions/create
-  # params { code: "code", code_verifier: "code_verifier" }
+  # params { code: "code", code_verifier: "code_verifier", redirect_uri: "redirect_uri" }
   # returns { status: "success", access_token: "token", expires_in: 3600 }
   def create
     # ANYURにリクエスト
@@ -11,7 +11,8 @@ class V1::SessionsController < V1::ApplicationController
 
     code = params[:code].to_s
     code_verifier = params[:code_verifier].to_s
-    unless code && code_verifier
+    redirect_uri = params[:redirect_uri].to_s
+    unless code && code_verifier && redirect_uri
       return render json: { status: 'error', message: 'Invalid parameters' }, status: :bad_request
     end
 
@@ -21,7 +22,7 @@ class V1::SessionsController < V1::ApplicationController
       {
         grant_type: 'authorization_code',
         client_id: config[:client_id],
-        redirect_uri: 'amiverse://auth',
+        redirect_uri: redirect_uri,
         code: code,
         code_verifier: code_verifier
       }
