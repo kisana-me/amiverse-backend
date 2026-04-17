@@ -97,9 +97,9 @@ Rails.application.routes.draw do
     post 'search' => 'search#index'
 
     # Feeds
-    post 'feeds/index' => 'feeds#index'
+    post 'feeds/index' => 'feeds#new_index'
     post 'feeds/follow' => 'feeds#follow'
-    post 'feeds/current' => 'feeds#current'
+    post 'feeds/current' => 'feeds#new_current'
     post 'feeds/account' => 'feeds#account'
 
     # Notifications
