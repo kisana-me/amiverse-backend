@@ -75,6 +75,7 @@ Rails.application.routes.draw do
     post 'accounts/@:name_id' => 'accounts#show', constraints: { name_id: /.*/ }
     resources :accounts, only: [], param: :aid do
       resource :follow, only: [:create, :destroy]
+      resource :block, only: [:create, :destroy]
     end
 
     # Posts
@@ -131,6 +132,9 @@ Rails.application.routes.draw do
 
     # Reports
     post 'reports' => 'reports#create'
+
+    # Blocks
+    post 'blocks' => 'block#index'
   end
 
   # Others

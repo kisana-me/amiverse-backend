@@ -14,5 +14,8 @@ json.posts_count @account.posts.is_normal.count
 json.is_following @current_account.present? ? @current_account.following.exists?(@account.id) : false
 json.is_followed @current_account.present? ? @account.following.exists?(@current_account.id) : false
 
+json.is_blocking @current_account.present? ? @current_account.blocking.exists?(@account.id) : false
+json.is_blocked @current_account.present? ? @account.blocking.exists?(@current_account.id) : false
+
 json.icon_url @account.icon_url
 json.banner_url @account.banner_url

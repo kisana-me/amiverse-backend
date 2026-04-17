@@ -10,6 +10,10 @@ class Account < ApplicationRecord
   has_many :passive_relationships, class_name: 'Follow', foreign_key: 'followed_id', dependent: :destroy
   has_many :following, through: :active_relationships, source: :followed
   has_many :followers, through: :passive_relationships, source: :follower
+  has_many :active_blockings, class_name: 'Block', foreign_key: 'blocker_id', dependent: :destroy
+  has_many :passive_blockings, class_name: 'Block', foreign_key: 'blocked_id', dependent: :destroy
+  has_many :blocking, through: :active_blockings, source: :blocked
+  has_many :blockers, through: :passive_blockings, source: :blocker
   has_many :diffuses, dependent: :destroy
   has_many :diffused_posts, through: :diffuses, source: :post
   has_many :notifications, dependent: :destroy
