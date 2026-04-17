@@ -15,6 +15,9 @@ class NotificationCreator
     # 1. バリデーション: 自分自身へのアクションなら通知しない
     return if self_action?
 
+    # 1.5. actorが存在し、statusがnormal以外なら通知しない
+    return if actor_restricted?
+
     # 2. 設定チェック: 受信者が通知を拒否していたら作成しない
     return unless notification_allowed?
 
@@ -35,6 +38,10 @@ class NotificationCreator
 
   def self_action?
     actor.present? && actor.id == recipient.id
+  end
+
+  def actor_restricted?
+    actor.present? && !actor.normal?
   end
 
   def notification_allowed?
