@@ -37,8 +37,7 @@
       <nav>
         <%= link_to "ホーム", root_path %>
         <% if @current_account&.admin? %>
-          | <%= link_to "セッション", sessions_path %> |
-          <%= link_to "アカウント", accounts_path %> |
+          | <%= link_to "アカウント", accounts_path %> |
           <%= link_to "画像", images_path %> |
           <%= link_to "投稿", posts_path %>
         <% end %>

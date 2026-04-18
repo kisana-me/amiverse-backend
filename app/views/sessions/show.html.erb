@@ -1,26 +1,25 @@
-<% provide(:title, "セッションをみる") %>
+<% provide(:title, "セッション詳細") %>
 
-<h1>セッションをみる</h1>
+<h1>セッション詳細</h1>
+
+<%= render @account %>
 
 <div>
-  <p>
-    <strong>lookup:</strong>
-    <%= @session.token_lookup %>
-  </p>
-
-  <p>
-    <strong>名前:</strong>
-    <%= @session.name %>
-  </p>
-
-  <p>
-    <strong>IP:</strong>
-    <%= @session.ip_address %>
-  </p>
-
-  <p>
-    <strong>操作:</strong>
-    <%= link_to "変更", edit_session_path(@session.token_lookup) %>
-    <%= button_to "削除", session_path(@session.token_lookup), method: :delete %>
-  </p>
+  <div>AID: <%= @session.aid %></div>
+  <div>名前: <%= @session.name %></div>
+  <div>状態:
+    <span style="<% if @session.status == "locked" %>color: #ff5722;<% end %><% if @session.status == "deleted" %>color: red;<% end %>"> 
+      <%= @session.status %>
+    </span>
+  </div>
+  <div>期限:
+    <span style="<% if @session.token_expires_at <= Time.current %>color: red;<% end %>">
+      <%= @session.token_expires_at.strftime("%Y/%m/%d %H:%M:%S") %>
+    </span>
+  </div>
+  <div>操作: <%= link_to "アカウント詳細", account_path(@account.aid) %> <%= link_to "セッション一覧", account_sessions_path(@account.aid) %></div>
 </div>
+
+<hr />
+
+<%= render "form", session: @session, url: account_session_path(@account.aid, @session.aid) %>

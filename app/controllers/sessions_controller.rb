@@ -1,8 +1,9 @@
 class SessionsController < ApplicationController
+  before_action :require_admin, except: %i[ start signout ]
+  before_action :set_account, except: %i[ start signout ]
   before_action :require_signin, except: %i[ start ]
   before_action :require_signout, only: %i[ start ]
-  before_action :set_session, only: %i[ show edit update destroy ]
-  before_action :require_admin, except: %i[ start signout ]
+  before_action :set_session, only: %i[ show update ]
 
   def start
   end
@@ -18,35 +19,37 @@ class SessionsController < ApplicationController
   # 以下サインイン済み #
 
   def index
-    @sessions = Session.where(account: @current_account)
+    sessions = Session.where(account: @account)
+    @sessions = set_pagination_for(sessions)
   end
 
   def show
   end
 
-  def edit
-  end
-
   def update
-    if @session.update!(session_params)
-      redirect_to session_path(@session.token_lookup), notice: 'セッションを更新しました'
+    if @session.update(session_params)
+      redirect_to account_session_path(@account.aid, @session.aid), notice: '更新しました'
     else
-      render :edit
+      render :show, status: :unprocessable_entity
     end
-  end
-
-  def destroy# bad
-    @session.update(deleted: true)
-    redirect_to sessions_path, notice: 'セッションを削除しました'
   end
 
   private
 
+  def set_account
+    @account = Account.find_by(aid: params.expect(:account_aid))
+  end
+
   def set_session
-    @session = Session.find_by(account: @current_account, lookup: params[:id], deleted: false)
+    @session = Session.find_by(account: @account, aid: params[:aid])
   end
 
   def session_params
-    params.require(:session).permit(:name)
+    params.expect(
+      session: [
+        :name,
+        :status,
+      ]
+    )
   end
 end

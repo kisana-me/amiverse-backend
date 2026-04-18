@@ -1,12 +1,29 @@
-<% provide(:title, "セッション") %>
+<% provide(:title, "セッション一覧") %>
 
-<h1>セッション</h1>
+<h1>セッション一覧</h1>
 
-<div class="sessions">
+<div style="margin-bottom: 0.25rem;">
+  <%= render @account %>
+</div>
+
+<div class="sessions" style="display: flex; flex-direction: column; gap: 0.25rem;">
   <% @sessions.each do |session| %>
-    <div>
-      <strong>名前:</strong>
-      <%= session.name %>
+    <div style="border: 1px solid #373737; border-radius: 0.25rem; padding: 0.25rem;">
+      <div>AID: <%= session.aid %></div>
+      <div>名前: <%= session.name %></div>
+      <div>状態:
+        <span style="<% if session.status == "locked" %>color: #ff5722;<% end %><% if session.status == "deleted" %>color: red;<% end %>"> 
+          <%= session.status %>
+        </span>
+      </div>
+      <div>期限:
+        <span style="<% if session.token_expires_at <= Time.current %>color: red;<% end %>">
+          <%= session.token_expires_at.strftime("%Y/%m/%d %H:%M:%S") %>
+        </span>
+      </div>
+      <div>操作: <%= link_to "セッション詳細", account_session_path(@account.aid, session.aid) %></div>
     </div>
   <% end %>
 </div>
+
+<%= render "shared/paging", page: @page, pages: @total_pages, page_to: account_sessions_path(@account.aid) %>

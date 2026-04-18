@@ -3,14 +3,16 @@
 <h1>アカウント詳細</h1>
 
 <%= render @account %>
+
 <div>
   <div>AID: <%= @account.aid %></div>
   <div>URL: <%= link_to "amiverse", "https://amiverse.net/@" + @account.name_id, target: "_blank", rel: "noopener noreferrer" %></div>
-  <div>STAT:
-    <span style="<% if @account.status == "locked" %>color: #ff5722;<% end %><% if @account.status == :deleted %>color: red;<% end %>"> 
+  <div>状態:
+    <span style="<% if @account.status == "locked" %>color: #ff5722;<% end %><% if @account.status == "deleted" %>color: red;<% end %>"> 
       <%= @account.status %>
     </span>
   </div>
+  <div>操作: <%= link_to "セッション一覧", account_sessions_path(@account.aid) %></div>
 </div>
 
 <hr />

@@ -3,7 +3,9 @@ Rails.application.routes.draw do
   root 'pages#index'
 
   # Accounts
-  resources :accounts, param: :aid
+  resources :accounts, only: [:index, :show, :update], param: :aid do
+    resources :sessions, only: [:index, :show, :update], param: :aid
+  end
 
   # Posts
   resources :posts, param: :aid
@@ -43,7 +45,6 @@ Rails.application.routes.draw do
   # Sessions
   get 'sessions/start'
   delete 'signout' => 'sessions#signout'
-  resources :sessions, except: [:new, :create], param: :aid
 
   # Signup
   get 'signup' => 'signup#new'
