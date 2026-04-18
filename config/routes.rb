@@ -8,7 +8,7 @@ Rails.application.routes.draw do
   end
 
   # Posts
-  resources :posts, param: :aid
+  resources :posts, only: [:index, :show, :update], param: :aid
 
   # Images
   resources :images, only: [:index, :show, :update], param: :aid do

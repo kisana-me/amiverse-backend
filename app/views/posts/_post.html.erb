@@ -1,24 +1,31 @@
 <div class="post">
-  <div>
-    <div>
-      <%= image_tag post.account.icon_url %>
-    </div>
-    <div>
-      <div>
-        <%= post.account.name %>
-      </div>
-      <div>
-        <%= post.account.name_id %>
-      </div>
-    </div>
-  </div>
+  <%= render post.account %>
   <hr />
+
   <p><%= post.content %></p>
   <% post.images.each do |image| %>
-    <%= image_tag image.image_url %>
+    <%= image_tag image.image_url, style: "width: 200px; height: 150px; object-fit: contain;" %>
+  <% end %>
+  <% post.videos.each do |video| %>
+    <%= video_tag video.video_url, style: "width: 200px; height: 150px; object-fit: contain;", controls: true %>
+  <% end %>
+  <% post.drawings.each do |drawing| %>
+    <%= image_tag drawing.image_url, style: "width: 320px; height: 120px; border: 1px solid #cfc;" %>
   <% end %>
   <hr />
-  <p><em><%= post.created_at.strftime("%Y-%m-%d") %></em></p>
+
+  <% if post.reply %>
+    <%= link_to "返信先があります", post_path(post.reply.aid) if post.reply %>
+  <% else %>
+    返信先はありません
+  <% end %>
+  <% if post.quote %>
+    <%= link_to "引用元があります", post_path(post.quote.aid) %>
+  <% else %>
+    引用元はありません
+  <% end %>
+  <small><%= post.created_at.strftime("%Y-%m-%d %H:%M:%S") %></small>
+  <hr />
 
   <div class="post-reactions" style="margin-bottom: 10px;">
     <% my_reacted_emoji_ids = @current_account ? post.reactions.where(account: @current_account).pluck(:emoji_id) : [] %>
@@ -37,13 +44,11 @@
 
   <div>
     <%= render "emojis/picker", mode: 'reaction', target_id: post.aid %>
-    
-    <% if @current_account %>
-      <% if post.diffuses.exists?(account: @current_account) %>
-        <%= button_to "Undiffuse", undiffuse_path(post_aid: post.aid), method: :delete, style: "display: inline-block; margin-left: 10px; color: green;" %>
-      <% else %>
-        <%= button_to "Diffuse", diffuse_path(post_aid: post.aid), method: :post, style: "display: inline-block; margin-left: 10px;" %>
-      <% end %>
+
+    <% if post.diffuses.exists?(account: @current_account) %>
+      <%= button_to "Undiffuse", undiffuse_path(post_aid: post.aid), method: :delete, style: "display: inline-block; margin-left: 10px; color: green;" %>
+    <% else %>
+      <%= button_to "Diffuse", diffuse_path(post_aid: post.aid), method: :post, style: "display: inline-block; margin-left: 10px;" %>
     <% end %>
 
     reactions, replies, quotes, views, menu.

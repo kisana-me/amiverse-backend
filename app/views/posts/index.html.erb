@@ -1,9 +1,13 @@
-<div class="posts">
+<% provide(:title, "投稿一覧") %>
+
+<h1>投稿一覧</h1>
+
+<div id="posts">
   <%= render partial: "post", collection: @posts %>
 </div>
+
 <% if @posts.empty? %>
   <p>投稿はありません</p>
 <% end %>
-<div>
-  ページネーション
-</div>
+
+<%= render "shared/paging", pages: @total_pages, page: @page, page_to: "/posts" %>
