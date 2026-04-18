@@ -38,7 +38,7 @@ class Image < ApplicationRecord
   def image_upload
     validate_image(required: true)
 
-    self.save_original = true
+    self.save_original = false
     if save_original
       self.original_ext = image.original_filename.split('.').last.downcase
       s3_upload(
@@ -47,7 +47,7 @@ class Image < ApplicationRecord
         content_type: image.content_type
       )
     end
-    self.name = image.original_filename.split('.').first if name.blank?
+    # self.name = image.original_filename.split('.').first if name.blank?
 
     return if deleted?
 

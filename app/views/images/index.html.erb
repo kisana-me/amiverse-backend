@@ -1,8 +1,13 @@
-<% provide(:title, '画像一覧') %>
-<% provide(:robots, 'false') %>
-<% provide(:layout_style, '') %>
-<% provide(:ga4, 'false') %>
+<% provide(:title, "画像一覧") %>
 
 <h1>画像一覧</h1>
-<%= render partial: 'images/image', collection: @images, as: 'image' %>
-<%= render 'shared/paging', pages: @total_pages, page: @page, page_to: '/images' %>
+
+<div id="images" style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 2px;">
+  <% @images.each do |image| %>
+    <%= link_to image_path(image.aid), style: "border: 1px solid #ccc; padding: 2px; width: 120px; height: 120px;" do %>
+      <%= image_tag(image.image_url, style: "width: 100%; height: 100%; object-fit: contain;") %>
+    <% end %>
+  <% end %>
+</div>
+
+<%= render "shared/paging", pages: @total_pages, page: @page, page_to: "/images" %>

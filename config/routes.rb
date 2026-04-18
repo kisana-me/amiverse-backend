@@ -11,7 +11,7 @@ Rails.application.routes.draw do
   resources :posts, param: :aid
 
   # Images
-  resources :images, param: :aid do
+  resources :images, only: [:index, :show, :update], param: :aid do
     member do
       post "create_variant" => "images#create_variant", as: "create_variant"
       delete "delete_variant" => "images#delete_variant", as: "delete_variant"

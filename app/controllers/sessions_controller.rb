@@ -1,8 +1,8 @@
 class SessionsController < ApplicationController
   before_action :require_admin, except: %i[ start signout ]
-  before_action :set_account, except: %i[ start signout ]
-  before_action :require_signin, except: %i[ start ]
+  before_action :require_signin, only: %i[ signout ]
   before_action :require_signout, only: %i[ start ]
+  before_action :set_account, except: %i[ start signout ]
   before_action :set_session, only: %i[ show update ]
 
   def start
@@ -19,7 +19,7 @@ class SessionsController < ApplicationController
   # 以下サインイン済み #
 
   def index
-    sessions = Session.where(account: @account)
+    sessions = Session.all.order(id: :desc).where(account: @account)
     @sessions = set_pagination_for(sessions)
   end
 

@@ -3,7 +3,7 @@ class AccountsController < ApplicationController
   before_action :set_account, only: %i[ show update ]
 
   def index
-    accounts = Account.includes(:icon)
+    accounts = Account.all.order(id: :desc).includes(:icon)
     @accounts = set_pagination_for(accounts)
   end
 
