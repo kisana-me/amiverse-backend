@@ -1,10 +1,18 @@
-<p style="color: green"><%= notice %></p>
+<% content_for :title, "アカウント詳細" %>
+
+<h1>アカウント詳細</h1>
 
 <%= render @account %>
-
 <div>
-  <%= link_to "Edit this account", edit_account_path(@account) %> |
-  <%= link_to "Back to accounts", accounts_path %>
-
-  <%= button_to "Destroy this account", @account, method: :delete %>
+  <div>AID: <%= @account.aid %></div>
+  <div>URL: <%= link_to "amiverse", "https://amiverse.net/@" + @account.name_id, target: "_blank", rel: "noopener noreferrer" %></div>
+  <div>STAT:
+    <span style="<% if @account.status == "locked" %>color: #ff5722;<% end %><% if @account.status == :deleted %>color: red;<% end %>"> 
+      <%= @account.status %>
+    </span>
+  </div>
 </div>
+
+<hr />
+
+<%= render "form", account: @account, url: account_path(@account.aid) %>

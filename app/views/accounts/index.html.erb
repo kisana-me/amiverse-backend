@@ -1,16 +1,23 @@
-<p style="color: green"><%= notice %></p>
+<% content_for :title, "アカウント一覧" %>
 
-<% content_for :title, "Accounts" %>
+<h1>アカウント一覧</h1>
 
-<h1>Accounts</h1>
-
-<div id="accounts">
+<div id="accounts" style="display: flex; flex-direction: column; gap: 0.25rem;">
   <% @accounts.each do |account| %>
-    <%= render account %>
-    <p>
-      <%= link_to "Show this account", account %>
-    </p>
+    <div style="border: 1px solid #373737; border-radius: 0.25rem; padding: 0.25rem;">
+      <%= render account %>
+      <div>
+        <div>AID: <%= account.aid %></div>
+        <div>URL: <%= link_to "amiverse", "https://amiverse.net/@" + account.name_id, target: "_blank", rel: "noopener noreferrer" %></div>
+        <div>STAT:
+          <span style="<% if account.status == "locked" %>color: #ff5722;<% end %><% if account.status == :deleted %>color: red;<% end %>"> 
+            <%= account.status %>
+          </span>
+        </div>
+        <div>DETAIL: <%= link_to "SHOW", account_path(account.aid) %></div>
+      </div>
+    </div>
   <% end %>
 </div>
 
-<%= link_to "New account", new_account_path %>
+<%= render "shared/paging", page: @page, pages: @total_pages, page_to: accounts_path %>
