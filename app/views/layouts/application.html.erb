@@ -6,6 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="application-name" content="Amiverse API">
     <meta name="mobile-web-app-capable" content="yes">
+    <meta name="turbo-prefetch" content="false">
 
     <meta name="generator" content="Amiverse API" />
     <meta name="description" content="Amiverse API" />
@@ -32,13 +33,15 @@
 
   <body>
     <header>
-      <h1><%= link_to "Amiverse", root_path %></h1>
+      <div style="font-size: 1.5rem; font-weight: bold;"><%= link_to "Amiverse", root_path %></div>
       <nav>
-        <%= link_to "ホーム", root_path %> |
-        <%= link_to "セッション", sessions_path %> |
-        <%= link_to "アカウント", accounts_path %> |
-        <%= link_to "画像", images_path %> |
-        <%= link_to "投稿", posts_path %>
+        <%= link_to "ホーム", root_path %>
+        <% if @current_account&.admin? %>
+          | <%= link_to "セッション", sessions_path %> |
+          <%= link_to "アカウント", accounts_path %> |
+          <%= link_to "画像", images_path %> |
+          <%= link_to "投稿", posts_path %>
+        <% end %>
       </nav>
       <div>
         <% if @current_account %>
