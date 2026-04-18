@@ -2,4 +2,6 @@
 
 <h1>画像詳細</h1>
 
-<%= render 'images/image', image: @image %>
+<%= render @image.account if @image.account %>
+
+<%= render "images/image", image: @image %>

@@ -1,6 +1,6 @@
 class ImagesController < ApplicationController
   before_action :require_admin
-  before_action :set_image, only: %i[show create_variant delete_variant delete_original]
+  before_action :set_image, except: %i[index]
 
   def index
     images = Image.all.order(id: :desc)
@@ -14,7 +14,7 @@ class ImagesController < ApplicationController
       redirect_to image_path(@image.aid), notice: "更新しました"
     else
       flash.now[:alert] = "更新できませんでした"
-      render :edit
+      render :show
     end
   end
 

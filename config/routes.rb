@@ -20,7 +20,7 @@ Rails.application.routes.draw do
   end
 
   # Videos
-  resources :videos, param: :aid do
+  resources :videos, only: [:index, :show, :update], param: :aid do
     member do
       post "create_variant" => "videos#create_variant", as: "create_variant"
       delete "delete_variant" => "videos#delete_variant", as: "delete_variant"

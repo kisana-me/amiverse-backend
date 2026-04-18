@@ -62,7 +62,7 @@ class Video < ApplicationRecord
   end
 
   def video_upload
-    self.name = video.original_filename.split('.').first if name.blank?
+    # self.name = video.original_filename.split('.').first if name.blank?
     extension = video.original_filename.split('.').last.downcase
     self.original_ext = extension
 

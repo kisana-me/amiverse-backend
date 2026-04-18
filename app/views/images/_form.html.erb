@@ -1,13 +1,13 @@
 <%= form_with model: @image, url: url, data: { turbo: false } do |f| %>
-  <%= render 'shared/error_messages', instead: @image %>
+  <%= render "shared/error_messages", instead: @image %>
   <div>
-    <%= f.label :image, 'image' %>
+    <%= f.label :image, "image" %>
     <%= f.file_field :image %>
   </div>
 
   <div>
-    <%= f.label :name, '名前' %>
-    <%= f.text_field :name, placeholder: '名前' %>
+    <%= f.label :name, "名前" %>
+    <%= f.text_field :name, placeholder: "名前" %>
   </div>
 
   <div>
@@ -21,5 +21,5 @@
   </div>
   <br/>
   <br/>
-  <%= f.submit '送信' %>
+  <%= f.submit "送信" %>
 <% end %>
