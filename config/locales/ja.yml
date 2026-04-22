@@ -138,6 +138,15 @@ ja:
           normal: "通常"
           locked: "停止中"
           deleted: "削除済み"
+      video:
+        visibility:
+          closed: "非公開"
+          limited: "限定公開"
+          opened: "公開"
+        status:
+          normal: "通常"
+          locked: "停止中"
+          deleted: "削除済み"
       group:
         visibility:
           closed: "非公開"

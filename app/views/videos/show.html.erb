@@ -3,5 +3,26 @@
 <h1>動画詳細</h1>
 
 <%= render @video.account if @video.account %>
+<%= render @video %>
+<div>
+  <strong>variant_type:</strong>
+    <%= @video.variant_type.present? ? "あり: " + @video.variant_type : "なし" %>
+    <%= button_to("削除", delete_variant_video_path(@video.aid), method: :delete, data: { turbo: false }) %>
+  <strong>original_ext:</strong>
+    <%= @video.original_ext.present? ? "あり: " + @video.original_ext : "なし" %>
+    <%= button_to("削除", delete_original_video_path(@video.aid), method: :delete, data: { turbo: false }) %>
+  <strong>操作:</strong>
+  <%= form_with url: create_variant_video_path(@video.aid), method: :post, data: { turbo: false } do %>
+    <div>
+      <%= label_tag :variant_type, "variant_type" %>
+      <%= select_tag :variant_type, options_for_select(["normal", "copy"]) %>
+    </div>
+    <div>
+      <%= submit_tag "送信" %>
+    </div>
+  <% end %>
+</div>
 
-<%= render "videos/video", video: @video %>
+<hr />
+
+<%= render "videos/form", video: @video, url: video_path(@video.aid) %>

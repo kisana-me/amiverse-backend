@@ -3,5 +3,26 @@
 <h1>画像詳細</h1>
 
 <%= render @image.account if @image.account %>
+<%= render @image %>
+<div>
+  <strong>variant_type:</strong>
+    <%= @image.variant_type.present? ? "あり: " + @image.variant_type : "なし" %>
+    <%= button_to("削除", delete_variant_image_path(@image.aid), method: :delete, data: { turbo: false }) %>
+  <strong>original_ext:</strong>
+    <%= @image.original_ext.present? ? "あり: " + @image.original_ext : "なし" %>
+    <%= button_to("削除", delete_original_image_path(@image.aid), method: :delete, data: { turbo: false }) %>
+  <strong>操作:</strong>
+  <%= form_with url: create_variant_image_path(@image.aid), method: :post, data: { turbo: false } do %>
+    <div>
+      <%= label_tag :variant_type, "variant_type" %>
+      <%= select_tag :variant_type, options_for_select(["icon", "q-icon", "banner", "q-banner", "normal", "q-normal", "d-normal", "emoji", "q-emoji"]) %>
+    </div>
+    <div>
+      <%= submit_tag "送信" %>
+    </div>
+  <% end %>
+</div>
 
-<%= render "images/image", image: @image %>
+<hr />
+
+<%= render "images/form", image: @image, url: image_path(@image.aid) %>

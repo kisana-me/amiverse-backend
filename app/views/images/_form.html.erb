@@ -1,13 +1,14 @@
-<%= form_with model: @image, url: url, data: { turbo: false } do |f| %>
+<%= form_with model: @image, url: url, class: "ctmf", data: { turbo: false } do |f| %>
   <%= render "shared/error_messages", instead: @image %>
+
   <div>
-    <%= f.label :image, "image" %>
-    <%= f.file_field :image %>
+    <%= f.label :name %>
+    <%= f.text_field :name %>
   </div>
 
   <div>
-    <%= f.label :name, "名前" %>
-    <%= f.text_field :name, placeholder: "名前" %>
+    <%= f.label :description %>
+    <%= f.text_area :description %>
   </div>
 
   <div>
@@ -19,7 +20,6 @@
     <%= f.label :status %>
     <%= f.select :status, Image.statuses.keys.map { |k| [t("activerecord.enums.image.status.#{k}"), k] }, {} %>
   </div>
-  <br/>
-  <br/>
-  <%= f.submit "送信" %>
+
+  <%= f.submit %>
 <% end %>

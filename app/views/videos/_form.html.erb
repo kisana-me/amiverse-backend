@@ -1,25 +1,25 @@
-<%= form_with model: @video, url: url, data: { turbo: false } do |f| %>
+<%= form_with model: @video, url: url, class: "ctmf", data: { turbo: false } do |f| %>
   <%= render "shared/error_messages", instead: @video %>
+
   <div>
-    <%= f.label :video, "video" %>
-    <%= f.file_field :video %>
+    <%= f.label :name %>
+    <%= f.text_field :name %>
   </div>
 
   <div>
-    <%= f.label :name, "名前" %>
-    <%= f.text_field :name, placeholder: "名前" %>
+    <%= f.label :description %>
+    <%= f.text_area :description %>
   </div>
 
   <div>
     <%= f.label :visibility %>
-    <%= f.select :visibility, Image.visibilities.keys.map { |k| [t("activerecord.enums.image.visibility.#{k}"), k] }, {} %>
+    <%= f.select :visibility, Video.visibilities.keys.map { |k| [t("activerecord.enums.video.visibility.#{k}"), k] }, {} %>
   </div>
 
   <div>
     <%= f.label :status %>
-    <%= f.select :status, Image.statuses.keys.map { |k| [t("activerecord.enums.image.status.#{k}"), k] }, {} %>
+    <%= f.select :status, Video.statuses.keys.map { |k| [t("activerecord.enums.video.status.#{k}"), k] }, {} %>
   </div>
-  <br/>
-  <br/>
-  <%= f.submit "送信" %>
+
+  <%= f.submit %>
 <% end %>
