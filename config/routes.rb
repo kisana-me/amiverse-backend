@@ -28,6 +28,14 @@ Rails.application.routes.draw do
     end
   end
 
+  # Drawings
+  resources :drawings, only: [ :index, :show, :update ], param: :aid do
+    member do
+      post "create_variant" => "drawings#create_variant", as: "create_variant"
+      delete "delete_variant" => "drawings#delete_variant", as: "delete_variant"
+    end
+  end
+
   # Emojis
   resources :emojis, param: :aid do
     collection do

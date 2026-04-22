@@ -1,0 +1,15 @@
+<% provide(:title, "お絵描き詳細") %>
+
+<h1>お絵描き詳細</h1>
+
+<%= render @drawing.account if @drawing.account %>
+<%= render @drawing %>
+<div>
+  <strong>controll:</strong>
+  <%= button_to("作成", create_variant_drawing_path(@drawing.aid), method: :post, data: { turbo: false }) %>
+  <%= button_to("削除", delete_variant_drawing_path(@drawing.aid), method: :delete, data: { turbo: false }) %>
+</div>
+
+<hr />
+
+<%= render "drawings/form", drawing: @drawing, url: drawing_path(@drawing.aid) %>

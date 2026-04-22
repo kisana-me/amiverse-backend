@@ -1,0 +1,18 @@
+<% provide(:title, "お絵描き一覧") %>
+
+<h1>お絵描き一覧</h1>
+
+<div id="drawings" style="display: flex; flex-direction: column; gap: 0.25rem;">
+  <% @drawings.each do |drawing| %>
+    <div style="border: 1px solid #373737; border-radius: 0.25rem; padding: 0.25rem;">
+      <%= render drawing.account if drawing.account %>
+      <%= render drawing %>
+      <div>
+        <strong>controll:</strong>
+        <%= link_to "お絵描き詳細", drawing_path(drawing.aid) %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<%= render "shared/paging", pages: @total_pages, page: @page, page_to: "/drawings" %>

@@ -1,0 +1,25 @@
+<%= form_with model: @drawing, url: url, class: "ctmf", data: { turbo: false } do |f| %>
+  <%= render "shared/error_messages", instead: @drawing %>
+
+  <div>
+    <%= f.label :name %>
+    <%= f.text_field :name %>
+  </div>
+
+  <div>
+    <%= f.label :description %>
+    <%= f.text_area :description %>
+  </div>
+
+  <div>
+    <%= f.label :visibility %>
+    <%= f.select :visibility, Drawing.visibilities.keys.map { |k| [t("activerecord.enums.drawing.visibility.#{k}"), k] }, {} %>
+  </div>
+
+  <div>
+    <%= f.label :status %>
+    <%= f.select :status, Drawing.statuses.keys.map { |k| [t("activerecord.enums.drawing.status.#{k}"), k] }, {} %>
+  </div>
+
+  <%= f.submit "送信" %>
+<% end %>

@@ -73,4 +73,8 @@ class Drawing < ApplicationRecord
   rescue StandardError => e
     Rails.logger.error("Failed to encode and upload drawing #{aid}: #{e.message}")
   end
+
+  def delete_variant
+    s3_delete(key: "/drawings/#{aid}.png")
+  end
 end

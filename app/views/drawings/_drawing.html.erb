@@ -1,0 +1,12 @@
+<div>
+  <%= image_tag(drawing.image_url, style: "width: 320px; height: 120px; border: 1px solid #cfc; vertical-align: middle; image-rendering: pixelated;") %>
+  <div><strong>aid:</strong> <%= drawing.aid %></div>
+  <div><strong>name:</strong> <%= drawing.name %></div>
+  <div><strong>description:</strong> <%= drawing.description %></div>
+  <div><strong>visibility:</strong> <%= drawing.visibility %></div>
+  <div><strong>status:</strong>
+    <span style="color: <%= status_color(drawing.status) %>">
+      ●<%= drawing.status %>■
+    </span>
+  </div>
+</div>

@@ -31,8 +31,8 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
-    <header>
+  <body style="margin: 0;">
+    <header style="padding: 0.5rem; border-bottom: 1px solid #bc88ff;">
       <div style="font-size: 1.5rem; font-weight: bold;"><%= link_to "Amiverse", root_path %></div>
       <nav>
         <%= link_to "ホーム", root_path %>
@@ -40,19 +40,20 @@
           | <%= link_to "アカウント", accounts_path %> |
           <%= link_to "投稿", posts_path %> |
           <%= link_to "画像", images_path %> |
-          <%= link_to "動画", videos_path %>
+          <%= link_to "動画", videos_path %> |
+          <%= link_to "お絵描き", drawings_path %>
         <% end %>
       </nav>
       <div>
         <% if @current_account %>
           サインイン中: <%= @current_account.name %> <small>@<%= @current_account.name_id %></small>
         <% else %>
-          <%= link_to "サインイン/サインアップ", sessions_start_path %>
+          <div>サインインしていません</div>
         <% end %>
       </div>
     </header>
 
-    <main>
+    <main style="padding: 0.5rem; min-height: 50svh;">
       <%= yield %>
     </main>
 
@@ -60,8 +61,8 @@
       <%= render "shared/flash" %>
     </div>
 
-    <footer>
-      <p>&copy; Amiverse</p>
+    <footer style="padding: 0.5rem; border-top: 1px solid #a6f848;">
+      <p style="margin: 0;">&copy; Amiverse</p>
     </footer>
   </body>
 </html>

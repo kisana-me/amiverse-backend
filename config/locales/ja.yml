@@ -102,6 +102,18 @@ ja:
         status: "ステータス"
         created_at: "作成日時"
         updated_at: "更新日時"
+      drawing:
+        account: "アカウント"
+        aid: "固有ID"
+        name: "名前"
+        description: "説明"
+        data: "データ"
+        style: "スタイル"
+        visibility: "公開状態"
+        meta: "メタデータ"
+        status: "ステータス"
+        created_at: "作成日時"
+        updated_at: "更新日時"
     enums:
       account:
         visibility:
@@ -147,6 +159,15 @@ ja:
           locked: "停止中"
           deleted: "削除済み"
       comment:
+        status:
+          normal: "通常"
+          locked: "停止中"
+          deleted: "削除済み"
+      drawing:
+        visibility:
+          closed: "非公開"
+          limited: "限定公開"
+          opened: "公開"
         status:
           normal: "通常"
           locked: "停止中"
