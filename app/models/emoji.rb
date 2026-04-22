@@ -23,7 +23,7 @@ class Emoji < ApplicationRecord
   scope :is_normal, -> { where(status: :normal) }
   scope :isnt_deleted, -> { where.not(status: :deleted) }
 
-  def emoji_url
+  def image_url
     image&.image_url || full_url("/static_assets/images/amiverse-logo.webp")
   end
 

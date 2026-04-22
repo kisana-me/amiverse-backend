@@ -1,11 +1,18 @@
 class EmojisController < ApplicationController
-  before_action :require_signin, except: %i[ index show picker ]
-  before_action :set_emoji, only: %i[ show ]
-  # before_action :set_correct_post, only: %i[ edit update destroy ]
   before_action :require_admin
+  before_action :set_emoji, only: %i[ show ]
+  before_action :set_group, only: %i[ group ]
 
   def index
-    @emojis = Emoji.all
+    pairs = Emoji
+      .where.not(group: [ nil, "" ])
+      .distinct
+      .order(:group, :subgroup)
+      .pluck(:group, :subgroup)
+
+    @group_subgroups = pairs.group_by(&:first).transform_values do |rows|
+      rows.map(&:last).reject(&:blank?)
+    end
   end
 
   def picker
@@ -17,6 +24,14 @@ class EmojisController < ApplicationController
 
     @mode = params[:mode]
     @target_id = params[:target_id]
+  end
+
+  def group
+    @emojis = Emoji
+      .where(group: @group_name)
+      .order(:subgroup, :name_id)
+
+    render_404 if @emojis.blank?
   end
 
   def show
@@ -80,5 +95,9 @@ class EmojisController < ApplicationController
         :description
       ]
     )
+  end
+
+  def set_group
+    @group_name = params.expect(:group_name)
   end
 end

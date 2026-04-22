@@ -40,6 +40,7 @@ Rails.application.routes.draw do
   resources :emojis, param: :aid do
     collection do
       get :picker
+      get "groups/:group_name", to: "emojis#group", as: :group
     end
   end
 

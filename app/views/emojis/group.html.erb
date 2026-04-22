@@ -1,0 +1,34 @@
+<h1><%= @group_name %> の絵文字</h1>
+
+<p>
+  <%= link_to "絵文字グループ一覧に戻る", emojis_path %>
+</p>
+
+<% if @emojis.blank? %>
+  <p>このグループの絵文字はありません</p>
+<% else %>
+  <p>件数: <%= @emojis.size %></p>
+
+  <div class="emojis">
+    <% @emojis.each do |emoji| %>
+      <article class="emoji">
+        <div>
+          <%= image_tag emoji.image_url, alt: (emoji.name.presence || emoji.name_id), size: "48x48" %>
+        </div>
+
+        <div>
+          <p><strong><%= emoji.name.presence || "(名前未設定)" %></strong></p>
+          <p>name_id: <%= emoji.name_id %></p>
+          <p>aid: <%= emoji.aid %></p>
+          <p>subgroup: <%= emoji.subgroup.presence || "未設定" %></p>
+          <p>status: <%= emoji.status %></p>
+          <p>description: <%= emoji.description.presence || "(説明なし)" %></p>
+          <p>created_at: <%= emoji.created_at.strftime("%Y-%m-%d %H:%M") %></p>
+          <p><%= link_to "詳細", emoji_path(emoji.aid) %></p>
+        </div>
+
+        <hr />
+      </article>
+    <% end %>
+  </div>
+<% end %>

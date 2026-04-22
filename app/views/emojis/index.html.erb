@@ -1,9 +1,22 @@
-<div class="emojis">
-  <%= render partial: "emoji", collection: @emojis %>
-</div>
-<% if @emojis.empty? %>
-  <p>絵文字はありません</p>
+<h1>絵文字グループ一覧</h1>
+
+<% if @group_subgroups.blank? %>
+  <p>グループはありません</p>
+<% else %>
+  <ul>
+    <% @group_subgroups.each do |group_name, subgroup_names| %>
+      <li>
+        <strong><%= link_to group_name, group_emojis_path(group_name: group_name) %></strong>
+        <% if subgroup_names.any? %>
+          <ul>
+            <% subgroup_names.each do |subgroup_name| %>
+              <li><%= subgroup_name %></li>
+            <% end %>
+          </ul>
+        <% else %>
+          <p>subgroup は未設定です</p>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
 <% end %>
-<div>
-  ページネーション
-</div>
