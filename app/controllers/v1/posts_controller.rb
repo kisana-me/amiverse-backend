@@ -15,11 +15,11 @@ class V1::PostsController < V1::ApplicationController
           .order(id: :desc)
           .limit(50)
       end
-      render template: 'v1/posts/show', formats: [:json]
+      render template: "v1/posts/show", formats: [ :json ]
     else
       render json: {
-        status: 'error',
-        message: '投稿が見つかりませんでした'
+        status: "error",
+        message: "投稿が見つかりませんでした"
       }, status: :not_found
     end
   end
@@ -27,7 +27,7 @@ class V1::PostsController < V1::ApplicationController
   def quotes
     @post = Post.find_by(aid: params[:post_aid])
     unless @post
-      render json: { status: 'error', message: '投稿が見つかりません' }, status: :not_found
+      render json: { status: "error", message: "投稿が見つかりません" }, status: :not_found
       return
     end
 
@@ -39,29 +39,29 @@ class V1::PostsController < V1::ApplicationController
       .order(id: :desc)
       .limit(50)
 
-    render template: 'v1/posts/index', formats: [:json]
+    render template: "v1/posts/index", formats: [ :json ]
   end
 
   def diffusions
     @post = Post.find_by(aid: params[:post_aid])
     unless @post
-      render json: { status: 'error', message: '投稿が見つかりません' }, status: :not_found
+      render json: { status: "error", message: "投稿が見つかりません" }, status: :not_found
       return
     end
 
     @accounts = @post.diffused_by
       .where(status: :normal)
       .includes(:icon)
-      .order('diffuses.id DESC')
+      .order("diffuses.id DESC")
       .limit(50)
 
-    render template: 'v1/accounts/index', formats: [:json]
+    render template: "v1/accounts/index", formats: [ :json ]
   end
 
   def reactions
     @post = Post.find_by(aid: params[:post_aid])
     unless @post
-      render json: { status: 'error', message: '投稿が見つかりません' }, status: :not_found
+      render json: { status: "error", message: "投稿が見つかりません" }, status: :not_found
       return
     end
 
@@ -81,7 +81,7 @@ class V1::PostsController < V1::ApplicationController
     emoji_ids = @post.reactions.select(:emoji_id).distinct
     @emojis = Emoji.where(id: emoji_ids).includes(:image)
 
-    render template: 'v1/posts/reactions', formats: [:json]
+    render template: "v1/posts/reactions", formats: [ :json ]
   end
 
   def create
@@ -92,11 +92,11 @@ class V1::PostsController < V1::ApplicationController
       # 通知の作成
       create_notifications
 
-      render template: 'v1/posts/show', formats: [:json], status: :created
+      render template: "v1/posts/show", formats: [ :json ], status: :created
     else
       render json: {
-        status: 'error',
-        message: '投稿に失敗しました',
+        status: "error",
+        message: "投稿に失敗しました",
         error: @post.errors.full_messages
       }, status: :unprocessable_entity
     end
@@ -105,11 +105,11 @@ class V1::PostsController < V1::ApplicationController
   def destroy
     @post = @current_account.posts.find_by(aid: params[:aid])
     if @post.update(status: :deleted)
-      render json: { status: 'success', message: '投稿を削除しました' }, status: :ok
+      render json: { status: "success", message: "投稿を削除しました" }, status: :ok
     else
       render json: {
-        status: 'error',
-        message: '投稿の削除に失敗しました',
+        status: "error",
+        message: "投稿の削除に失敗しました",
         errors: @post.errors.full_messages
       }, status: :unprocessable_entity
     end
@@ -160,7 +160,7 @@ class V1::PostsController < V1::ApplicationController
         :content,
         :visibility,
         media_files: [],
-        drawing_attributes: [:data, :name, :description]
+        drawing_attributes: [ :data, :name, :description ]
       ]
     )
   end

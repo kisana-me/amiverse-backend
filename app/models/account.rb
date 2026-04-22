@@ -3,21 +3,21 @@ class Account < ApplicationRecord
   has_many :posts, dependent: :destroy
   has_many :images
   has_many :videos
-  belongs_to :icon, class_name: 'Image', foreign_key: 'icon_id', optional: true
-  belongs_to :banner, class_name: 'Image', foreign_key: 'banner_id', optional: true
+  belongs_to :icon, class_name: "Image", foreign_key: "icon_id", optional: true
+  belongs_to :banner, class_name: "Image", foreign_key: "banner_id", optional: true
   has_many :oauth_accounts
-  has_many :active_relationships, class_name: 'Follow', foreign_key: 'follower_id', dependent: :destroy
-  has_many :passive_relationships, class_name: 'Follow', foreign_key: 'followed_id', dependent: :destroy
+  has_many :active_relationships, class_name: "Follow", foreign_key: "follower_id", dependent: :destroy
+  has_many :passive_relationships, class_name: "Follow", foreign_key: "followed_id", dependent: :destroy
   has_many :following, through: :active_relationships, source: :followed
   has_many :followers, through: :passive_relationships, source: :follower
-  has_many :active_blockings, class_name: 'Block', foreign_key: 'blocker_id', dependent: :destroy
-  has_many :passive_blockings, class_name: 'Block', foreign_key: 'blocked_id', dependent: :destroy
+  has_many :active_blockings, class_name: "Block", foreign_key: "blocker_id", dependent: :destroy
+  has_many :passive_blockings, class_name: "Block", foreign_key: "blocked_id", dependent: :destroy
   has_many :blocking, through: :active_blockings, source: :blocked
   has_many :blockers, through: :passive_blockings, source: :blocker
   has_many :diffuses, dependent: :destroy
   has_many :diffused_posts, through: :diffuses, source: :post
   has_many :notifications, dependent: :destroy
-  has_many :act_notifications, class_name: 'Notification', foreign_key: :actor_id, dependent: :nullify
+  has_many :act_notifications, class_name: "Notification", foreign_key: :actor_id, dependent: :nullify
   has_one :notification_setting, dependent: :destroy
   has_many :webpush_subscriptions, dependent: :destroy
 
@@ -55,46 +55,46 @@ class Account < ApplicationRecord
   scope :isnt_closed, -> { where.not(visibility: :closed) }
 
   def icon_file=(file)
-    if file.present? && file.content_type.start_with?('image/')
+    if file.present? && file.content_type.start_with?("image/")
       new_image = Image.new
       new_image.account = self
       new_image.image = file
-      new_image.variant_type = 'icon'
+      new_image.variant_type = "icon"
       self.icon = new_image
     end
   end
 
   def banner_file=(file)
-    if file.present? && file.content_type.start_with?('image/')
+    if file.present? && file.content_type.start_with?("image/")
       new_image = Image.new
       new_image.account = self
       new_image.image = file
-      new_image.variant_type = 'banner'
+      new_image.variant_type = "banner"
       self.banner = new_image
     end
   end
 
   def icon_url
-    icon&.image_url || full_url('/static_assets/images/amiverse-logo.webp')
+    icon&.image_url || full_url("/static_assets/images/amiverse-logo.webp")
   end
 
   def banner_url
-    banner&.image_url || full_url('/static_assets/images/amiverse-1.webp')
+    banner&.image_url || full_url("/static_assets/images/amiverse-1.webp")
   end
 
   def subscription_plan
-    status = meta.dig('subscription', 'subscription_status')
+    status = meta.dig("subscription", "subscription_status")
     return :basic unless %w[active trialing].include?(status)
 
-    period_end = meta.dig('subscription', 'current_period_end')&.to_time
+    period_end = meta.dig("subscription", "current_period_end")&.to_time
     return :expired unless period_end && period_end > Time.current
 
-    plan = meta.dig('subscription', 'plan')
+    plan = meta.dig("subscription", "plan")
     plan&.to_sym || :unknown
   end
 
   def admin?
-    self.meta['roles']&.include?('admin')
+    self.meta["roles"]&.include?("admin")
   end
 
   def notification_setting

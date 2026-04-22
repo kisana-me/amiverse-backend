@@ -17,13 +17,13 @@ class V1::SearchController < V1::ApplicationController
 
     search_options = {
       limit: limit,
-      sort: ['created_at:desc'],
-      filter: filter.join(' AND '),
-      attributes_to_highlight: ['content']
+      sort: [ "created_at:desc" ],
+      filter: filter.join(" AND "),
+      attributes_to_highlight: [ "content" ]
     }
 
     results = Post.index.search(query, search_options)
-    ids = results['hits'].map { |h| h['id'] }
+    ids = results["hits"].map { |h| h["id"] }
 
     @posts = Post.where(id: ids)
       .includes(
@@ -34,16 +34,16 @@ class V1::SearchController < V1::ApplicationController
         :quotes,
         :images,
         :videos,
-        quote: [:account],
-        reactions: [:emoji],
-        account: [:icon],
+        quote: [ :account ],
+        reactions: [ :emoji ],
+        account: [ :icon ],
       )
       .order(created_at: :desc)
 
     if @posts.present?
-      response.headers['X-Next-Cursor'] = @posts.last.created_at.to_f.to_s
+      response.headers["X-Next-Cursor"] = @posts.last.created_at.to_f.to_s
     end
 
-    render template: 'v1/feeds/feed_only_posts', formats: [:json]
+    render template: "v1/feeds/feed_only_posts", formats: [ :json ]
   end
 end

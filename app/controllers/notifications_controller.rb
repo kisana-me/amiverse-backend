@@ -45,33 +45,33 @@ class NotificationsController < ApplicationController
   private
 
   def target_accounts(target_type, aids_text)
-    case target_type.presence || 'all'
-    when 'all'
-      [Account.is_normal, nil]
-    when 'specific'
+    case target_type.presence || "all"
+    when "all"
+      [ Account.is_normal, nil ]
+    when "specific"
       aids = parse_aids(aids_text)
 
       if aids.empty?
-        return [nil, '個別配信を選択した場合は account aid を入力してください。']
+        return [ nil, "個別配信を選択した場合は account aid を入力してください。" ]
       end
 
       accounts_by_aid = Account.is_normal.where(aid: aids).index_by { |account| account.aid.to_s }
       missing_aids = aids - accounts_by_aid.keys
 
       if missing_aids.any?
-        return [nil, "存在しない account aid があります: #{missing_aids.join(', ')}"]
+        return [ nil, "存在しない account aid があります: #{missing_aids.join(', ')}" ]
       end
 
-      [aids.map { |aid| accounts_by_aid[aid] }, nil]
+      [ aids.map { |aid| accounts_by_aid[aid] }, nil ]
     else
-      [nil, '配信対象の指定が不正です。']
+      [ nil, "配信対象の指定が不正です。" ]
     end
   end
 
   def parse_aids(aids_text)
     aids_text
-      .tr('、', ',')
-      .split(',')
+      .tr("、", ",")
+      .split(",")
       .map(&:strip)
       .reject(&:blank?)
       .uniq

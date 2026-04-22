@@ -10,9 +10,9 @@ class SessionsController < ApplicationController
 
   def signout
     if sign_out
-      redirect_to root_path, notice: 'サインアウトしました'
+      redirect_to root_path, notice: "サインアウトしました"
     else
-      redirect_to root_path, alert: 'サインアウトできませんでした'
+      redirect_to root_path, alert: "サインアウトできませんでした"
     end
   end
 
@@ -28,7 +28,7 @@ class SessionsController < ApplicationController
 
   def update
     if @session.update(session_params)
-      redirect_to account_session_path(@account.aid, @session.aid), notice: '更新しました'
+      redirect_to account_session_path(@account.aid, @session.aid), notice: "更新しました"
     else
       render :show, status: :unprocessable_entity
     end
@@ -48,7 +48,7 @@ class SessionsController < ApplicationController
     params.expect(
       session: [
         :name,
-        :status,
+        :status
       ]
     )
   end

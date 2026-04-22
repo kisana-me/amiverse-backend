@@ -5,7 +5,7 @@ module VideoProcessable
 
   def process_video(input_path:, video:, variant_type:)
     movie = FFMPEG::Movie.new(input_path)
-    tempfile = Tempfile.new([SecureRandom.uuid, ".mp4"])
+    tempfile = Tempfile.new([ SecureRandom.uuid, ".mp4" ])
     tempfile.binmode
 
     options = set_video_options(variant_type)
@@ -32,19 +32,19 @@ module VideoProcessable
 
   def set_video_options(variant_type)
     case variant_type
-    when 'copy'
-      return copy_options
-    when 'normal'
-      return normal_options
+    when "copy"
+      copy_options
+    when "normal"
+      normal_options
     else
-      return normal_options
+      normal_options
     end
   end
 
   def normal_options
     {
-      video_codec: 'libx264',
-      audio_codec: 'aac',
+      video_codec: "libx264",
+      audio_codec: "aac",
       custom: [
         "-crf", "24",
         "-preset", "fast",
@@ -69,8 +69,8 @@ module VideoProcessable
 
   def copy_options
     {
-      video_codec: 'copy',
-      audio_codec: 'copy',
+      video_codec: "copy",
+      audio_codec: "copy",
       custom: [
         "-map_metadata", "-1",
         "-movflags", "+faststart"

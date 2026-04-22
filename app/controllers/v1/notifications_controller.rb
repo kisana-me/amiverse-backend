@@ -8,11 +8,11 @@ class V1::NotificationsController < V1::ApplicationController
                                      .is_normal
                                      .recent
                                      .with_details
-                                     .where('created_at < ?', cursor_time)
+                                     .where("created_at < ?", cursor_time)
                                      .limit(20)
 
     if @notifications.present?
-      response.headers['X-Next-Cursor'] = @notifications.last.created_at.to_f.to_s
+      response.headers["X-Next-Cursor"] = @notifications.last.created_at.to_f.to_s
     end
 
     # 取得した通知のうち、未読のものを既読にする
@@ -20,11 +20,11 @@ class V1::NotificationsController < V1::ApplicationController
     if unread_ids.any?
       Notification.where(id: unread_ids).update_all(checked: true)
     end
-    render template: 'v1/notifications/index', formats: [:json]
+    render template: "v1/notifications/index", formats: [ :json ]
   end
 
   def unread_count
     count = @current_account.notifications.is_normal.unread.count
-    render json: { status: 'success', count: count }
+    render json: { status: "success", count: count }
   end
 end

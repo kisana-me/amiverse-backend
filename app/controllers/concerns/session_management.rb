@@ -6,7 +6,7 @@ module SessionManagement
   # Accountに必要なカラム(名前 型)
   # - status enum { normal: 0, locked: 1, deleted: 2 }
 
-  COOKIE_NAME = 'amiverse'.freeze
+  COOKIE_NAME = "amiverse".freeze
   COOKIE_EXPIRES_IN = 6.months
   TOKEN_EXPIRES_IN = 6.months
 
@@ -104,8 +104,8 @@ module SessionManagement
       auth = authorization_header_value
       return [] if auth.blank?
 
-      token = auth.sub(/\ABearer\s+/i, '')
-      token.present? ? [token] : []
+      token = auth.sub(/\ABearer\s+/i, "")
+      token.present? ? [ token ] : []
     end
   rescue JSON::ParserError
     []
@@ -126,6 +126,6 @@ module SessionManagement
   def authorization_header_value
     return nil unless respond_to?(:request) && request
 
-    request.headers['Authorization'].presence
+    request.headers["Authorization"].presence
   end
 end

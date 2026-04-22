@@ -31,7 +31,7 @@ class Image < ApplicationRecord
     if normal? && variant_type.present?
       object_url(key: "/images/variants/#{aid}.webp")
     else
-      full_url('/static_assets/images/amiverse-1.webp')
+      full_url("/static_assets/images/amiverse-1.webp")
     end
   end
 
@@ -40,7 +40,7 @@ class Image < ApplicationRecord
 
     self.save_original = false
     if save_original
-      self.original_ext = image.original_filename.split('.').last.downcase
+      self.original_ext = image.original_filename.split(".").last.downcase
       s3_upload(
         key: "/images/originals/#{aid}.#{original_ext}",
         file: image.path,
@@ -51,20 +51,20 @@ class Image < ApplicationRecord
 
     return if deleted?
 
-    self.variant_type = 'normal' if variant_type.blank?
+    self.variant_type = "normal" if variant_type.blank?
     processed = process_image(image: image, variant_type: variant_type)
     s3_upload(
       key: "/images/variants/#{aid}.webp",
       file: processed.path,
-      content_type: 'image/webp'
+      content_type: "image/webp"
     )
     processed.delete
   end
 
-  def create_variant(next_variant_type = 'normal')
+  def create_variant(next_variant_type = "normal")
     return false if original_ext.blank?
 
-    tempfile = Tempfile.new(['tempfile', ".#{original_ext}"])
+    tempfile = Tempfile.new([ "tempfile", ".#{original_ext}" ])
     tempfile.binmode
     s3_download(
       key: "/images/originals/#{aid}.#{original_ext}",
@@ -75,7 +75,7 @@ class Image < ApplicationRecord
     s3_upload(
       key: "/images/variants/#{aid}.webp",
       file: processed.path,
-      content_type: 'image/webp'
+      content_type: "image/webp"
     )
     processed.delete
     tempfile.close

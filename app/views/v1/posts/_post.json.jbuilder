@@ -19,7 +19,7 @@ end
 if defined? reply_to
   json.reply do
     if post.reply
-      json.partial! 'v1/posts/post', post: post.reply, quote_to: true
+      json.partial! "v1/posts/post", post: post.reply, quote_to: true
     else
       json.null!
     end
@@ -29,7 +29,7 @@ end
 if defined? quote_to
   json.quote do
     if post.quote
-      json.partial! 'v1/posts/post', post: post.quote
+      json.partial! "v1/posts/post", post: post.quote
     else
       json.null!
     end
@@ -40,15 +40,15 @@ if defined? reactions
   json.reactions do
     if emoji_counts.empty?
       json.child! do
-        json.aid '3g2a62o0pwxlc7' # 仮(本番でのAIDを直)
-        json.name '❤️'
-        json.name_id 'red_heart'
+        json.aid "3g2a62o0pwxlc7" # 仮(本番でのAIDを直)
+        json.name "❤️"
+        json.name_id "red_heart"
         json.reactions_count 0
         json.reacted false
       end
     else
       json.array! emoji_counts.keys do |emoji|
-        json.partial! 'v1/emojis/emoji', emoji: emoji
+        json.partial! "v1/emojis/emoji", emoji: emoji
         json.reactions_count emoji_counts[emoji]
         json.reacted my_reacted_emoji_ids.include?(emoji.id)
       end
@@ -61,7 +61,7 @@ if defined? display_media
     media_items = []
     post.images.each do |image|
       media_items << {
-        type: 'image',
+        type: "image",
         aid: image.aid,
         name: image.name,
         description: image.description,
@@ -70,7 +70,7 @@ if defined? display_media
     end
     post.videos.each do |video|
       media_items << {
-        type: 'video',
+        type: "video",
         aid: video.aid,
         name: video.name,
         description: video.description,
@@ -96,5 +96,5 @@ if defined? display_media
 end
 
 json.account do
-  json.partial! 'v1/accounts/account', account: post.account
+  json.partial! "v1/accounts/account", account: post.account
 end

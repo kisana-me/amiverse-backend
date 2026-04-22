@@ -24,14 +24,14 @@ class Emoji < ApplicationRecord
   scope :isnt_deleted, -> { where.not(status: :deleted) }
 
   def emoji_url
-    image&.image_url || full_url('/static_assets/images/amiverse-logo.webp')
+    image&.image_url || full_url("/static_assets/images/amiverse-logo.webp")
   end
 
   private
 
   def image_upload
-    self.name = image.original_filename.split('.').first if name.blank?
-    extension = image.original_filename.split('.').last.downcase
+    self.name = image.original_filename.split(".").first if name.blank?
+    extension = image.original_filename.split(".").last.downcase
     self.original_ext = extension
     s3_upload(
       key: "/images/originals/#{aid}.#{extension}",

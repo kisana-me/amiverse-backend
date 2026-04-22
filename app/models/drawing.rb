@@ -34,8 +34,8 @@ class Drawing < ApplicationRecord
     width = 320
     height = 120
 
-    require 'chunky_png'
-    require 'base64'
+    require "chunky_png"
+    require "base64"
 
     # Decode Base64 data
     decoded_data = Base64.decode64(data)
@@ -61,13 +61,13 @@ class Drawing < ApplicationRecord
     end
 
     # Save to temp file and upload
-    Tempfile.create(["drawing_#{aid}", '.png']) do |file|
+    Tempfile.create([ "drawing_#{aid}", ".png" ]) do |file|
       png.save(file.path)
 
       s3_upload(
         key: "drawings/#{aid}.png",
         file: file.path,
-        content_type: 'image/png'
+        content_type: "image/png"
       )
     end
   rescue StandardError => e

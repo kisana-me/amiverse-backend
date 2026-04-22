@@ -1,13 +1,13 @@
 class VideoProcessingJob < ApplicationJob
   queue_as :default
 
-  def perform(video_id, variant_type = 'normal')
+  def perform(video_id, variant_type = "normal")
     video = Video.find_by(id: video_id)
     return unless video
 
     # オリジナル動画をダウンロード
     original_key = "/videos/originals/#{video.aid}.#{video.original_ext}"
-    temp_input = Tempfile.new(['original', ".#{video.original_ext}"])
+    temp_input = Tempfile.new([ "original", ".#{video.original_ext}" ])
     temp_input.binmode
 
     begin
@@ -22,16 +22,16 @@ class VideoProcessingJob < ApplicationJob
     begin
       processed_file = video.process_video(input_path: temp_input.path, video: video, variant_type: variant_type)
 
-      upload_key = if variant_type == 'normal'
+      upload_key = if variant_type == "normal"
                      "/videos/variants/#{video.aid}.mp4"
-                   else
+      else
                      "/videos/variants/#{variant_type}/#{video.aid}.mp4"
-                   end
+      end
 
       video.send(:s3_upload,
         key: upload_key,
         file: processed_file.path,
-        content_type: 'video/mp4'
+        content_type: "video/mp4"
       )
 
       # バリアント情報の更新

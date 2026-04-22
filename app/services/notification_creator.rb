@@ -24,7 +24,7 @@ class NotificationCreator
     # 3. 重複チェック: 「未読」の同じ通知が既にある場合は、新規作成せずに日時だけ更新する（スパム防止）
     # 例: 何度もいいね/解除を繰り返した場合など
     existing_notification = find_duplicate
-    
+
     if existing_notification
       existing_notification.touch # update_atを更新して一覧の一番上に持ってくる
     else
@@ -46,7 +46,7 @@ class NotificationCreator
 
   def notification_allowed?
     # システム通知は設定に関係なく常に許可
-    return true if action.to_s == 'system'
+    return true if action.to_s == "system"
 
     # 設定を取得
     setting = recipient.notification_setting
@@ -62,7 +62,7 @@ class NotificationCreator
 
   def webpush_allowed?(notification)
     # システム通知は設定に関係なく常に許可
-    return true if notification.action == 'system'
+    return true if notification.action == "system"
 
     setting = recipient.notification_setting
     column_name = "wp_#{notification.action}"
@@ -111,7 +111,7 @@ class NotificationCreator
           p256dh: subscription.p256dh,
           auth: subscription.auth_key,
           vapid: {
-            subject: 'mailto:kisana@amiverse.net',
+            subject: "mailto:kisana@amiverse.net",
             public_key: Rails.configuration.x.vapid_public_key,
             private_key: Rails.configuration.x.vapid_private_key
           }
@@ -125,62 +125,62 @@ class NotificationCreator
   end
 
   def build_webpush_message(notification)
-    title = 'Amiverse '
-    body = '新しい通知があります'
-    icon = '/static-assets/images/amiverse-logo-400.webp'
-    image = nil#'/static-assets/images/amiverse-1.webp'
-    tag = 'new-notification'
+    title = "Amiverse "
+    body = "新しい通知があります"
+    icon = "/static-assets/images/amiverse-logo-400.webp"
+    image = nil# '/static-assets/images/amiverse-1.webp'
+    tag = "new-notification"
     timestamp = notification.created_at.to_i * 1000
-    url = '/notifications'
+    url = "/notifications"
     actions = []
     action_urls = {}
 
     case notification.action
-    when 'reaction'
-      title += '❤️'
+    when "reaction"
+      title += "❤️"
       body = "#{notification.actor.name}さんがあなたの投稿にリアクションしました"
       icon = notification.actor.icon_url
       set_post_actions(notification, tag, actions, action_urls)
-    when 'diffuse'
-      title += '🔁'
+    when "diffuse"
+      title += "🔁"
       body = "#{notification.actor.name}さんがあなたの投稿を拡散しました"
       icon = notification.actor.icon_url
       set_post_actions(notification, tag, actions, action_urls)
-    when 'reply'
-      title += '💬'
+    when "reply"
+      title += "💬"
       body = "#{notification.actor.name}さんがあなたの投稿に返信しました"
       icon = notification.actor.icon_url
       set_post_actions(notification, tag, actions, action_urls)
-    when 'quote'
-      title += '✒️'
+    when "quote"
+      title += "✒️"
       body = "#{notification.actor.name}さんがあなたの投稿を引用しました"
       icon = notification.actor.icon_url
       set_post_actions(notification, tag, actions, action_urls)
-    when 'follow'
-      title += '👤'
+    when "follow"
+      title += "👤"
       body = "#{notification.actor.name}さんがあなたをフォローしました"
       icon = notification.actor.icon_url
       tag.replace("follow")
-      actions.push({ action: 'view_account', title: 'アカウントを見る', icon: notification.actor.icon_url })
-      action_urls['view_account'] = "/@#{notification.actor.name_id}"
-    when 'mention'
-      title += '📢'
+      actions.push({ action: "view_account", title: "アカウントを見る", icon: notification.actor.icon_url })
+      action_urls["view_account"] = "/@#{notification.actor.name_id}"
+    when "mention"
+      title += "📢"
       body = "#{notification.actor.name}さんがあなたをメンションしました"
       icon = notification.actor.icon_url
-      tag.replace('mention')
+      tag.replace("mention")
       set_post_actions(notification, tag, actions, action_urls)
-    when 'signin'
-      title += '🔑'
+    when "signin"
+      title += "🔑"
       body = "新しい端末からサインインがありました"
-      tag.replace('signin')
-      actions.push({ action: 'open_settings', title: '設定を開く' })
-      action_urls['open_settings'] = '/settings'
-    when 'system'
-      title += '🔔'
+      tag.replace("signin")
+      actions.push({ action: "open_settings", title: "設定を開く" })
+      action_urls["open_settings"] = "/settings"
+    when "system"
+      title += "🔔"
       body = notification.content
-      tag.replace('system')
+      tag.replace("system")
     else
-      title += '❔'
+      title += "❔"
     end
 
     {
@@ -205,10 +205,10 @@ class NotificationCreator
 
     tag.replace("post-#{notification.notifiable.aid}")
     actions.push(
-      { action: 'view_account', title: 'アカウントを見る', icon: notification.actor.icon_url },
-      { action: 'view_post', title: '投稿を見る', icon: notification.account.icon_url }
+      { action: "view_account", title: "アカウントを見る", icon: notification.actor.icon_url },
+      { action: "view_post", title: "投稿を見る", icon: notification.account.icon_url }
     )
-    action_urls['view_account'] = "/@#{notification.actor.name_id}"
-    action_urls['view_post'] = "/posts/#{notification.notifiable.aid}"
+    action_urls["view_account"] = "/@#{notification.actor.name_id}"
+    action_urls["view_post"] = "/posts/#{notification.notifiable.aid}"
   end
 end

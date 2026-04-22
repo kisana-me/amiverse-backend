@@ -20,33 +20,33 @@ class EmojiImportService
 
     puts "Starting import from #{@file_path}..."
 
-    current_group = 'Unknown'
-    current_subgroup = 'Unknown'
+    current_group = "Unknown"
+    current_subgroup = "Unknown"
 
     File.foreach(@file_path) do |line|
       line = line.strip
 
       # 1. グループ/サブグループの更新
-      if line.start_with?('# group:')
-        current_group = line.sub('# group:', '').strip
+      if line.start_with?("# group:")
+        current_group = line.sub("# group:", "").strip
         next
-      elsif line.start_with?('# subgroup:')
-        current_subgroup = line.sub('# subgroup:', '').strip
+      elsif line.start_with?("# subgroup:")
+        current_subgroup = line.sub("# subgroup:", "").strip
         next
       end
 
       # 2. データ行の解析（空行やコメント行はスキップ）
-      next if line.empty? || line.start_with?('#')
+      next if line.empty? || line.start_with?("#")
 
       # 行のパース
       # 例: 1F600 ; fully-qualified # 😀 E1.0 grinning face
-      code_part, rest = line.split(';', 2)
-      status_part, comment_part = rest.split('#', 2)
+      code_part, rest = line.split(";", 2)
+      status_part, comment_part = rest.split("#", 2)
 
       status_text = status_part.strip
 
       # 要件: fully-qualified のみ取り込む
-      next unless status_text == 'fully-qualified'
+      next unless status_text == "fully-qualified"
 
       # 生データの抽出
       hex_sequence = code_part.strip # "1F600" や "1F468 200D 2695"
@@ -71,11 +71,11 @@ class EmojiImportService
       # データの加工
 
       # name: 実際の絵文字
-      emoji_char = hex_sequence.split.map { |c| c.hex }.pack('U*')
+      emoji_char = hex_sequence.split.map { |c| c.hex }.pack("U*")
 
       # name_id: 英数字以外をアンダーバーに置換（連続は1つにまとめる）
       # 例: "boy: medium skin tone" -> "boy_medium_skin_tone"
-      name_id_value = english_name.downcase.gsub(/[^a-z0-9]+/, '_').gsub(/^_|_$/, '')
+      name_id_value = english_name.downcase.gsub(/[^a-z0-9]+/, "_").gsub(/^_|_$/, "")
 
       # description: "1F600\nE1.0" の形式
       description_value = "#{hex_sequence}\n#{version_str}"

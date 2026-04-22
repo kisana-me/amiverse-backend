@@ -32,13 +32,13 @@ class Video < ApplicationRecord
     if normal? && variant_type.present?
       object_url(key: "/videos/variants/#{aid}.mp4")
     elsif normal?
-      full_url('/static_assets/videos/loading.mp4')
+      full_url("/static_assets/videos/loading.mp4")
     else
-      full_url('/static_assets/videos/amiverse-1.mp4')
+      full_url("/static_assets/videos/amiverse-1.mp4")
     end
   end
 
-  def create_variant(next_variant_type = 'normal')
+  def create_variant(next_variant_type = "normal")
     return false if original_ext.blank?
     VideoProcessingJob.perform_later(id, next_variant_type)
   end
@@ -63,7 +63,7 @@ class Video < ApplicationRecord
 
   def video_upload
     # self.name = video.original_filename.split('.').first if name.blank?
-    extension = video.original_filename.split('.').last.downcase
+    extension = video.original_filename.split(".").last.downcase
     self.original_ext = extension
 
     s3_upload(
@@ -89,23 +89,23 @@ class Video < ApplicationRecord
     end
 
     if video.size > 500.megabytes
-      errors.add(:video, 'must be 500MB or less')
+      errors.add(:video, "must be 500MB or less")
     end
 
     allowed_types = %w[video/mp4 video/quicktime video/x-msvideo video/x-matroska video/webm]
     unless allowed_types.include?(video.content_type)
-      errors.add(:video, 'must be a supported video format (mp4, mov, avi, mkv, webm)')
+      errors.add(:video, "must be a supported video format (mp4, mov, avi, mkv, webm)")
     end
 
     begin
       movie = FFMPEG::Movie.new(video.path)
       if movie.duration < 3
-        errors.add(:video, 'must be at least 3 seconds')
+        errors.add(:video, "must be at least 3 seconds")
       elsif movie.duration > 5.minutes
-        errors.add(:video, 'must be 5 minutes or less')
+        errors.add(:video, "must be 5 minutes or less")
       end
     rescue StandardError
-      errors.add(:video, 'could not be processed')
+      errors.add(:video, "could not be processed")
     end
   end
 end

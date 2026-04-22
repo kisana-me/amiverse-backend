@@ -19,12 +19,12 @@ class OgImagesController < ApplicationController
       nil
     end
 
-    svg_string = render_to_string(template: 'og_images/post', formats: [:svg])
+    svg_string = render_to_string(template: "og_images/post", formats: [ :svg ])
 
     image = Vips::Image.new_from_buffer(svg_string, "")
     png_data = image.write_to_buffer(".png")
 
-    send_data png_data, type: 'image/png', disposition: 'inline'
+    send_data png_data, type: "image/png", disposition: "inline"
   end
 
   def account
@@ -32,7 +32,7 @@ class OgImagesController < ApplicationController
 
   private
 
-  def image_to_base64(s3_key, image_format = 'webp')
+  def image_to_base64(s3_key, image_format = "webp")
     target = StringIO.new
 
     Image.s3_download(key: s3_key, response_target: target)

@@ -11,9 +11,9 @@ class PostsController < ApplicationController
 
   def update
     if @post.update(post_params)
-      redirect_to post_path(@post.aid), notice: '更新しました'
+      redirect_to post_path(@post.aid), notice: "更新しました"
     else
-      flash.now[:alert] = '更新できませんでした'
+      flash.now[:alert] = "更新できませんでした"
       render :show, status: :unprocessable_entity
     end
   end
@@ -24,7 +24,7 @@ class PostsController < ApplicationController
     params.expect(
       post: [
         :visibility,
-        :status,
+        :status
       ]
     )
   end

@@ -1,4 +1,4 @@
-require 'active_support/core_ext/integer/time'
+require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
   config.enable_reloading = false
@@ -7,7 +7,7 @@ Rails.application.configure do
   config.action_controller.perform_caching = true
 
   config.assets.compile = false
-  config.public_file_server.headers = { 'cache-control' => "public, max-age=#{10.days.to_i}" }
+  config.public_file_server.headers = { "cache-control" => "public, max-age=#{10.days.to_i}" }
   config.active_storage.service = :minio
   config.assume_ssl = true
   config.force_ssl = true
@@ -15,14 +15,14 @@ Rails.application.configure do
   # Skip http-to-https redirect for the default health check endpoint.
   # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
 
-  config.log_tags = [:request_id]
-  config.log_level = ENV.fetch('RAILS_LOG_LEVEL', 'info')
-  config.logger = Logger.new('log/production.log', 'daily')
+  config.log_tags = [ :request_id ]
+  config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "info")
+  config.logger = Logger.new("log/production.log", "daily")
   config.i18n.fallbacks = true
   config.active_support.report_deprecations = false
   config.active_record.dump_schema_after_migration = false
-  config.active_record.attributes_for_inspect = [:id]
-  config.silence_healthcheck_path = '/up'
+  config.active_record.attributes_for_inspect = [ :id ]
+  config.silence_healthcheck_path = "/up"
   config.cache_store = :memory_store # solid_cache_store
 
   # # Replace the default in-process and non-durable queuing backend for Active Job.
@@ -40,7 +40,7 @@ Rails.application.configure do
   # }
 
   # Enable DNS rebinding protection and other `Host` header attacks.
-  env_hosts = [ENV['BACK_URL'], ENV['FRONT_URL']].compact.map do |u|
+  env_hosts = [ ENV["BACK_URL"], ENV["FRONT_URL"] ].compact.map do |u|
     begin
       uri = URI.parse(u)
       uri.host || u

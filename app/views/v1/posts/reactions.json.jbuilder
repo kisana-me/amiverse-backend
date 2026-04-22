@@ -1,6 +1,6 @@
 json.reactions @reactions do |reaction|
   json.account do
-    json.partial! 'v1/accounts/account', account: reaction.account
+    json.partial! "v1/accounts/account", account: reaction.account
   end
   json.emoji do
     json.extract! reaction.emoji, :aid, :name, :name_id

@@ -19,7 +19,7 @@ module TokenTools
     BCrypt::Password.create(token, cost: cost)
   end
 
-  def generate_token(expires_in = 0, type = 'token')
+  def generate_token(expires_in = 0, type = "token")
     token = SecureRandom.base36(BASE36_LENGTH)
     lookup = generate_lookup(token)
     digest = generate_digest(token)
@@ -30,7 +30,7 @@ module TokenTools
     token
   end
 
-  def authenticate_token(token, type = 'token')
+  def authenticate_token(token, type = "token")
     digest = send("#{type}_digest")
     return false unless digest
 
@@ -38,7 +38,7 @@ module TokenTools
   end
 
   class_methods do
-    def findby_token(token, type = 'token')
+    def findby_token(token, type = "token")
       lookup = new.generate_lookup(token)
       record = where("#{type}_expires_at > ?", Time.current)
         .find_by("#{type}_lookup": lookup)
@@ -50,7 +50,7 @@ module TokenTools
       record
     end
 
-    def find_all_by_tokens(tokens, type = 'token')
+    def find_all_by_tokens(tokens, type = "token")
       return [] if tokens.blank?
 
       lookups = tokens.map { |token| new.generate_lookup(token) }

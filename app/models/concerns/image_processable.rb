@@ -5,9 +5,9 @@ module ImageProcessable
     resize, extent = set_image_size(variant_type)
     processor = ImageProcessing::MiniMagick
       .source(image.path)
-      .gravity('center')
+      .gravity("center")
       .strip
-      .colorspace('sRGB')
+      .colorspace("sRGB")
       .coalesce
       .resize(resize)
 
@@ -17,12 +17,12 @@ module ImageProcessable
 
     processor
       .quality(80)
-      .convert('webp')
+      .convert("webp")
       .call
   end
 
   def validate_image(
-    column_name: 'image',
+    column_name: "image",
     required: true,
     max_size_mb: 30,
     max_dim: 4096
@@ -53,41 +53,41 @@ module ImageProcessable
   private
 
   def set_image_size(variant_type)
-    resize = '2048x2048>'
-    extent = '' # 切り取る
+    resize = "2048x2048>"
+    extent = "" # 切り取る
     case variant_type
     # bealive capture
-    when 'bealive_capture'
-      resize = '600x800^'
-      extent = '600x800'
+    when "bealive_capture"
+      resize = "600x800^"
+      extent = "600x800"
     # icon
-    when 'icon'
-      resize = '400x400^'
-      extent = '400x400'
-    when 'q-icon'
-      resize = '100x100^'
-      extent = '100x100'
+    when "icon"
+      resize = "400x400^"
+      extent = "400x400"
+    when "q-icon"
+      resize = "100x100^"
+      extent = "100x100"
     # banner
-    when 'banner'
-      resize = '1600x1600^'
-      extent = '1600x1600'
-    when 'q-banner'
-      resize = '400x400^'
-      extent = '400x400'
+    when "banner"
+      resize = "1600x1600^"
+      extent = "1600x1600"
+    when "q-banner"
+      resize = "400x400^"
+      extent = "400x400"
     # normal
-    when 'normal'
-      resize = '2048x2048>'
-    when 'q-normal'
-      resize = '512x512>'
-    when 'd-normal'
-      resize = '4096x4096>'
+    when "normal"
+      resize = "2048x2048>"
+    when "q-normal"
+      resize = "512x512>"
+    when "d-normal"
+      resize = "4096x4096>"
     # emoji
-    when 'emoji'
-      resize = '200x200>'
-    when 'q-emoji'
-      resize = '50x50>'
+    when "emoji"
+      resize = "200x200>"
+    when "q-emoji"
+      resize = "50x50>"
     else
-      raise 'Unknown variant_type'
+      raise "Unknown variant_type"
     end
     return resize, extent
   end

@@ -1,8 +1,8 @@
 class TrendService
-  require 'natto'
+  require "natto"
 
-  CACHE_KEY = 'current_trends'
-  CACHE_TIME_KEY = 'current_trends_updated_at'
+  CACHE_KEY = "current_trends"
+  CACHE_TIME_KEY = "current_trends_updated_at"
   CACHE_EXPIRY = 1.hour
 
   # Defaults if config is missing
@@ -24,7 +24,7 @@ class TrendService
   end
 
   def update_trends
-    Rails.logger.info 'Starting trend update...'
+    Rails.logger.info "Starting trend update..."
 
     items = get_newer_items
     trends = frequent_words(items: items)
@@ -46,7 +46,7 @@ class TrendService
     base_time = Time.current - interval.minutes
 
     # Assuming Post model is what we want (user code used Item, but context shows Post)
-    recent_items = Post.isnt_deleted.where('created_at > ?', base_time).order(created_at: :desc)
+    recent_items = Post.isnt_deleted.where("created_at > ?", base_time).order(created_at: :desc)
 
     if recent_items.count < base_limit
       return Post.isnt_deleted.order(created_at: :desc).limit(base_limit)
@@ -64,11 +64,11 @@ class TrendService
 
       natto.parse(item.content) do |n|
         surface = n.surface
-        feature = n.feature.split(',')
+        feature = n.feature.split(",")
 
         if surface.length <= 3 ||
            surface.match?(/[!?！？　「」\s.,\/#@&"'$%()=\-~^\\|_{}\[\]。、*+;:`]/) ||
-           (surface.match?(/\A[a-zA-Z]+\z/) && !(feature[0] == '名詞' && feature[1] == '固有名詞'))
+           (surface.match?(/\A[a-zA-Z]+\z/) && !(feature[0] == "名詞" && feature[1] == "固有名詞"))
           next
         end
 
@@ -85,10 +85,10 @@ class TrendService
         # Search count using MeiliSearch (Post.search)
         # Using double quotes for exact phrase match
         search_count = Post.search("\"#{word}\"", limit: 500).count
-        word_usage_count[word] = [search_count, count]
+        word_usage_count[word] = [ search_count, count ]
       rescue => e
         Rails.logger.error "Search failed for #{word}: #{e.message}"
-        word_usage_count[word] = [count, count] # Fallback
+        word_usage_count[word] = [ count, count ] # Fallback
       end
     end
 

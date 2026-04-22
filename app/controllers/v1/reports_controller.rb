@@ -37,7 +37,7 @@ class V1::ReportsController < V1::ApplicationController
         :target_type,
         :target_aid,
         :category,
-        :description,
+        :description
       ]
     )
   end

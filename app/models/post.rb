@@ -3,13 +3,13 @@ class Post < ApplicationRecord
 
   belongs_to :account
 
-  belongs_to :reply, -> { from_normal_account.is_normal.is_opened }, class_name: 'Post', optional: true
-  has_many   :replies, -> { from_normal_account.is_normal.is_opened }, class_name: 'Post', foreign_key: :reply_id
-  has_many   :all_replies, class_name: 'Post', foreign_key: :reply_id, dependent: :nullify
+  belongs_to :reply, -> { from_normal_account.is_normal.is_opened }, class_name: "Post", optional: true
+  has_many   :replies, -> { from_normal_account.is_normal.is_opened }, class_name: "Post", foreign_key: :reply_id
+  has_many   :all_replies, class_name: "Post", foreign_key: :reply_id, dependent: :nullify
 
-  belongs_to :quote, -> { from_normal_account.is_normal.is_opened }, class_name: 'Post', optional: true
-  has_many   :quotes, -> { from_normal_account.is_normal.is_opened }, class_name: 'Post', foreign_key: :quote_id
-  has_many   :all_quotes, class_name: 'Post', foreign_key: :quote_id, dependent: :nullify
+  belongs_to :quote, -> { from_normal_account.is_normal.is_opened }, class_name: "Post", optional: true
+  has_many   :quotes, -> { from_normal_account.is_normal.is_opened }, class_name: "Post", foreign_key: :quote_id
+  has_many   :all_quotes, class_name: "Post", foreign_key: :quote_id, dependent: :nullify
 
   # リアクション 多対多(絵文字)
   has_many :reactions, dependent: :destroy
@@ -69,24 +69,24 @@ class Post < ApplicationRecord
     attribute :account_status do
       account&.status
     end
-    filterable_attributes [:created_at, :status, :visibility, :account_status]
-    sortable_attributes [:created_at]
+    filterable_attributes [ :created_at, :status, :visibility, :account_status ]
+    sortable_attributes [ :created_at ]
   end
 
   def media_files=(files)
     files.reject(&:blank?).each do |file|
-      if file.content_type.start_with?('image/')
+      if file.content_type.start_with?("image/")
         new_image = Image.new
         new_image.account = self.account
         new_image.image = file
         self.post_images.build(image: new_image)
-      elsif file.content_type.start_with?('video/')
+      elsif file.content_type.start_with?("video/")
         new_video = Video.new
         new_video.account = self.account
         new_video.video = file
         self.post_videos.build(video: new_video)
       else
-        @media_upload_error = 'サポートされていないメディアタイプです'
+        @media_upload_error = "サポートされていないメディアタイプです"
       end
     end
   end
@@ -94,17 +94,17 @@ class Post < ApplicationRecord
   def drawing_attributes=(attributes)
     return if attributes.blank?
 
-    attributes_collection = attributes.is_a?(Array) ? attributes : [attributes]
+    attributes_collection = attributes.is_a?(Array) ? attributes : [ attributes ]
 
     attributes_collection.each do |attrs|
-      data = attrs[:data] || attrs['data']
+      data = attrs[:data] || attrs["data"]
       next if data.blank?
 
       new_drawing = Drawing.new
       new_drawing.account = self.account
       new_drawing.data = data
-      new_drawing.name = attrs[:name] || attrs['name'] || ''
-      new_drawing.description = attrs[:description] || attrs['description'] || ''
+      new_drawing.name = attrs[:name] || attrs["name"] || ""
+      new_drawing.description = attrs[:description] || attrs["description"] || ""
       self.post_drawings.build(drawing: new_drawing)
     end
   end
@@ -119,7 +119,7 @@ class Post < ApplicationRecord
       .find_by(aid: reply_aid)
 
     if reply_post.nil?
-      errors.add(:reply_aid, 'リプライ先の投稿が見つかりません')
+      errors.add(:reply_aid, "リプライ先の投稿が見つかりません")
       self.reply = nil
     else
       self.reply = reply_post
@@ -134,7 +134,7 @@ class Post < ApplicationRecord
       .find_by(aid: quote_aid)
 
     if quote_post.nil?
-      errors.add(:quote_aid, '引用先の投稿が見つかりません')
+      errors.add(:quote_aid, "引用先の投稿が見つかりません")
       self.quote = nil
     else
       self.quote = quote_post

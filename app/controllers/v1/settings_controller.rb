@@ -5,14 +5,14 @@ class V1::SettingsController < V1::ApplicationController
   def account
     if @account.update(account_params)
       render json: {
-        status: 'success',
-        message: '更新しました',
-        account: JSON.parse(render_to_string(partial: 'v1/accounts/current_account', locals: { account: @account }, formats: :json))
+        status: "success",
+        message: "更新しました",
+        account: JSON.parse(render_to_string(partial: "v1/accounts/current_account", locals: { account: @account }, formats: :json))
       }, status: :ok
     else
       render json: {
-        status: 'error',
-        message: '更新できませんでした',
+        status: "error",
+        message: "更新できませんでした",
         errors: @account.errors.full_messages
       }, status: :unprocessable_entity
     end
@@ -21,7 +21,7 @@ class V1::SettingsController < V1::ApplicationController
   def notification
     setting = @current_account.notification_setting
     render json: {
-      status: 'success',
+      status: "success",
       setting: setting
     }, status: :ok
   end
@@ -30,14 +30,14 @@ class V1::SettingsController < V1::ApplicationController
     setting = @current_account.notification_setting
     if setting.update(notification_params)
       render json: {
-        status: 'success',
-        message: '更新しました',
+        status: "success",
+        message: "更新しました",
         setting: setting
       }, status: :ok
     else
       render json: {
-        status: 'error',
-        message: '更新できませんでした',
+        status: "error",
+        message: "更新できませんでした",
         errors: setting.errors.full_messages
       }, status: :unprocessable_entity
     end
@@ -46,11 +46,11 @@ class V1::SettingsController < V1::ApplicationController
   def leave
     if @current_account.update(status: :deleted)
       sign_out
-      render json: { status: 'success', message: '退会しました' }, status: :ok
+      render json: { status: "success", message: "退会しました" }, status: :ok
     else
       render json: {
-        status: 'error',
-        message: '退会できませんでした',
+        status: "error",
+        message: "退会できませんでした",
         errors: @current_account.errors.full_messages
       }, status: :unprocessable_entity
     end

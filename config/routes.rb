@@ -1,17 +1,17 @@
 Rails.application.routes.draw do
   mount MissionControl::Jobs::Engine, at: "/jobs"
-  root 'pages#index'
+  root "pages#index"
 
   # Accounts
-  resources :accounts, only: [:index, :show, :update], param: :aid do
-    resources :sessions, only: [:index, :show, :update], param: :aid
+  resources :accounts, only: [ :index, :show, :update ], param: :aid do
+    resources :sessions, only: [ :index, :show, :update ], param: :aid
   end
 
   # Posts
-  resources :posts, only: [:index, :show, :update], param: :aid
+  resources :posts, only: [ :index, :show, :update ], param: :aid
 
   # Images
-  resources :images, only: [:index, :show, :update], param: :aid do
+  resources :images, only: [ :index, :show, :update ], param: :aid do
     member do
       post "create_variant" => "images#create_variant", as: "create_variant"
       delete "delete_variant" => "images#delete_variant", as: "delete_variant"
@@ -20,7 +20,7 @@ Rails.application.routes.draw do
   end
 
   # Videos
-  resources :videos, only: [:index, :show, :update], param: :aid do
+  resources :videos, only: [ :index, :show, :update ], param: :aid do
     member do
       post "create_variant" => "videos#create_variant", as: "create_variant"
       delete "delete_variant" => "videos#delete_variant", as: "delete_variant"
@@ -36,111 +36,111 @@ Rails.application.routes.draw do
   end
 
   # Reactions
-  post 'reactions/react' => 'reactions#react', as: :react
+  post "reactions/react" => "reactions#react", as: :react
 
   # Diffuses
-  post 'diffuses/create' => 'diffuses#create', as: :diffuse
-  delete 'diffuses/destroy' => 'diffuses#destroy', as: :undiffuse
+  post "diffuses/create" => "diffuses#create", as: :diffuse
+  delete "diffuses/destroy" => "diffuses#destroy", as: :undiffuse
 
   # Sessions
-  get 'sessions/start'
-  delete 'signout' => 'sessions#signout'
+  get "sessions/start"
+  delete "signout" => "sessions#signout"
 
   # Signup
-  get 'signup' => 'signup#new'
-  post 'signup' => 'signup#create'
+  get "signup" => "signup#new"
+  post "signup" => "signup#create"
 
   # OAuth
-  post 'oauth/start' => 'oauth#start'
-  get 'oauth/callback' => 'oauth#callback'
-  post 'oauth/fetch' => 'oauth#fetch'
+  post "oauth/start" => "oauth#start"
+  get "oauth/callback" => "oauth#callback"
+  post "oauth/fetch" => "oauth#fetch"
 
   # Trends
-  resources :trends, only: [:index, :create]
+  resources :trends, only: [ :index, :create ]
 
   # Notifications
-  resources :notifications, only: [:new, :create]
+  resources :notifications, only: [ :new, :create ]
 
   # OG
-  get 'og/posts/:aid' => 'og_images#post', as: :og_post
+  get "og/posts/:aid" => "og_images#post", as: :og_post
   # get 'og/accounts/:aid' => 'og_images#account', as: :og_account
 
   # API v1
   namespace :v1 do
-    root 'pages#index'
+    root "pages#index"
 
     # Pages
-    get 'start' => 'pages#start'
+    get "start" => "pages#start"
 
     # Accounts
-    post 'accounts/@:name_id' => 'accounts#show', constraints: { name_id: /.*/ }
+    post "accounts/@:name_id" => "accounts#show", constraints: { name_id: /.*/ }
     resources :accounts, only: [], param: :aid do
-      resource :follow, only: [:create, :destroy]
-      resource :block, only: [:create, :destroy]
+      resource :follow, only: [ :create, :destroy ]
+      resource :block, only: [ :create, :destroy ]
     end
 
     # Posts
-    post 'posts/:aid' => 'posts#show'
-    resources :posts, only: [:create, :destroy], param: :aid do
-      resource :reaction, only: [:create, :destroy]
-      resource :diffuse, only: [:create, :destroy]
-      post 'quotes'
-      post 'diffusions'
-      post 'reactions'
+    post "posts/:aid" => "posts#show"
+    resources :posts, only: [ :create, :destroy ], param: :aid do
+      resource :reaction, only: [ :create, :destroy ]
+      resource :diffuse, only: [ :create, :destroy ]
+      post "quotes"
+      post "diffusions"
+      post "reactions"
     end
 
     # Emojis
-    post 'emojis/groups' => 'emojis#groups_index'
-    post 'emojis/groups/:group_name' => 'emojis#groups_show'
-    post 'emojis/:name_id' => 'emojis#show'
+    post "emojis/groups" => "emojis#groups_index"
+    post "emojis/groups/:group_name" => "emojis#groups_show"
+    post "emojis/:name_id" => "emojis#show"
 
     # Search
-    post 'search' => 'search#index'
+    post "search" => "search#index"
 
     # Feeds
-    post 'feeds/index' => 'feeds#new_index'
-    post 'feeds/follow' => 'feeds#follow'
-    post 'feeds/current' => 'feeds#new_current'
-    post 'feeds/account' => 'feeds#account'
+    post "feeds/index" => "feeds#new_index"
+    post "feeds/follow" => "feeds#follow"
+    post "feeds/current" => "feeds#new_current"
+    post "feeds/account" => "feeds#account"
 
     # Notifications
-    post 'notifications' => 'notifications#index'
-    post 'notifications/unread_count' => 'notifications#unread_count'
+    post "notifications" => "notifications#index"
+    post "notifications/unread_count" => "notifications#unread_count"
 
     # WebPush Subscriptions
-    post 'webpush_subscriptions' => 'webpush_subscriptions#create'
+    post "webpush_subscriptions" => "webpush_subscriptions#create"
 
     # Sessions
-    post 'sessions/create' => 'sessions#create'
-    delete 'signout' => 'sessions#signout'
+    post "sessions/create" => "sessions#create"
+    delete "signout" => "sessions#signout"
 
     # Signup
-    post 'signup' => 'signup#create'
+    post "signup" => "signup#create"
 
     # Settings
-    post 'settings/account' => 'settings#account'
-    post 'settings/notification' => 'settings#notification'
-    post 'settings/update_notification' => 'settings#update_notification'
-    delete 'settings/leave' => 'settings#leave'
+    post "settings/account" => "settings#account"
+    post "settings/notification" => "settings#notification"
+    post "settings/update_notification" => "settings#update_notification"
+    delete "settings/leave" => "settings#leave"
 
     # OAuth
-    post 'oauth/start' => 'oauth#start'
-    post 'oauth/callback' => 'oauth#callback'
-    post 'oauth/fetch' => 'oauth#fetch'
+    post "oauth/start" => "oauth#start"
+    post "oauth/callback" => "oauth#callback"
+    post "oauth/fetch" => "oauth#fetch"
 
     # Trends
-    post 'trends' => 'trends#index'
+    post "trends" => "trends#index"
 
     # Reports
-    post 'reports' => 'reports#create'
+    post "reports" => "reports#create"
 
     # Blocks
-    post 'blocks' => 'block#index'
+    post "blocks" => "block#index"
   end
 
   # Others
-  get 'up' => 'rails/health#show', as: :rails_health_check
+  get "up" => "rails/health#show", as: :rails_health_check
 
   # Errors
-  match '*path', to: 'application#routing_error', via: :all
+  match "*path", to: "application#routing_error", via: :all
 end

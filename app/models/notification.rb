@@ -1,6 +1,6 @@
 class Notification < ApplicationRecord
   belongs_to :account
-  belongs_to :actor, class_name: 'Account', optional: true
+  belongs_to :actor, class_name: "Account", optional: true
   belongs_to :notifiable, polymorphic: true, optional: true
 
   enum :action, {
@@ -28,10 +28,10 @@ class Notification < ApplicationRecord
   scope :with_details, -> { includes(:actor, :notifiable) }
 
   def post_related?
-    ['reaction', 'diffuse', 'reply', 'quote'].include?(action)
+    [ "reaction", "diffuse", "reply", "quote" ].include?(action)
   end
 
   def account_related?
-    ['follow', 'mention'].include?(action)
+    [ "follow", "mention" ].include?(action)
   end
 end

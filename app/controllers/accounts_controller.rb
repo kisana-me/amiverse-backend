@@ -12,7 +12,7 @@ class AccountsController < ApplicationController
 
   def update
     if @account.update(account_params)
-      redirect_to account_path(@account.aid), notice: '更新しました'
+      redirect_to account_path(@account.aid), notice: "更新しました"
     else
       render :show, status: :unprocessable_entity
     end
@@ -27,7 +27,7 @@ class AccountsController < ApplicationController
   def account_params
     params.expect(
       account: [
-        :status,
+        :status
       ]
     )
   end

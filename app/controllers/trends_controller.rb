@@ -9,6 +9,6 @@ class TrendsController < ApplicationController
 
   def create
     TrendService.update_trends
-    redirect_to trends_path, notice: 'Trends updated successfully'
+    redirect_to trends_path, notice: "Trends updated successfully"
   end
 end

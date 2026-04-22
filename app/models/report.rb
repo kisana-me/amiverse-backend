@@ -37,27 +37,27 @@ class Report < ApplicationRecord
     return if target_type.blank? && target_aid.blank?
 
     case target_type
-      when "post"
-        self.reportable = Post
-          .from_normal_account
-          .is_normal
-          .is_opened
-          .find_by(aid: target_aid)
-        if self.reportable.nil?
-          errors.add(:base, "通報対象のポストが見つかりませんでした")
-          return
-        end
-      when "account"
-        self.reportable = Account
-          .is_normal
-          .find_by(aid: target_aid)
-        if self.reportable.nil?
-          errors.add(:base, "通報対象のアカウントが見つかりませんでした")
-          return
-        end
-      else
-        errors.add(:base, "通報対象が見つかりませんでした")
-        return
+    when "post"
+      self.reportable = Post
+        .from_normal_account
+        .is_normal
+        .is_opened
+        .find_by(aid: target_aid)
+      if self.reportable.nil?
+        errors.add(:base, "通報対象のポストが見つかりませんでした")
+        nil
+      end
+    when "account"
+      self.reportable = Account
+        .is_normal
+        .find_by(aid: target_aid)
+      if self.reportable.nil?
+        errors.add(:base, "通報対象のアカウントが見つかりませんでした")
+        nil
+      end
+    else
+      errors.add(:base, "通報対象が見つかりませんでした")
+      nil
     end
   end
 end

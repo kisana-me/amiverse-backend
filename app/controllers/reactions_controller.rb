@@ -13,16 +13,16 @@ class ReactionsController < ApplicationController
     )
     if @reaction.emoji == @emoji
       @reaction.destroy!
-      redirect_to post_path(@post.aid), notice: 'Reaction was successfully removed.'
+      redirect_to post_path(@post.aid), notice: "Reaction was successfully removed."
       return
     end
     @reaction.emoji = @emoji
 
     if @reaction.save
-      redirect_to post_path(@post.aid), notice: 'Reaction was successfully added.'
+      redirect_to post_path(@post.aid), notice: "Reaction was successfully added."
     else
-      flash.now[:alert] = 'Failed to add the reaction.'
-      render 'posts/show', status: :unprocessable_entity
+      flash.now[:alert] = "Failed to add the reaction."
+      render "posts/show", status: :unprocessable_entity
     end
   end
 end

@@ -6,18 +6,18 @@ class DiffusesController < ApplicationController
   def create
     @diffuse = @current_account.diffuses.build(post: @post)
     if @diffuse.save
-      redirect_to request.referer || post_path(@post.aid), notice: 'Post was successfully diffused.'
+      redirect_to request.referer || post_path(@post.aid), notice: "Post was successfully diffused."
     else
-      redirect_to request.referer || post_path(@post.aid), alert: 'Failed to diffuse the post.'
+      redirect_to request.referer || post_path(@post.aid), alert: "Failed to diffuse the post."
     end
   end
 
   def destroy
     @diffuse = @current_account.diffuses.find_by(post: @post)
     if @diffuse&.destroy
-      redirect_to request.referer || post_path(@post.aid), notice: 'Diffuse was successfully removed.', status: :see_other
+      redirect_to request.referer || post_path(@post.aid), notice: "Diffuse was successfully removed.", status: :see_other
     else
-      redirect_to request.referer || post_path(@post.aid), alert: 'Failed to remove diffuse.'
+      redirect_to request.referer || post_path(@post.aid), alert: "Failed to remove diffuse."
     end
   end
 

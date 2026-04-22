@@ -9,7 +9,7 @@ class EmojisController < ApplicationController
   end
 
   def picker
-    @groups = Emoji.where.not(group: [nil, '']).distinct.pluck(:group)
+    @groups = Emoji.where.not(group: [ nil, "" ]).distinct.pluck(:group)
 
     if params[:group].present?
       @emojis = Emoji.where(group: params[:group])
@@ -32,27 +32,27 @@ class EmojisController < ApplicationController
   def create
     @emoji = Emoji.new(emoji_params)
     if @emoji.save
-      redirect_to emoji_path(@emoji.aid), notice: 'Emoji was successfully created.'
+      redirect_to emoji_path(@emoji.aid), notice: "Emoji was successfully created."
     else
-      flash.now[:alert] = 'Failed to create the emoji.'
+      flash.now[:alert] = "Failed to create the emoji."
       render :new, status: :unprocessable_entity
     end
   end
 
   def update
     if @emoji.update(emoji_params)
-      redirect_to emoji_path(@emoji.aid), notice: 'Emoji was successfully updated.', status: :see_other
+      redirect_to emoji_path(@emoji.aid), notice: "Emoji was successfully updated.", status: :see_other
     else
-      flash.now[:alert] = 'Failed to update the emoji.'
+      flash.now[:alert] = "Failed to update the emoji."
       render :edit, status: :unprocessable_entity
     end
   end
 
   def destroy
     if @emoji.update(status: :deleted)
-      redirect_to emoji_path(@emoji.aid), notice: 'Emoji was successfully deleted.', status: :see_other
+      redirect_to emoji_path(@emoji.aid), notice: "Emoji was successfully deleted.", status: :see_other
     else
-      flash.now[:alert] = 'Failed to delete the emoji.'
+      flash.now[:alert] = "Failed to delete the emoji."
       render :show, status: :unprocessable_entity
     end
   end

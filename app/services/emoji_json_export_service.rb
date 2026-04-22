@@ -1,13 +1,13 @@
-require 'json'
-require 'fileutils'
-require 'pathname'
+require "json"
+require "fileutils"
+require "pathname"
 
 class EmojiJsonExportService
   # 使い方:
   # EmojiJsonExportService.call('storage/emoji-test.txt')
   # EmojiJsonExportService.call('storage/emoji-test.txt', output_dir: 'storage')
 
-  def self.call(file_path = 'storage/emoji-test.txt', output_dir: 'storage')
+  def self.call(file_path = "storage/emoji-test.txt", output_dir: "storage")
     new(file_path, output_dir: output_dir).perform
   end
 
@@ -30,8 +30,8 @@ class EmojiJsonExportService
 
     puts "Starting json export from #{input_path}..."
 
-    current_group = 'Unknown'
-    current_subgroup = 'Unknown'
+    current_group = "Unknown"
+    current_subgroup = "Unknown"
 
     File.foreach(input_path) do |raw_line|
       line = raw_line.strip
@@ -48,7 +48,7 @@ class EmojiJsonExportService
         next
       end
 
-      next if line.start_with?('#')
+      next if line.start_with?("#")
 
       attrs = parse_emoji_line(line, current_group, current_subgroup)
       next if attrs.nil?
@@ -72,14 +72,14 @@ class EmojiJsonExportService
   end
 
   def parse_emoji_line(line, group, subgroup)
-    code_part, rest = line.split(';', 2)
+    code_part, rest = line.split(";", 2)
     return nil if code_part.nil? || rest.nil?
 
-    status_part, comment_part = rest.split('#', 2)
+    status_part, comment_part = rest.split("#", 2)
     return nil if status_part.nil? || comment_part.nil?
 
     status_text = status_part.strip
-    return nil unless status_text == 'fully-qualified'
+    return nil unless status_text == "fully-qualified"
 
     hex_sequence = code_part.strip
     raw_comment = comment_part.strip
@@ -93,8 +93,8 @@ class EmojiJsonExportService
     version_str = match_data[1]
     english_name = match_data[2]
 
-    emoji_char = hex_sequence.split.map { |code_point| code_point.hex }.pack('U*')
-    name_id_value = english_name.downcase.gsub(/[^a-z0-9]+/, '_').gsub(/^_|_$/, '')
+    emoji_char = hex_sequence.split.map { |code_point| code_point.hex }.pack("U*")
+    name_id_value = english_name.downcase.gsub(/[^a-z0-9]+/, "_").gsub(/^_|_$/, "")
     description_value = "#{hex_sequence}\n#{version_str}"
 
     {
@@ -102,7 +102,7 @@ class EmojiJsonExportService
       name_id: name_id_value,
       description: description_value,
       group: group,
-      subgroup: subgroup,
+      subgroup: subgroup
     }
   end
 
@@ -111,7 +111,7 @@ class EmojiJsonExportService
 
     @grouped_emojis.each do |group_name, emojis|
       file_group = normalized_group_name(group_name)
-      file_group = 'unknown' if file_group.empty?
+      file_group = "unknown" if file_group.empty?
 
       file_path = File.join(output_base_dir, "emojis-#{file_group}.json")
       File.write(file_path, JSON.pretty_generate(emojis))
@@ -126,10 +126,10 @@ class EmojiJsonExportService
   def normalized_group_name(group_name)
     group_name
       .downcase
-      .gsub(/[&\s]+/, '-')
-      .gsub(%r{[/\\]+}, '-')
-      .gsub(/-+/, '-')
-      .gsub(/\A-+|-+\z/, '')
+      .gsub(/[&\s]+/, "-")
+      .gsub(%r{[/\\]+}, "-")
+      .gsub(/-+/, "-")
+      .gsub(/\A-+|-+\z/, "")
   end
 
   def absolute_path(path)

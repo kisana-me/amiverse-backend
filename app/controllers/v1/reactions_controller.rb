@@ -5,7 +5,7 @@ class V1::ReactionsController < V1::ApplicationController
   # POST /v1/posts/:aid/reaction
   def create
     emoji = Emoji.is_normal.find_by(name_id: params[:emoji_name_id])
-    return render_error('絵文字が見つかりません', :not_found) unless emoji
+    return render_error("絵文字が見つかりません", :not_found) unless emoji
 
     reaction = @post.reactions.find_or_initialize_by(account: @current_account)
     reaction.emoji = emoji
@@ -19,24 +19,24 @@ class V1::ReactionsController < V1::ApplicationController
       )
 
       render json: {
-        status: 'success',
-        message: 'リアクションしました',
+        status: "success",
+        message: "リアクションしました",
         data: { emoji_name_id: emoji.name_id, post_aid: @post.aid }
       }, status: :ok
     else
-      render_error('リアクションの保存に失敗しました', :unprocessable_entity, reaction.errors.full_messages)
+      render_error("リアクションの保存に失敗しました", :unprocessable_entity, reaction.errors.full_messages)
     end
   end
 
   # DELETE /v1/posts/:aid/reaction
   def destroy
     reaction = @post.reactions.find_by(account: @current_account)
-    return render_error('リアクションが見つかりません', :not_found) unless reaction
+    return render_error("リアクションが見つかりません", :not_found) unless reaction
 
     if reaction.destroy
-      render json: { status: 'success', message: 'リアクションを削除しました' }, status: :ok
+      render json: { status: "success", message: "リアクションを削除しました" }, status: :ok
     else
-      render_error('リアクションの削除に失敗しました', :unprocessable_entity, reaction.errors.full_messages)
+      render_error("リアクションの削除に失敗しました", :unprocessable_entity, reaction.errors.full_messages)
     end
   end
 
@@ -44,11 +44,11 @@ class V1::ReactionsController < V1::ApplicationController
 
   def set_post
     @post = Post.from_normal_account.is_normal.find_by(aid: params[:post_aid])
-    render_error('投稿が見つかりません', :not_found) unless @post
+    render_error("投稿が見つかりません", :not_found) unless @post
   end
 
   def render_error(message, status, errors = nil)
-    payload = { status: 'error', message: message }
+    payload = { status: "error", message: message }
     payload[:errors] = errors if errors
     render json: payload, status: status
   end
