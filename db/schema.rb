@@ -55,7 +55,7 @@ ActiveRecord::Schema[8.1].define(version: 23) do
   end
 
   create_table "drawings", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
-    t.bigint "account_id", null: false
+    t.bigint "account_id"
     t.string "aid", limit: 14, null: false
     t.datetime "created_at", null: false
     t.text "data", null: false

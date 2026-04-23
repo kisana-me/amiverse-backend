@@ -1,5 +1,5 @@
 class Report < ApplicationRecord
-  belongs_to :account
+  belongs_to :account, optional: true
   belongs_to :reportable, polymorphic: true
 
   attribute :meta, :json, default: -> { {} }
@@ -53,6 +53,14 @@ class Report < ApplicationRecord
         .find_by(aid: target_aid)
       if self.reportable.nil?
         errors.add(:base, "通報対象のアカウントが見つかりませんでした")
+        nil
+      end
+    when "drawing"
+      self.reportable = Drawing
+        .is_normal
+        .find_by(aid: target_aid)
+      if self.reportable.nil?
+        errors.add(:base, "通報対象のお絵描きが見つかりませんでした")
         nil
       end
     else

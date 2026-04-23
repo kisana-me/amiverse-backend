@@ -1,10 +1,8 @@
 class V1::ReportsController < V1::ApplicationController
-  before_action :require_signin, except: %i[]
-
   # POST /v1/reports
   def create
     @report = Report.new(report_params)
-    @report.account = @current_account
+    @report.account = @current_account if @current_account.present?
 
     if @report.save
       render json: {

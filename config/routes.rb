@@ -145,6 +145,9 @@ Rails.application.routes.draw do
 
     # Blocks
     post "blocks" => "block#index"
+
+    # Drawings
+    post "drawings/create" => "drawings#create"
   end
 
   # Others

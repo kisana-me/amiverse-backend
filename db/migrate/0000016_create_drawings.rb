@@ -1,7 +1,7 @@
 class CreateDrawings < ActiveRecord::Migration[8.1]
   def change
     create_table :drawings do |t|
-      t.references :account, null: false, foreign_key: true, type: :bigint
+      t.references :account, null: true, foreign_key: true, type: :bigint
       t.string :aid, null: false, limit: 14
       t.string :name, null: false, default: ""
       t.text :description, null: false, default: ""

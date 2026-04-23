@@ -1,5 +1,5 @@
 class Drawing < ApplicationRecord
-  belongs_to :account
+  belongs_to :account, optional: true
   has_many :post_drawings
   has_many :posts, through: :post_drawings
 
