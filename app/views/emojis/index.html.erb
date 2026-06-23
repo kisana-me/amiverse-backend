@@ -1,4 +1,10 @@
+<% provide(:title, "絵文字グループ一覧") %>
+
 <h1>絵文字グループ一覧</h1>
+
+<p>
+  <%= link_to("絵文字を追加", new_emoji_path) %>
+</p>
 
 <% if @group_subgroups.blank? %>
   <p>グループはありません</p>

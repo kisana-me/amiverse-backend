@@ -23,6 +23,16 @@ class Emoji < ApplicationRecord
   scope :is_normal, -> { where(status: :normal) }
   scope :isnt_deleted, -> { where.not(status: :deleted) }
 
+  def image=(file)
+    if file.present? && file.content_type.start_with?("image/")
+      new_image = Image.new
+      new_image.account = nil
+      new_image.image = file
+      new_image.variant_type = "emoji"
+      super(new_image)
+    end
+  end
+
   def image_url
     image&.image_url || full_url("/static_assets/images/amiverse-logo.webp")
   end

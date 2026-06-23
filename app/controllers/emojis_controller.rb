@@ -1,6 +1,6 @@
 class EmojisController < ApplicationController
   before_action :require_admin
-  before_action :set_emoji, only: %i[ show ]
+  before_action :set_emoji, only: %i[ show update destroy ]
   before_action :set_group, only: %i[ group ]
 
   def index
@@ -39,9 +39,6 @@ class EmojisController < ApplicationController
 
   def new
     @emoji = Emoji.new
-  end
-
-  def edit
   end
 
   def create
@@ -89,10 +86,13 @@ class EmojisController < ApplicationController
   def emoji_params
     params.expect(
       emoji: [
-        :image_aid,
+        :image,
         :name,
         :name_id,
-        :description
+        :description,
+        :group,
+        :subgroup,
+        :status,
       ]
     )
   end
