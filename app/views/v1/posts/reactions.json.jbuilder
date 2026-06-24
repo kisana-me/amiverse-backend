@@ -4,11 +4,11 @@ json.reactions @reactions do |reaction|
   end
   json.emoji do
     json.extract! reaction.emoji, :aid, :name, :name_id
-    json.image_url reaction.emoji.image ? reaction.emoji.emoji_url : nil
+    json.image_url reaction.emoji.image ? reaction.emoji.image_url : nil
   end
 end
 
 json.emojis @emojis do |emoji|
   json.extract! emoji, :aid, :name, :name_id
-  json.image_url emoji.image ? emoji.emoji_url : nil
+  json.image_url emoji.image ? emoji.image_url : nil
 end
