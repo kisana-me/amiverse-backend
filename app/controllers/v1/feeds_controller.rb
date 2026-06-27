@@ -1,10 +1,10 @@
 class V1::FeedsController < V1::ApplicationController
-  before_action :require_signin, only: %i[ follow ]
-  # index: おすすめ
-  # follow: フォロー中
+  before_action :require_signin, only: %i[ following ]
+  # recommended: おすすめ
+  # following: フォロー中
   # current: 最新順
 
-  def index
+  def recommended
     posts = Post
       .from_normal_account
       .is_normal
@@ -39,7 +39,7 @@ class V1::FeedsController < V1::ApplicationController
     render template: "v1/feeds/feed_only_posts", formats: [ :json ]
   end
 
-  def new_index
+  def new_recommended
     posts = Post
       .from_normal_account
       .is_normal
@@ -111,7 +111,7 @@ class V1::FeedsController < V1::ApplicationController
     render template: "v1/feeds/feed_only_posts", formats: [ :json ]
   end
 
-  def follow
+  def following
     cursor_time = params[:cursor].present? ? Time.at(params[:cursor].to_f) : Time.current
     following_ids = @current_account.following.is_normal.ids
 
@@ -119,6 +119,7 @@ class V1::FeedsController < V1::ApplicationController
       .where(account_id: following_ids)
       .is_normal
       .isnt_closed
+      .where(reply_id: nil)
       .where("created_at < ?", cursor_time)
       .order(created_at: :desc)
       .limit(30)
@@ -321,6 +322,7 @@ class V1::FeedsController < V1::ApplicationController
       .joins(:account)
       .where(accounts: { status: :normal })
       .where(status: :normal, visibility: :opened)
+      .where(reply_id: nil)
       .where("posts.created_at < ?", current_cursor)
 
     diffuses = Diffuse

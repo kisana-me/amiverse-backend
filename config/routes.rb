@@ -107,8 +107,12 @@ Rails.application.routes.draw do
     post "search" => "search#index"
 
     # Feeds
-    post "feeds/index" => "feeds#new_index"
-    post "feeds/follow" => "feeds#follow"
+    # 後方互換の為（index → recommended, follow → following）
+    post "feeds/index" => "feeds#new_recommended"
+    post "feeds/follow" => "feeds#following"
+    # ここからが本来のエンドポイント
+    post "feeds/recommended" => "feeds#new_recommended"
+    post "feeds/following" => "feeds#following"
     post "feeds/current" => "feeds#new_current"
     post "feeds/account" => "feeds#account"
 
