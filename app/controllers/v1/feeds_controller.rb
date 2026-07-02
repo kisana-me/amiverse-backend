@@ -420,26 +420,54 @@ class V1::FeedsController < V1::ApplicationController
     end
 
     cursor_time = params[:cursor].present? ? Time.at(params[:cursor].to_f) : Time.current
+    filter = params[:filter].to_s
 
-    posts = Post
+    posts_scope = Post
       .where(account_id: @account.id)
       .is_normal
       .isnt_closed
       .where("created_at < ?", cursor_time)
+
+    # filter ごとに投稿を絞り込む。返信・メディア・お絵描きタブでは拡散(Diffuse)は含めない
+    include_diffuses = true
+    case filter
+    when "posts"
+      posts_scope = posts_scope.where(reply_id: nil)
+    when "replies"
+      posts_scope = posts_scope.where.not(reply_id: nil)
+      include_diffuses = false
+    when "media"
+      posts_scope = posts_scope.where(
+        "EXISTS (SELECT 1 FROM post_images WHERE post_images.post_id = posts.id) OR " \
+        "EXISTS (SELECT 1 FROM post_videos WHERE post_videos.post_id = posts.id)"
+      )
+      include_diffuses = false
+    when "drawings"
+      posts_scope = posts_scope.where(
+        "EXISTS (SELECT 1 FROM post_drawings WHERE post_drawings.post_id = posts.id)"
+      )
+      include_diffuses = false
+    end
+
+    posts = posts_scope
       .order(created_at: :desc)
       .limit(30)
 
-    diffuses = Diffuse
-      .where(account_id: @account.id)
-      .includes(:account)
-      .joins(:account)
-      .where(accounts: { status: :normal })
-      .joins(:post)
-      .where(posts: { status: :normal })
-      .where.not(posts: { visibility: :closed })
-      .where("diffuses.created_at < ?", cursor_time)
-      .order(created_at: :desc)
-      .limit(30)
+    diffuses = if include_diffuses
+      Diffuse
+        .where(account_id: @account.id)
+        .includes(:account)
+        .joins(:account)
+        .where(accounts: { status: :normal })
+        .joins(:post)
+        .where(posts: { status: :normal })
+        .where.not(posts: { visibility: :closed })
+        .where("diffuses.created_at < ?", cursor_time)
+        .order(created_at: :desc)
+        .limit(30)
+    else
+      []
+    end
 
     mixed_items = (posts + diffuses).sort_by(&:created_at).reverse.first(30)
 
