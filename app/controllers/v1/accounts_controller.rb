@@ -13,4 +13,39 @@ class V1::AccountsController < V1::ApplicationController
       }, status: :not_found
     end
   end
+
+  def following
+    return unless set_listed_account
+
+    @accounts = @account.following
+      .where(status: :normal)
+      .includes(:icon)
+      .order("follows.id DESC")
+      .limit(50)
+
+    render template: "v1/accounts/index", formats: [ :json ]
+  end
+
+  def followers
+    return unless set_listed_account
+
+    @accounts = @account.followers
+      .where(status: :normal)
+      .includes(:icon)
+      .order("follows.id DESC")
+      .limit(50)
+
+    render template: "v1/accounts/index", formats: [ :json ]
+  end
+
+  private
+
+  def set_listed_account
+    @account = Account.is_normal.is_opened.find_by(aid: params[:account_aid])
+    unless @account
+      render json: { status: "error", message: "アカウントが見つかりません" }, status: :not_found
+      return false
+    end
+    true
+  end
 end

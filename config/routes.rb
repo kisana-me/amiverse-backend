@@ -86,6 +86,8 @@ Rails.application.routes.draw do
     resources :accounts, only: [], param: :aid do
       resource :follow, only: [ :create, :destroy ]
       resource :block, only: [ :create, :destroy ]
+      post "following"
+      post "followers"
     end
 
     # Posts
