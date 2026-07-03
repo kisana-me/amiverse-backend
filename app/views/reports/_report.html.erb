@@ -1,0 +1,12 @@
+<div>
+  <div><strong>aid:</strong> <%= report.aid %></div>
+  <div><strong>category:</strong> <%= t("activerecord.enums.report.category.#{report.category}") %></div>
+  <div><strong>description:</strong> <%= report.description %></div>
+  <div><strong>announcement:</strong> <%= report.announcement %></div>
+  <div><strong>status:</strong>
+    <span style="color: <%= status_color(report.status) %>">
+      ●<%= report.status %>■
+    </span>
+  </div>
+  <div><strong>created_at:</strong> <%= report.created_at.strftime("%Y-%m-%d %H:%M:%S") %></div>
+</div>

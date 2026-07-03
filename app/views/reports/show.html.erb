@@ -1,0 +1,38 @@
+<% provide(:title, "通報詳細") %>
+
+<h1>通報詳細</h1>
+
+<%= render @report %>
+
+<h2>通報者</h2>
+<% if @report.account %>
+  <%= render @report.account %>
+  <div>
+    <strong>controll:</strong>
+    <%= link_to "アカウント詳細", account_path(@report.account.aid) %>
+  </div>
+<% else %>
+  <div>通報者なし</div>
+<% end %>
+
+<h2>通報対象 (<%= @report.reportable_type %>)</h2>
+<% if @report.reportable %>
+  <%= render @report.reportable %>
+  <div>
+    <strong>controll:</strong>
+    <% case @report.reportable %>
+    <% when Post %>
+      <%= link_to "投稿詳細", post_path(@report.reportable.aid) %>
+    <% when Account %>
+      <%= link_to "アカウント詳細", account_path(@report.reportable.aid) %>
+    <% when Drawing %>
+      <%= link_to "お絵描き詳細", drawing_path(@report.reportable.aid) %>
+    <% end %>
+  </div>
+<% else %>
+  <div>対象が見つかりません(削除済みの可能性)</div>
+<% end %>
+
+<hr />
+
+<%= render "reports/form", report: @report, url: report_path(@report.aid) %>

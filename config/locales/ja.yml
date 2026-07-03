@@ -9,6 +9,7 @@ ja:
       entry: "エントリー"
       capture: "キャプチャー"
       comment: "コメント"
+      report: "通報"
     attributes:
       account:
         aid: "固有ID"
@@ -114,6 +115,17 @@ ja:
         status: "ステータス"
         created_at: "作成日時"
         updated_at: "更新日時"
+      report:
+        account: "通報者"
+        aid: "固有ID"
+        category: "カテゴリー"
+        description: "通報内容"
+        announcement: "アナウンス"
+        reportable: "通報対象"
+        meta: "メタデータ"
+        status: "ステータス"
+        created_at: "作成日時"
+        updated_at: "更新日時"
     enums:
       account:
         visibility:
@@ -177,6 +189,22 @@ ja:
           closed: "非公開"
           limited: "限定公開"
           opened: "公開"
+        status:
+          normal: "通常"
+          locked: "停止中"
+          deleted: "削除済み"
+      report:
+        category:
+          other: "その他"
+          spam: "スパム"
+          hate: "ヘイト"
+          disinformation: "デマ・誤情報"
+          violence: "暴力"
+          sensitive: "センシティブ"
+          suicide: "自殺・自傷"
+          illegal: "違法行為"
+          theft: "盗作・無断転載"
+          privacy: "プライバシー侵害"
         status:
           normal: "通常"
           locked: "停止中"

@@ -1,0 +1,27 @@
+<% provide(:title, "通報一覧") %>
+
+<h1>通報一覧</h1>
+
+<div id="reports" style="display: flex; flex-direction: column; gap: 0.25rem;">
+  <% @reports.each do |report| %>
+    <div style="border: 1px solid #373737; border-radius: 0.25rem; padding: 0.25rem;">
+      <%= render report.account if report.account %>
+      <%= render report %>
+      <div>
+        <strong>target:</strong>
+        <%= report.reportable_type %>
+        <% if report.reportable %>
+          (<%= report.reportable.aid %>)
+        <% else %>
+          (対象なし)
+        <% end %>
+      </div>
+      <div>
+        <strong>controll:</strong>
+        <%= link_to "通報詳細", report_path(report.aid) %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<%= render "shared/paging", pages: @total_pages, page: @page, page_to: "/reports" %>

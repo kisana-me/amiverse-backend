@@ -1,0 +1,25 @@
+<%= form_with model: report, url: url, class: "ctmf", data: { turbo: false } do |f| %>
+  <%= render "shared/error_messages", instead: report %>
+
+  <div>
+    <%= f.label :category %>
+    <%= f.select :category, Report.categories.keys.map { |k| [t("activerecord.enums.report.category.#{k}"), k] }, {} %>
+  </div>
+
+  <div>
+    <%= f.label :description %>
+    <%= f.text_area :description %>
+  </div>
+
+  <div>
+    <%= f.label :announcement %>
+    <%= f.text_area :announcement %>
+  </div>
+
+  <div>
+    <%= f.label :status %>
+    <%= f.select :status, Report.statuses.keys.map { |k| [t("activerecord.enums.report.status.#{k}"), k] }, {} %>
+  </div>
+
+  <%= f.submit %>
+<% end %>

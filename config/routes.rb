@@ -36,6 +36,9 @@ Rails.application.routes.draw do
     end
   end
 
+  # Reports
+  resources :reports, only: [ :index, :show, :update ], param: :aid
+
   # Emojis
   resources :emojis, except: [ :edit ], param: :aid do
     collection do
