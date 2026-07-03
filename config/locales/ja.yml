@@ -3,6 +3,7 @@ ja:
     models:
       account: "アカウント"
       session: "セッション"
+      webpush_subscription: "WebPush購読"
       follow: "フォロー"
       image: "画像"
       group: "グループ"
@@ -35,6 +36,16 @@ ja:
         token_digest: "トークンのダイジェスト"
         token_expires_at: "トークンの有効期限"
         token_generated_at: "トークンの生成日時"
+        meta: "メタデータ"
+        status: "ステータス"
+        created_at: "作成日時"
+        updated_at: "更新日時"
+      webpush_subscription:
+        account: "アカウント"
+        name: "名前"
+        endpoint: "エンドポイント"
+        p256dh: "公開鍵(p256dh)"
+        auth_key: "認証キー"
         meta: "メタデータ"
         status: "ステータス"
         created_at: "作成日時"
@@ -137,6 +148,11 @@ ja:
           locked: "停止中"
           deleted: "削除済み"
       session:
+        status:
+          normal: "通常"
+          locked: "停止中"
+          deleted: "削除済み"
+      webpush_subscription:
         status:
           normal: "通常"
           locked: "停止中"

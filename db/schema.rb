@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 23) do
+ActiveRecord::Schema[8.1].define(version: 24) do
   create_table "accounts", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
     t.string "aid", limit: 14, null: false
     t.bigint "banner_id"
@@ -309,9 +309,13 @@ ActiveRecord::Schema[8.1].define(version: 23) do
     t.string "auth_key"
     t.datetime "created_at", null: false
     t.text "endpoint"
+    t.text "meta", size: :long, default: "{}", null: false, collation: "utf8mb4_bin"
+    t.string "name", default: "", null: false
     t.string "p256dh"
+    t.integer "status", limit: 1, default: 0, null: false
     t.datetime "updated_at", null: false
     t.index ["account_id"], name: "index_webpush_subscriptions_on_account_id"
+    t.check_constraint "json_valid(`meta`)", name: "meta"
   end
 
   add_foreign_key "accounts", "images", column: "banner_id"

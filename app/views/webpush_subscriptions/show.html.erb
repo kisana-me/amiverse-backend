@@ -1,0 +1,24 @@
+<% provide(:title, "WebPushSubscription詳細") %>
+
+<h1>WebPushSubscription詳細</h1>
+
+<%= render @account %>
+
+<div>
+  <div>ID: <%= @webpush_subscription.id %></div>
+  <div>名前: <%= @webpush_subscription.name %></div>
+  <div>状態:
+    <span style="<% if @webpush_subscription.status == "locked" %>color: #ff5722;<% end %><% if @webpush_subscription.status == "deleted" %>color: red;<% end %>">
+      <%= @webpush_subscription.status %>
+    </span>
+  </div>
+  <div>Endpoint: <%= @webpush_subscription.endpoint %></div>
+  <div>UserAgent: <%= @webpush_subscription.meta["user_agent"] %></div>
+  <div>作成: <%= @webpush_subscription.created_at.strftime("%Y/%m/%d %H:%M:%S") %></div>
+  <div>更新: <%= @webpush_subscription.updated_at.strftime("%Y/%m/%d %H:%M:%S") %></div>
+  <div>操作: <%= link_to "アカウント詳細", account_path(@account.aid) %> <%= link_to "WebPushSubscription一覧", account_webpush_subscriptions_path(@account.aid) %></div>
+</div>
+
+<hr />
+
+<%= render "form", webpush_subscription: @webpush_subscription, url: account_webpush_subscription_path(@account.aid, @webpush_subscription.id) %>

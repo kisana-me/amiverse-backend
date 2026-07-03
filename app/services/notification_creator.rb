@@ -103,7 +103,7 @@ class NotificationCreator
     message = build_webpush_message(notification)
     return unless message
 
-    recipient.webpush_subscriptions.find_each do |subscription|
+    recipient.webpush_subscriptions.is_normal.find_each do |subscription|
       begin
         WebPush.payload_send(
           message: JSON.generate(message),
@@ -117,7 +117,7 @@ class NotificationCreator
           }
         )
       rescue WebPush::InvalidSubscription, WebPush::ExpiredSubscription
-        subscription.destroy
+        subscription.deleted!
       rescue => e
         Rails.logger.error("WebPush Error: #{e.message}")
       end

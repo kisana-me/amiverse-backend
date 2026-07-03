@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   # Accounts
   resources :accounts, only: [ :index, :show, :update ], param: :aid do
     resources :sessions, only: [ :index, :show, :update ], param: :aid
+    resources :webpush_subscriptions, only: [ :index, :show, :update ]
   end
 
   # Posts
@@ -127,6 +128,8 @@ Rails.application.routes.draw do
 
     # WebPush Subscriptions
     post "webpush_subscriptions" => "webpush_subscriptions#create"
+    post "webpush_subscriptions/list" => "webpush_subscriptions#index"
+    delete "webpush_subscriptions/:id" => "webpush_subscriptions#destroy"
 
     # Sessions
     post "sessions/create" => "sessions#create"
