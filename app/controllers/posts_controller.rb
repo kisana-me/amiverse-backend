@@ -24,7 +24,8 @@ class PostsController < ApplicationController
     params.expect(
       post: [
         :visibility,
-        :status
+        :status,
+        :mod_rating
       ]
     )
   end

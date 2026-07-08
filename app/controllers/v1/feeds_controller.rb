@@ -9,6 +9,7 @@ class V1::FeedsController < V1::ApplicationController
       .from_normal_account
       .is_normal
       .is_opened
+      .rating_visible_to(@current_account)
       .order(id: :desc)
       .limit(50)
 
@@ -33,6 +34,7 @@ class V1::FeedsController < V1::ApplicationController
       .from_normal_account
       .is_normal
       .is_opened
+      .rating_visible_to(@current_account)
       .with_associations
       .where(id: post_ids)
       .in_order_of(:id, post_ids)
@@ -44,6 +46,7 @@ class V1::FeedsController < V1::ApplicationController
       .from_normal_account
       .is_normal
       .is_opened
+      .rating_visible_to(@current_account)
       .order(id: :desc)
 
     if @current_account
@@ -105,6 +108,7 @@ class V1::FeedsController < V1::ApplicationController
       .from_normal_account
       .is_normal
       .is_opened
+      .rating_visible_to(@current_account)
       .with_associations
       .where(id: post_ids)
       .in_order_of(:id, post_ids)
@@ -146,6 +150,7 @@ class V1::FeedsController < V1::ApplicationController
 
     @posts = Post
       .from_normal_account
+      .rating_visible_to(@current_account)
       .with_associations
       .where(id: post_ids)
 
@@ -278,6 +283,7 @@ class V1::FeedsController < V1::ApplicationController
 
     @posts = Post
       .from_normal_account
+      .rating_visible_to(@current_account)
       .with_associations
       .where(id: all_post_ids)
 
@@ -375,6 +381,7 @@ class V1::FeedsController < V1::ApplicationController
 
     @posts = Post
       .from_normal_account
+      .rating_visible_to(@current_account)
       .with_associations
       .where(id: all_post_ids)
 
@@ -479,6 +486,7 @@ class V1::FeedsController < V1::ApplicationController
 
     @posts = Post
       .from_normal_account
+      .rating_visible_to(@current_account)
       .with_associations
       .where(id: post_ids)
 

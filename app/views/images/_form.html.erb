@@ -21,5 +21,17 @@
     <%= f.select :status, Image.statuses.keys.map { |k| [t("activerecord.enums.image.status.#{k}"), k] }, {} %>
   </div>
 
+  <div>
+    <%= f.label :mod_rating, "レーティング(運営上書き)" %>
+    <%= f.select :mod_rating,
+      Image.mod_ratings.keys.map { |k| [t("activerecord.enums.image.rating.#{k}"), k] },
+      { include_blank: "(上書きなし)" } %>
+    <small>
+      実効: <%= t("activerecord.enums.image.rating.#{@image.rating_label}") %>
+      / 申告: <%= t("activerecord.enums.image.rating.#{@image.user_rating}") %>
+      / 自動: <%= @image.auto_rating ? t("activerecord.enums.image.rating.#{@image.auto_rating}") : "未判定" %>
+    </small>
+  </div>
+
   <%= f.submit %>
 <% end %>

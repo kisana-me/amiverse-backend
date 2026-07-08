@@ -1,5 +1,6 @@
 class Post < ApplicationRecord
   include MeiliSearch::Rails
+  include Rateable
 
   belongs_to :account
 
@@ -27,6 +28,7 @@ class Post < ApplicationRecord
   has_many :drawings, through: :post_drawings
 
   has_many :notifications, as: :notifiable, dependent: :destroy
+  has_many :moderation_results, as: :moderatable, dependent: :destroy
 
   attr_accessor :reply_aid, :quote_aid
   attribute :meta, :json, default: -> { {} }
@@ -36,6 +38,7 @@ class Post < ApplicationRecord
   before_validation :assign_reply_from_aid
   before_validation :assign_quote_from_aid
   before_create :set_aid
+  before_create :rate_content_text
 
   validates :content, length: { maximum: 5000, allow_blank: true }
   validates :content, presence: true, unless: :media_attached?
@@ -66,28 +69,37 @@ class Post < ApplicationRecord
     attribute :content
     attribute :status
     attribute :visibility
+    attribute :rating
     attribute :account_status do
       account&.status
     end
-    filterable_attributes [ :created_at, :status, :visibility, :account_status ]
+    filterable_attributes [ :created_at, :status, :visibility, :account_status, :rating ]
     sortable_attributes [ :created_at ]
   end
 
+  # レーティング等の指定なしでファイルだけ添付する場合(後方互換)
   def media_files=(files)
-    files.reject(&:blank?).each do |file|
-      if file.content_type.start_with?("image/")
-        new_image = Image.new
-        new_image.account = self.account
-        new_image.image = file
-        self.post_images.build(image: new_image)
-      elsif file.content_type.start_with?("video/")
-        new_video = Video.new
-        new_video.account = self.account
-        new_video.video = file
-        self.post_videos.build(video: new_video)
-      else
-        @media_upload_error = "サポートされていないメディアタイプです"
-      end
+    Array(files).reject(&:blank?).each do |file|
+      build_medium(file: file)
+    end
+  end
+
+  # 画像・動画をファイルごとに rating / name / description 付きで添付する
+  # 期待する形: [{ file:, rating:, name:, description: }, ...]
+  def media_attributes=(attributes)
+    return if attributes.blank?
+
+    collection = attributes.is_a?(Array) ? attributes : attributes.values
+    collection.each do |attrs|
+      file = attrs[:file] || attrs["file"]
+      next if file.blank?
+
+      build_medium(
+        file: file,
+        rating: attrs[:rating] || attrs["rating"],
+        name: attrs[:name] || attrs["name"],
+        description: attrs[:description] || attrs["description"]
+      )
     end
   end
 
@@ -105,11 +117,33 @@ class Post < ApplicationRecord
       new_drawing.data = data
       new_drawing.name = attrs[:name] || attrs["name"] || ""
       new_drawing.description = attrs[:description] || attrs["description"] || ""
+      rating = attrs[:rating] || attrs["rating"]
+      new_drawing.user_rating = rating if rating.present?
       self.post_drawings.build(drawing: new_drawing)
     end
   end
 
   private
+
+  def build_medium(file:, rating: nil, name: nil, description: nil)
+    if file.content_type.start_with?("image/")
+      medium = Image.new(account: self.account, name: name.to_s, description: description.to_s)
+      medium.user_rating = rating if rating.present?
+      medium.image = file
+      self.post_images.build(image: medium)
+    elsif file.content_type.start_with?("video/")
+      medium = Video.new(account: self.account, name: name.to_s, description: description.to_s)
+      medium.user_rating = rating if rating.present?
+      medium.video = file
+      self.post_videos.build(video: medium)
+    else
+      @media_upload_error = "サポートされていないメディアタイプです"
+    end
+  end
+
+  def rate_content_text
+    self.auto_rating = TextRating.rate(content) if read_attribute_before_type_cast(:auto_rating).nil?
+  end
 
   def assign_reply_from_aid
     return if reply_aid.blank?

@@ -97,6 +97,10 @@ class Account < ApplicationRecord
     self.meta["roles"]&.include?("admin")
   end
 
+  def adult?
+    birthdate.present? && birthdate <= 18.years.ago
+  end
+
   def notification_setting
     super || create_notification_setting!
   end

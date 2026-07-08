@@ -53,7 +53,8 @@ class VideosController < ApplicationController
         :name,
         :description,
         :visibility,
-        :status
+        :status,
+        :mod_rating
       ]
     )
   end

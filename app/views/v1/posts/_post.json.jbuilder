@@ -1,4 +1,5 @@
 json.extract! post, :aid, :content, :visibility, :created_at
+json.rating post.rating_label
 json.reply_presence post.reply_id.present?
 json.quote_presence post.quote_id.present?
 
@@ -65,7 +66,8 @@ if defined? display_media
         aid: image.aid,
         name: image.name,
         description: image.description,
-        url: image.image_url
+        url: image.display_url(@current_account),
+        rating: image.rating_label
       }
     end
     post.videos.each do |video|
@@ -74,7 +76,8 @@ if defined? display_media
         aid: video.aid,
         name: video.name,
         description: video.description,
-        url: video.video_url
+        url: video.display_url(@current_account),
+        rating: video.rating_label
       }
     end
 
@@ -84,13 +87,15 @@ if defined? display_media
       json.name item[:name]
       json.description item[:description]
       json.url item[:url]
+      json.rating item[:rating]
     end
   end
 
   json.drawings do
     json.array! post.drawings do |drawing|
       json.extract! drawing, :aid, :name, :description, :created_at
-      json.image_url drawing.image_url
+      json.image_url drawing.display_url(@current_account)
+      json.rating drawing.rating_label
     end
   end
 end

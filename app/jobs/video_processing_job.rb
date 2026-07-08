@@ -23,9 +23,9 @@ class VideoProcessingJob < ApplicationJob
       processed_file = video.process_video(input_path: temp_input.path, video: video, variant_type: variant_type)
 
       upload_key = if variant_type == "normal"
-                     "/videos/variants/#{video.aid}.mp4"
+        "/videos/variants/#{video.aid}.mp4"
       else
-                     "/videos/variants/#{variant_type}/#{video.aid}.mp4"
+        "/videos/variants/#{variant_type}/#{video.aid}.mp4"
       end
 
       video.send(:s3_upload,
@@ -43,6 +43,8 @@ class VideoProcessingJob < ApplicationJob
       video.variant_type = variant_type
       video.variants = variants
       video.save!
+
+      ModerationJob.perform_later("Video", video.id) if ModerationJob.enabled?
 
     ensure
       # 後始末

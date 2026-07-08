@@ -70,6 +70,7 @@ class V1::SettingsController < V1::ApplicationController
         :description,
         :birthdate,
         :visibility,
+        :reveal_sensitive,
         # password
         # password_confirmation
         :icon_file,

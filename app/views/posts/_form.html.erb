@@ -12,6 +12,18 @@
   </div>
 
   <div>
+    <%= form.label :mod_rating, "レーティング(運営上書き)" %>
+    <%= form.select :mod_rating,
+      Post.mod_ratings.keys.map { |k| [t("activerecord.enums.post.rating.#{k}"), k] },
+      { include_blank: "(上書きなし)" } %>
+    <small>
+      実効: <%= t("activerecord.enums.post.rating.#{post.rating_label}") %>
+      / 申告: <%= t("activerecord.enums.post.rating.#{post.user_rating}") %>
+      / 自動: <%= post.auto_rating ? t("activerecord.enums.post.rating.#{post.auto_rating}") : "未判定" %>
+    </small>
+  </div>
+
+  <div>
     <%= form.submit %>
   </div>
 <% end %>

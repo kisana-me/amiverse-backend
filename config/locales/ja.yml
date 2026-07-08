@@ -166,6 +166,11 @@ ja:
           normal: "通常"
           locked: "停止中"
           deleted: "削除済み"
+        rating:
+          general: "全年齢"
+          nsfw: "センシティブ"
+          r18: "R-18"
+          rejected: "却下"
       video:
         visibility:
           closed: "非公開"
@@ -175,6 +180,11 @@ ja:
           normal: "通常"
           locked: "停止中"
           deleted: "削除済み"
+        rating:
+          general: "全年齢"
+          nsfw: "センシティブ"
+          r18: "R-18"
+          rejected: "却下"
       group:
         visibility:
           closed: "非公開"
@@ -195,6 +205,11 @@ ja:
           normal: "通常"
           locked: "停止中"
           deleted: "削除済み"
+        rating:
+          general: "全年齢"
+          nsfw: "センシティブ"
+          r18: "R-18"
+          rejected: "却下"
       comment:
         status:
           normal: "通常"
@@ -209,6 +224,11 @@ ja:
           normal: "通常"
           locked: "停止中"
           deleted: "削除済み"
+        rating:
+          general: "全年齢"
+          nsfw: "センシティブ"
+          r18: "R-18"
+          rejected: "却下"
       report:
         category:
           other: "その他"

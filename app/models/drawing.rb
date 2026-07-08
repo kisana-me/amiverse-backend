@@ -1,7 +1,10 @@
 class Drawing < ApplicationRecord
+  include Rateable
+
   belongs_to :account, optional: true
   has_many :post_drawings
   has_many :posts, through: :post_drawings
+  has_many :moderation_results, as: :moderatable, dependent: :destroy
 
   attribute :meta, :json, default: -> { {} }
   enum :style, { miiverse: 0 }, default: :miiverse
@@ -10,6 +13,7 @@ class Drawing < ApplicationRecord
 
   before_create :set_aid
   after_create :encode_and_upload
+  after_create_commit :enqueue_moderation
 
   validates :name,
     allow_blank: true,
@@ -27,7 +31,15 @@ class Drawing < ApplicationRecord
   scope :isnt_closed, -> { where.not(visibility: :closed) }
 
   def image_url
+    return full_url("/static_assets/images/amiverse-1.webp") if rating_rejected?
+
     object_url(key: "drawings/#{aid}.png")
+  end
+
+  def display_url(account)
+    return full_url("/static_assets/images/amiverse-1.webp") if media_hidden_for?(account)
+
+    image_url
   end
 
   def encode_and_upload
@@ -76,5 +88,11 @@ class Drawing < ApplicationRecord
 
   def delete_variant
     s3_delete(key: "/drawings/#{aid}.png")
+  end
+
+  private
+
+  def enqueue_moderation
+    ModerationJob.perform_later("Drawing", id) if ModerationJob.enabled?
   end
 end

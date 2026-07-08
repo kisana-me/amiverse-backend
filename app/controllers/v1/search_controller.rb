@@ -7,7 +7,8 @@ class V1::SearchController < V1::ApplicationController
     filter = [
       "status = 'normal'",
       "visibility = 'opened'",
-      "account_status = 'normal'"
+      "account_status = 'normal'",
+      "rating <= #{Rateable.max_rating_for(@current_account)}"
     ]
 
     if cursor.present?
@@ -26,6 +27,7 @@ class V1::SearchController < V1::ApplicationController
     ids = results["hits"].map { |h| h["id"] }
 
     @posts = Post.where(id: ids)
+      .rating_visible_to(@current_account)
       .includes(
         :account,
         :diffuses,

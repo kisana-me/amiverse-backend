@@ -53,7 +53,8 @@ class ImagesController < ApplicationController
         :name,
         :description,
         :visibility,
-        :status
+        :status,
+        :mod_rating
       ]
     )
   end

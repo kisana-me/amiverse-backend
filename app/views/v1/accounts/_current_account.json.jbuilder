@@ -6,6 +6,8 @@ json.birthdate account.birthdate
 json.visibility account.visibility
 json.created_at account.created_at
 
+json.reveal_sensitive account.reveal_sensitive
+json.is_adult account.adult?
 json.icon_url account.icon_url
 json.banner_url account.banner_url
 json.followers_count account.followers.count

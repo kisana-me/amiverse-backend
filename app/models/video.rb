@@ -1,8 +1,10 @@
 class Video < ApplicationRecord
   include VideoProcessable
+  include Rateable
 
   belongs_to :account, optional: true
   has_many :post_videos
+  has_many :moderation_results, as: :moderatable, dependent: :destroy
 
   attribute :variants, :json, default: -> { [] }
   attribute :meta, :json, default: -> { {} }
@@ -29,13 +31,21 @@ class Video < ApplicationRecord
   scope :isnt_closed, -> { where.not(visibility: :closed) }
 
   def video_url
-    if normal? && variant_type.present?
+    if rating_rejected?
+      full_url("/static_assets/videos/amiverse-1.mp4")
+    elsif normal? && variant_type.present?
       object_url(key: "/videos/variants/#{aid}.mp4")
     elsif normal?
       full_url("/static_assets/videos/loading.mp4")
     else
       full_url("/static_assets/videos/amiverse-1.mp4")
     end
+  end
+
+  def display_url(account)
+    return full_url("/static_assets/videos/amiverse-1.mp4") if media_hidden_for?(account)
+
+    video_url
   end
 
   def create_variant(next_variant_type = "normal")

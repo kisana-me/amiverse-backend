@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 24) do
+ActiveRecord::Schema[8.1].define(version: 27) do
   create_table "accounts", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
     t.string "aid", limit: 14, null: false
     t.bigint "banner_id"
@@ -24,6 +24,7 @@ ActiveRecord::Schema[8.1].define(version: 24) do
     t.string "name", null: false
     t.string "name_id", null: false
     t.string "password_digest"
+    t.boolean "reveal_sensitive", default: false, null: false
     t.integer "status", limit: 1, default: 0, null: false
     t.datetime "updated_at", null: false
     t.integer "visibility", limit: 1, default: 0, null: false
@@ -57,17 +58,22 @@ ActiveRecord::Schema[8.1].define(version: 24) do
   create_table "drawings", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
     t.bigint "account_id"
     t.string "aid", limit: 14, null: false
+    t.integer "auto_rating", limit: 1
     t.datetime "created_at", null: false
     t.text "data", null: false
     t.text "description", default: "", null: false
     t.text "meta", size: :long, default: "{}", null: false, collation: "utf8mb4_bin"
+    t.integer "mod_rating", limit: 1
     t.string "name", default: "", null: false
+    t.virtual "rating", type: :integer, as: "coalesce(`mod_rating`,greatest(`user_rating`,coalesce(`auto_rating`,0)))", stored: true
     t.integer "status", limit: 1, default: 0, null: false
     t.integer "style", limit: 1, default: 0, null: false
     t.datetime "updated_at", null: false
+    t.integer "user_rating", limit: 1, default: 0, null: false
     t.integer "visibility", limit: 1, default: 0, null: false
     t.index ["account_id"], name: "index_drawings_on_account_id"
     t.index ["aid"], name: "index_drawings_on_aid", unique: true
+    t.index ["rating"], name: "index_drawings_on_rating"
     t.check_constraint "json_valid(`meta`)", name: "meta"
   end
 
@@ -105,20 +111,40 @@ ActiveRecord::Schema[8.1].define(version: 24) do
   create_table "images", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
     t.bigint "account_id"
     t.string "aid", limit: 14, null: false
+    t.integer "auto_rating", limit: 1
     t.datetime "created_at", null: false
     t.text "description", default: "", null: false
     t.text "meta", size: :long, default: "{}", null: false, collation: "utf8mb4_bin"
+    t.integer "mod_rating", limit: 1
     t.string "name", default: "", null: false
     t.string "original_ext"
+    t.virtual "rating", type: :integer, as: "coalesce(`mod_rating`,greatest(`user_rating`,coalesce(`auto_rating`,0)))", stored: true
     t.integer "status", limit: 1, default: 0, null: false
     t.datetime "updated_at", null: false
+    t.integer "user_rating", limit: 1, default: 0, null: false
     t.string "variant_type"
     t.text "variants", size: :long, default: "[]", null: false, collation: "utf8mb4_bin"
     t.integer "visibility", limit: 1, default: 0, null: false
     t.index ["account_id"], name: "index_images_on_account_id"
     t.index ["aid"], name: "index_images_on_aid", unique: true
+    t.index ["rating"], name: "index_images_on_rating"
     t.check_constraint "json_valid(`meta`)", name: "meta"
     t.check_constraint "json_valid(`variants`)", name: "variants"
+  end
+
+  create_table "moderation_results", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
+    t.bigint "account_id"
+    t.string "classifier", default: "", null: false
+    t.datetime "created_at", null: false
+    t.bigint "moderatable_id", null: false
+    t.string "moderatable_type", null: false
+    t.integer "rating", limit: 1, null: false
+    t.text "scores", size: :long, default: "{}", null: false, collation: "utf8mb4_bin"
+    t.integer "source", limit: 1, default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_moderation_results_on_account_id"
+    t.index ["moderatable_type", "moderatable_id"], name: "index_moderation_results_on_moderatable"
+    t.check_constraint "json_valid(`scores`)", name: "scores"
   end
 
   create_table "notification_settings", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
@@ -216,17 +242,22 @@ ActiveRecord::Schema[8.1].define(version: 24) do
   create_table "posts", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.string "aid", limit: 14, null: false
+    t.integer "auto_rating", limit: 1
     t.text "content", default: "", null: false
     t.datetime "created_at", null: false
     t.text "meta", size: :long, default: "{}", null: false, collation: "utf8mb4_bin"
+    t.integer "mod_rating", limit: 1
     t.bigint "quote_id"
+    t.virtual "rating", type: :integer, as: "coalesce(`mod_rating`,greatest(`user_rating`,coalesce(`auto_rating`,0)))", stored: true
     t.bigint "reply_id"
     t.integer "status", limit: 1, default: 0, null: false
     t.datetime "updated_at", null: false
+    t.integer "user_rating", limit: 1, default: 0, null: false
     t.integer "visibility", limit: 1, default: 0, null: false
     t.index ["account_id"], name: "index_posts_on_account_id"
     t.index ["aid"], name: "index_posts_on_aid", unique: true
     t.index ["quote_id"], name: "index_posts_on_quote_id"
+    t.index ["rating"], name: "index_posts_on_rating"
     t.index ["reply_id"], name: "index_posts_on_reply_id"
     t.check_constraint "json_valid(`meta`)", name: "meta"
   end
@@ -288,18 +319,23 @@ ActiveRecord::Schema[8.1].define(version: 24) do
   create_table "videos", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
     t.bigint "account_id"
     t.string "aid", limit: 14, null: false
+    t.integer "auto_rating", limit: 1
     t.datetime "created_at", null: false
     t.text "description", default: "", null: false
     t.text "meta", size: :long, default: "{}", null: false, collation: "utf8mb4_bin"
+    t.integer "mod_rating", limit: 1
     t.string "name", default: "", null: false
     t.string "original_ext"
+    t.virtual "rating", type: :integer, as: "coalesce(`mod_rating`,greatest(`user_rating`,coalesce(`auto_rating`,0)))", stored: true
     t.integer "status", limit: 1, default: 0, null: false
     t.datetime "updated_at", null: false
+    t.integer "user_rating", limit: 1, default: 0, null: false
     t.string "variant_type"
     t.text "variants", size: :long, default: "[]", null: false, collation: "utf8mb4_bin"
     t.integer "visibility", limit: 1, default: 0, null: false
     t.index ["account_id"], name: "index_videos_on_account_id"
     t.index ["aid"], name: "index_videos_on_aid", unique: true
+    t.index ["rating"], name: "index_videos_on_rating"
     t.check_constraint "json_valid(`meta`)", name: "meta"
     t.check_constraint "json_valid(`variants`)", name: "variants"
   end
@@ -329,6 +365,7 @@ ActiveRecord::Schema[8.1].define(version: 24) do
   add_foreign_key "follows", "accounts", column: "followed_id"
   add_foreign_key "follows", "accounts", column: "follower_id"
   add_foreign_key "images", "accounts"
+  add_foreign_key "moderation_results", "accounts"
   add_foreign_key "notification_settings", "accounts"
   add_foreign_key "notifications", "accounts"
   add_foreign_key "notifications", "accounts", column: "actor_id"

@@ -6,11 +6,13 @@ class V1::PostsController < V1::ApplicationController
       .from_normal_account
       .is_normal
       .is_opened
+      .rating_visible_to(@current_account)
       .with_associations
       .find_by(aid: params[:aid])
     if @post
       if @post.replies.any?
         @replies = @post.replies
+          .rating_visible_to(@current_account)
           .with_associations
           .order(id: :desc)
           .limit(50)
@@ -35,6 +37,7 @@ class V1::PostsController < V1::ApplicationController
       .from_normal_account
       .is_normal
       .is_opened
+      .rating_visible_to(@current_account)
       .with_associations
       .order(id: :desc)
       .limit(50)
@@ -159,8 +162,10 @@ class V1::PostsController < V1::ApplicationController
         :quote_aid,
         :content,
         :visibility,
+        :user_rating,
         media_files: [],
-        drawing_attributes: [ :data, :name, :description ]
+        media_attributes: [ [ :file, :rating, :name, :description ] ],
+        drawing_attributes: [ :data, :name, :description, :rating ]
       ]
     )
   end

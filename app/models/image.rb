@@ -1,8 +1,10 @@
 class Image < ApplicationRecord
   include ImageProcessable
+  include Rateable
 
   belongs_to :account, optional: true
   has_many :post_images
+  has_many :moderation_results, as: :moderatable, dependent: :destroy
 
   attribute :variants, :json, default: -> { [] }
   attribute :meta, :json, default: -> { {} }
@@ -13,6 +15,7 @@ class Image < ApplicationRecord
   after_initialize :set_aid, if: :new_record?
   before_create :image_upload
   before_save :file_visibility_check
+  after_create_commit :enqueue_moderation
 
   validates :name,
     allow_blank: true,
@@ -28,11 +31,17 @@ class Image < ApplicationRecord
   scope :isnt_closed, -> { where.not(visibility: :closed) }
 
   def image_url
-    if normal? && variant_type.present?
+    if normal? && variant_type.present? && !rating_rejected?
       object_url(key: "/images/variants/#{aid}.webp")
     else
       full_url("/static_assets/images/amiverse-1.webp")
     end
+  end
+
+  def display_url(account)
+    return full_url("/static_assets/images/amiverse-1.webp") if media_hidden_for?(account)
+
+    image_url
   end
 
   def image_upload
@@ -98,6 +107,10 @@ class Image < ApplicationRecord
   end
 
   private
+
+  def enqueue_moderation
+    ModerationJob.perform_later("Image", id) if ModerationJob.enabled?
+  end
 
   def file_visibility_check
     return unless deleted?
