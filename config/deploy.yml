@@ -68,6 +68,7 @@ builder:
   arch: amd64
   dockerfile: Dockerfile.production
   driver: docker
+  context: .
 
 ssh:
   user: <%= ENV.fetch("DEPLOY_SSH_USER", "root") %>
