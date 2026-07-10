@@ -5,7 +5,7 @@ image: kisana-me/amiverse-backend
 servers:
   web:
     hosts:
-      - <%= ENV.fetch("DEPLOY_HOST") %>
+      - <%= ENV.fetch("DEPLOY_HOST", "127.0.0.1") %>
     options:
       add-host: host.docker.internal:host-gateway
 
@@ -68,5 +68,5 @@ builder:
 ssh:
   user: <%= ENV.fetch("DEPLOY_SSH_USER", "root") %>
   port: <%= ENV.fetch("DEPLOY_SSH_PORT", 22) %>
-  keys: [ "~/.ssh/id_deploy" ]
+  keys: [ "~/.ssh/id_kamal" ]
   keys_only: true
