@@ -67,6 +67,7 @@ asset_path: /rails/public/assets
 builder:
   arch: amd64
   dockerfile: Dockerfile.production
+  driver: docker
 
 ssh:
   user: <%= ENV.fetch("DEPLOY_SSH_USER", "root") %>
