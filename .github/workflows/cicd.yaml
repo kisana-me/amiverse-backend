@@ -1,24 +1,93 @@
 name: Release to Production Environment
+
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      command:
+        description: "実行するkamalコマンド"
+        required: true
+        default: deploy
+        type: choice
+        options:
+          - deploy
+          - setup
+          - proxy-boot-config
+          - rollback
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || vars.KAMAL_DEPLOY_ENABLED == 'true'
+    env:
+      DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+      DEPLOY_SSH_USER: ${{ secrets.DEPLOY_SSH_USER }}
+      DEPLOY_SSH_PORT: ${{ secrets.DEPLOY_SSH_PORT }}
+      RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+      DB_USERNAME: ${{ secrets.DB_USERNAME }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      S3_USERNAME: ${{ secrets.S3_USERNAME }}
+      S3_PASSWORD: ${{ secrets.S3_PASSWORD }}
+      S3_API_ENDPOINT: ${{ secrets.S3_API_ENDPOINT }}
+      S3_LOCAL_ENDPOINT: ${{ secrets.S3_LOCAL_ENDPOINT }}
+      MEILISEARCH_API_KEY: ${{ secrets.MEILISEARCH_API_KEY }}
+
     steps:
-      - name: ssh and deploy
-        uses: appleboy/ssh-action@master
+      - uses: actions/checkout@v4
+
+      - name: Verify required secrets are present
+        run: |
+          missing=()
+          for key in DEPLOY_HOST RAILS_MASTER_KEY DB_USERNAME DB_PASSWORD \
+                     S3_USERNAME S3_PASSWORD S3_API_ENDPOINT S3_LOCAL_ENDPOINT \
+                     MEILISEARCH_API_KEY; do
+            [ -n "${!key}" ] || missing+=("$key")
+          done
+          if [ ${#missing[@]} -ne 0 ]; then
+            echo "::error::未設定のシークレット: ${missing[*]}"
+            exit 1
+          fi
+
+      - uses: ruby/setup-ruby@v1
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          password: ${{ secrets.SSH_PASSWORD }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.SSH_PORT }}
-          script: |
-            cd ~/amiverse/backend
-            git remote set-url origin https://kisana-me:${{ secrets.GH_TOKEN }}@github.com/kisana-me/amiverse-backend.git
-            git fetch origin main
-            git reset --hard origin/main
-            docker compose restart rails
+          ruby-version: "3.4"
+
+      - name: Install Kamal
+        run: gem install kamal -v 2.8.2
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -p "${DEPLOY_SSH_PORT:-22}" -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Run Kamal
+        run: |
+          case "${{ inputs.command || 'deploy' }}" in
+            setup)
+              kamal setup
+              ;;
+            proxy-boot-config)
+              kamal proxy boot_config set \
+                --publish-host-ip 127.0.0.1 --http-port 3002 --https-port 3443
+              ;;
+            rollback)
+              kamal rollback
+              ;;
+            *)
+              kamal deploy
+              ;;
+          esac
+
+      - name: Show container logs on failure
+        if: failure()
+        run: kamal app logs --lines 100 || true

@@ -13,11 +13,11 @@ Rails.application.configure do
   config.force_ssl = true
 
   # Skip http-to-https redirect for the default health check endpoint.
-  # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
+  config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
 
   config.log_tags = [ :request_id ]
   config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "info")
-  config.logger = Logger.new("log/production.log", "daily")
+  config.logger = ActiveSupport::TaggedLogging.logger(STDOUT)
   config.i18n.fallbacks = true
   config.active_support.report_deprecations = false
   config.active_record.dump_schema_after_migration = false
@@ -25,9 +25,9 @@ Rails.application.configure do
   config.silence_healthcheck_path = "/up"
   config.cache_store = :memory_store # solid_cache_store
 
-  # # Replace the default in-process and non-durable queuing backend for Active Job.
-  # config.active_job.queue_adapter = :solid_queue
-  # config.solid_queue.connects_to = { database: { writing: :queue } }
+  # Replace the default in-process and non-durable queuing backend for Active Job.
+  config.active_job.queue_adapter = :solid_queue
+  config.solid_queue.connects_to = { database: { writing: :queue } }
 
   # config.action_mailer.raise_delivery_errors = false
   # config.action_mailer.default_url_options = { host: 'example.com' }
@@ -51,10 +51,17 @@ Rails.application.configure do
   config.hosts += env_hosts
 
   # Skip DNS rebinding protection for the default health check endpoint.
-  # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+  config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 
-  # Cloudflare IP Ranges(https://www.cloudflare.com/ips/)
   config.action_dispatch.trusted_proxies = [
+    # ローカル・プライベートIP帯 (nginx / kamal-proxy / Docker)
+    IPAddr.new("127.0.0.0/8"),
+    IPAddr.new("10.0.0.0/8"),
+    IPAddr.new("172.16.0.0/12"),
+    IPAddr.new("192.168.0.0/16"),
+    IPAddr.new("::1"),
+    IPAddr.new("fc00::/7"),
+    # Cloudflare IP Ranges(https://www.cloudflare.com/ips/)
     # IPv6
     IPAddr.new("2400:cb00::/32"),
     IPAddr.new("2606:4700::/32"),
