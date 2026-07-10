@@ -34,6 +34,8 @@ env:
     - MEILISEARCH_API_KEY
     - S3_API_ENDPOINT
     - S3_LOCAL_ENDPOINT
+    - MISSION_CONTROL_USER
+    - MISSION_CONTROL_PASSWORD
   clear:
     DB_HOST: host.docker.internal
     MEILISEARCH_URL: http://host.docker.internal:7700

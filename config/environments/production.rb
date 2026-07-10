@@ -29,6 +29,9 @@ Rails.application.configure do
   config.active_job.queue_adapter = :solid_queue
   config.solid_queue.connects_to = { database: { writing: :queue } }
 
+  config.mission_control.jobs.http_basic_auth_user = ENV["MISSION_CONTROL_USER"]
+  config.mission_control.jobs.http_basic_auth_password = ENV["MISSION_CONTROL_PASSWORD"]
+
   # config.action_mailer.raise_delivery_errors = false
   # config.action_mailer.default_url_options = { host: 'example.com' }
   # config.action_mailer.smtp_settings = {
