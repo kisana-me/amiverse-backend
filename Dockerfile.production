@@ -40,6 +40,9 @@ RUN bundle install && \
 
 COPY . .
 
+# Windowsからのコミットは実行ビットが落ちることがある (core.filemode=false)
+RUN chmod +x bin/*
+
 RUN bundle exec bootsnap precompile app/ lib/
 
 # master.key無しでプリコンパイルするためのダミーキー
