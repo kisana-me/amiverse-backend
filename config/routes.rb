@@ -40,6 +40,9 @@ Rails.application.routes.draw do
   # Reports
   resources :reports, only: [ :index, :show, :update ], param: :aid
 
+  # S3 Consistency Check
+  resource :consistency_check, only: [ :show, :create ]
+
   # Emojis
   resources :emojis, except: [ :edit ], param: :aid do
     collection do

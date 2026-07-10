@@ -1,6 +1,7 @@
 class Image < ApplicationRecord
   include ImageProcessable
   include Rateable
+  include MediaPrivatable
 
   belongs_to :account, optional: true
   has_many :post_images
@@ -14,7 +15,6 @@ class Image < ApplicationRecord
 
   after_initialize :set_aid, if: :new_record?
   before_create :image_upload
-  before_save :file_visibility_check
   after_create_commit :enqueue_moderation
 
   validates :name,
@@ -42,6 +42,20 @@ class Image < ApplicationRecord
     return full_url("/static_assets/images/amiverse-1.webp") if media_hidden_for?(account)
 
     image_url
+  end
+
+  def admin_media_url(expires_in: 300)
+    return image_url unless deleted? && variant_type.present?
+
+    signed_object_url(key: private_key_for("images/variants/#{aid}.webp"), expires_in: expires_in) ||
+      full_url("/static_assets/images/amiverse-1.webp")
+  end
+
+  def media_file_keys
+    keys = []
+    keys << "images/variants/#{aid}.webp" if variant_type.present?
+    keys << "images/originals/#{aid}.#{original_ext}" if original_ext.present?
+    keys
   end
 
   def image_upload
@@ -110,11 +124,5 @@ class Image < ApplicationRecord
 
   def enqueue_moderation
     ModerationJob.perform_later("Image", id) if ModerationJob.enabled?
-  end
-
-  def file_visibility_check
-    return unless deleted?
-    s3_delete(key: "/images/variants/#{aid}.webp")
-    self.variant_type = nil
   end
 end

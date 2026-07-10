@@ -1,6 +1,7 @@
 class Video < ApplicationRecord
   include VideoProcessable
   include Rateable
+  include MediaPrivatable
 
   belongs_to :account, optional: true
   has_many :post_videos
@@ -46,6 +47,23 @@ class Video < ApplicationRecord
     return full_url("/static_assets/videos/amiverse-1.mp4") if media_hidden_for?(account)
 
     video_url
+  end
+
+  def admin_media_url(expires_in: 300)
+    return video_url unless deleted? && variant_type.present?
+
+    signed_object_url(key: private_key_for("videos/variants/#{aid}.mp4"), expires_in: expires_in) ||
+      full_url("/static_assets/videos/amiverse-1.mp4")
+  end
+
+  def media_file_keys
+    keys = []
+    keys << "videos/variants/#{aid}.mp4" if variant_type.present?
+    keys << "videos/originals/#{aid}.#{original_ext}" if original_ext.present?
+    (variants || []).reject { |v| v == "normal" }.each do |v|
+      keys << "videos/variants/#{v}/#{aid}.mp4"
+    end
+    keys
   end
 
   def create_variant(next_variant_type = "normal")

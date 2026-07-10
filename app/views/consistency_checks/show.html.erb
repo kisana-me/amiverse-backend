@@ -1,0 +1,38 @@
+<% provide(:title, "ストレージ整合性チェック") %>
+
+<h1>ストレージ整合性チェック</h1>
+
+<p>オブジェクトストレージ上のファイルと Image / Video / Drawing レコードを突合します。</p>
+
+<%= button_to "チェック実行", consistency_check_path, method: :post, data: { turbo: false } %>
+
+<% if @result %>
+  <h2>孤児ファイル (S3 にあるが DB で管理されていない) : <%= @result.orphans.size %>件</h2>
+  <% if @result.orphans.any? %>
+    <table border="1" cellpadding="4">
+      <tr><th>キー</th></tr>
+      <% @result.orphans.each do |key| %>
+        <tr><td><code><%= key %></code></td></tr>
+      <% end %>
+    </table>
+  <% else %>
+    <p>なし ✅</p>
+  <% end %>
+
+  <h2>欠損ファイル (DB にあるが S3 に実体がない) : <%= @result.missing.size %>件</h2>
+  <% if @result.missing.any? %>
+    <table border="1" cellpadding="4">
+      <tr><th>キー</th><th>モデル</th><th>aid</th><th>status</th></tr>
+      <% @result.missing.each do |key, record| %>
+        <tr>
+          <td><code><%= key %></code></td>
+          <td><%= record.class.name %></td>
+          <td><%= link_to record.aid, url_for(controller: record.class.name.underscore.pluralize, action: :show, aid: record.aid) %></td>
+          <td><%= record.status %></td>
+        </tr>
+      <% end %>
+    </table>
+  <% else %>
+    <p>なし ✅</p>
+  <% end %>
+<% end %>

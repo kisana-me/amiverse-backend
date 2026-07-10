@@ -1,5 +1,6 @@
 class Drawing < ApplicationRecord
   include Rateable
+  include MediaPrivatable
 
   belongs_to :account, optional: true
   has_many :post_drawings
@@ -87,7 +88,18 @@ class Drawing < ApplicationRecord
   end
 
   def delete_variant
-    s3_delete(key: "/drawings/#{aid}.png")
+    s3_delete(key: "drawings/#{aid}.png")
+  end
+
+  def admin_media_url(expires_in: 300)
+    return image_url unless deleted?
+
+    signed_object_url(key: private_key_for("drawings/#{aid}.png"), expires_in: expires_in) ||
+      full_url("/static_assets/images/amiverse-1.webp")
+  end
+
+  def media_file_keys
+    [ "drawings/#{aid}.png" ]
   end
 
   private
