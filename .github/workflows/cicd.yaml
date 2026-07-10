@@ -13,6 +13,7 @@ on:
         type: choice
         options:
           - deploy
+          - proxy-boot-config
           - setup
           - rollback
 
@@ -132,14 +133,31 @@ jobs:
 
       - name: Run Kamal
         run: |
+          # kamal-proxyは既定で 0.0.0.0:80/443 を publish し、前段のnginxと衝突する。
+          # setup/deploy の前に、サーバー上に 3002 のboot_configが保存済みか確認する。
+          assert_boot_config() {
+            if ! kamal proxy boot_config get 2>&1 | grep -q "3002"; then
+              echo "::error::kamal-proxyのboot_configが未設定です。先に Run workflow から proxy-boot-config を実行してください (このままsetupするとnginxと80/443が衝突します)。"
+              exit 1
+            fi
+          }
+
           case "${{ inputs.command || 'deploy' }}" in
+            proxy-boot-config)
+              kamal proxy boot_config set \
+                --publish-host-ip 127.0.0.1 --http-port 3002 --https-port 3443
+              echo "--- 保存された設定 ---"
+              kamal proxy boot_config get
+              ;;
             setup)
+              assert_boot_config
               kamal setup
               ;;
             rollback)
               kamal rollback
               ;;
             *)
+              assert_boot_config
               kamal deploy
               ;;
           esac
