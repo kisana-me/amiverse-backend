@@ -17,6 +17,12 @@ proxy:
     path: /up
     interval: 3
     timeout: 30
+  run:
+    publish: true
+    http_port: 3002
+    https_port: 3443
+    bind_ips:
+      - 127.0.0.1
 
 registry:
   server: localhost:5555
@@ -68,3 +74,5 @@ builder:
 ssh:
   user: <%= ENV.fetch("DEPLOY_SSH_USER", "root") %>
   port: <%= ENV.fetch("DEPLOY_SSH_PORT", 22) %>
+  keys: [ "~/.ssh/id_deploy" ]
+  keys_only: true

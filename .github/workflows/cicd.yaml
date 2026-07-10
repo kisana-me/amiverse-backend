@@ -14,7 +14,6 @@ on:
         options:
           - deploy
           - setup
-          - proxy-boot-config
           - rollback
 
 concurrency:
@@ -64,21 +63,78 @@ jobs:
       - uses: docker/setup-buildx-action@v3
 
       - name: Configure SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
+          port="${DEPLOY_SSH_PORT:-22}"
+          user="${DEPLOY_SSH_USER:-root}"
+
           mkdir -p ~/.ssh && chmod 700 ~/.ssh
-          printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -p "${DEPLOY_SSH_PORT:-22}" -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+
+          # 鍵が正しい形式か (改行落ち・パスフレーズ付きをここで検出する)
+          if ! ssh-keygen -y -f ~/.ssh/id_deploy > /dev/null 2>&1; then
+            echo "::error::SSH_PRIVATE_KEY を秘密鍵として読めません。改行が保たれているか、パスフレーズ無しかを確認してください。"
+            exit 1
+          fi
+
+          # ポートが開いているか。ここで落ちるならファイアウォール/IP制限を疑う。
+          if ! timeout 10 bash -c "cat < /dev/null > /dev/tcp/$DEPLOY_HOST/$port" 2>/dev/null; then
+            echo "::error::$DEPLOY_HOST:$port へTCP接続できません。GitHub ActionsのランナーIPからSSHポートが開いているか確認してください。"
+            exit 1
+          fi
+
+          # Kamalが使うnet-sshは、ssh-keyscanが返す複数の鍵型(rsa/ecdsa/ed25519)や
+          # -H のハッシュ化エントリをうまく扱えず HostKeyMismatch になることがある。
+          # 型を1つに絞り、ハッシュ化しない形で記録する。
+          : > ~/.ssh/known_hosts
+          for t in ed25519 rsa; do
+            if ssh-keyscan -t "$t" -p "$port" "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null \
+               && [ -s ~/.ssh/known_hosts ]; then
+              echo "known_hosts: $t の鍵を記録しました"
+              break
+            fi
+          done
+          if [ ! -s ~/.ssh/known_hosts ]; then
+            echo "::error::ssh-keyscan がホスト鍵を取得できませんでした。"
+            exit 1
+          fi
+          chmod 644 ~/.ssh/known_hosts
+
+          cat >> ~/.ssh/config <<EOF
+          Host $DEPLOY_HOST
+            User $user
+            Port $port
+            IdentityFile ~/.ssh/id_deploy
+            IdentitiesOnly yes
+          EOF
+
+          # 鍵認証とdocker権限をここで確定させる (OpenSSH)
+          if ! ssh -o BatchMode=yes "$DEPLOY_HOST" 'docker version --format "{{.Server.Version}}"'; then
+            echo "::error::SSH接続、またはサーバー上でのdocker実行に失敗しました。公開鍵の登録と、$user が dockerグループに入っているかを確認してください。"
+            exit 1
+          fi
+
+          # Kamalが実際に使うのはnet-ssh。OpenSSHが通ってもここで落ちることがあるため、
+          # kamalを走らせる前に同じ経路で検証する。
+          if ! ruby -rnet/ssh -e '
+            Net::SSH.start(ENV.fetch("DEPLOY_HOST"), ENV["DEPLOY_SSH_USER"] || "root",
+                           port: (ENV["DEPLOY_SSH_PORT"] || 22).to_i,
+                           keys: [File.expand_path("~/.ssh/id_deploy")],
+                           keys_only: true, non_interactive: true) do |ssh|
+              puts "net-ssh OK: #{ssh.exec!("docker version --format {{.Server.Version}}").strip}"
+            end
+          '; then
+            echo "::error::net-ssh でのSSH接続に失敗しました。HostKeyMismatch の場合は known_hosts の鍵型が合っていません。"
+            exit 1
+          fi
 
       - name: Run Kamal
         run: |
           case "${{ inputs.command || 'deploy' }}" in
             setup)
               kamal setup
-              ;;
-            proxy-boot-config)
-              kamal proxy boot_config set \
-                --publish-host-ip 127.0.0.1 --http-port 3002 --https-port 3443
               ;;
             rollback)
               kamal rollback
