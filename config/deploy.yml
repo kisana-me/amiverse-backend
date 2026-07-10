@@ -62,7 +62,7 @@ aliases:
   logs: app logs -f
   dbc: app exec --interactive --reuse "bin/rails dbconsole --include-password"
 
-asset_path: /rails/public/assets
+# asset_path: /rails/public/assets
 
 builder:
   arch: amd64
