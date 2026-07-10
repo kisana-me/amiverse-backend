@@ -19,7 +19,10 @@ proxy:
     timeout: 30
 
 registry:
-  server: localhost:5555
+  server: 127.0.0.1:5000
+  username: kamal
+  password:
+    - KAMAL_REGISTRY_PASSWORD
 
 env:
   secret:
