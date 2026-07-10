@@ -7,9 +7,12 @@ module S3Tools
 
   class_methods do
     def s3_upload(key:, file:, content_type:)
-      s3 = Aws::S3::Resource.new(client: s3_client)
-      obj = s3.bucket(ENV.fetch("S3_BUCKET")).object(normalize_key(key))
-      obj.upload_file(file, content_type: content_type, acl: "readonly")
+      Aws::S3::TransferManager.new(client: s3_client).upload_file(
+        file,
+        bucket: ENV.fetch("S3_BUCKET"),
+        key: normalize_key(key),
+        content_type: content_type
+      )
     end
 
     def s3_download(key:, response_target:)
@@ -42,7 +45,7 @@ module S3Tools
       return false if from == to
 
       bucket = ENV.fetch("S3_BUCKET")
-      s3_client.copy_object(bucket: bucket, copy_source: "/#{bucket}/#{from}", key: to)
+      s3_client.copy_object(bucket: bucket, copy_source: "#{bucket}/#{from}", key: to)
       s3_client.delete_object(bucket: bucket, key: from)
       true
     rescue Aws::S3::Errors::NoSuchKey
@@ -95,7 +98,7 @@ module S3Tools
 
   def signed_object_url(key: "", expires_in: 100)
     s3 = Aws::S3::Client.new(
-      endpoint: ENV.fetch("S3_API_ENDPOINT") { ENV.fetch("S3_PUBLIC_ENDPOINT") },
+      endpoint: ENV["S3_API_ENDPOINT"].presence || ENV.fetch("S3_PUBLIC_ENDPOINT"),
       region: ENV.fetch("S3_REGION"),
       access_key_id: ENV.fetch("S3_USERNAME"),
       secret_access_key: ENV.fetch("S3_PASSWORD"),
