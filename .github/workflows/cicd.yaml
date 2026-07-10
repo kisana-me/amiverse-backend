@@ -51,9 +51,13 @@ jobs:
             kamal() {
               docker run --rm \
                 --network host \
-                -v "$PWD:/workdir" \
+                -v "$HOME/amiverse:/amiverse" \
+                -w /amiverse/backend \
                 -v /var/run/docker.sock:/var/run/docker.sock \
                 -v "$HOME/.ssh:/root/.ssh:ro" \
+                -e GIT_CONFIG_COUNT=1 \
+                -e GIT_CONFIG_KEY_0=safe.directory \
+                -e GIT_CONFIG_VALUE_0='*' \
                 --env-file .env.deploy \
                 ghcr.io/basecamp/kamal:v2.8.2 "$@"
             }
