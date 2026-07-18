@@ -1,17 +1,35 @@
-<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <rect width="100%" height="100%" fill="#ffffff" />
-  
+<svg width="1920" height="1080" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
   <defs>
+    <linearGradient id="bgGradient" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" />
+      <stop offset="1" stop-color="#f2faee" />
+    </linearGradient>
+    <linearGradient id="rainbow" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#ec7979" />
+      <stop offset="0.1667" stop-color="#ecec79" />
+      <stop offset="0.3333" stop-color="#79ec79" />
+      <stop offset="0.5" stop-color="#79ecec" />
+      <stop offset="0.6667" stop-color="#7979ec" />
+      <stop offset="0.8333" stop-color="#ec79ec" />
+      <stop offset="1" stop-color="#ec7979" />
+    </linearGradient>
     <clipPath id="circleView">
-      <circle cx="90" cy="90" r="40" />
+      <circle cx="145" cy="106" r="68" />
     </clipPath>
+    <filter id="softShadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feGaussianBlur stdDeviation="12" />
+    </filter>
   </defs>
-  <image x="50" y="50" width="80" height="80" xlink:href="<%= @account_icon_base64 %>" clip-path="url(#circleView)" />
-  
-  <text x="150" y="85" font-family="Noto Sans CJK JP" font-size="32" font-weight="bold" fill="#333">
+
+  <rect width="100%" height="100%" fill="url(#bgGradient)" />
+
+  <image x="75" y="36" width="140" height="140" xlink:href="<%= @account_icon_base64 %>" clip-path="url(#circleView)" />
+  <circle cx="145" cy="106" r="69" fill="none" stroke="url(#rainbow)" stroke-width="4" />
+
+  <text x="240" y="103" font-family="Noto Sans CJK JP, Noto Color Emoji" font-size="50" font-weight="bold" fill="#1f2937">
     <%= @post.account.name %>
   </text>
-  <text x="150" y="120" font-family="Noto Sans CJK JP" font-size="24" fill="#888">
+  <text x="240" y="155" font-family="Noto Sans CJK JP, Noto Color Emoji" font-size="34" fill="#9ca3af">
     @<%= @post.account.name_id %>
   </text>
 
@@ -21,27 +39,37 @@
     <% lines[max_lines - 1] = lines[max_lines - 1][0...-1] + "…" %>
   <% end %>
   <% lines.first(max_lines).each_with_index do |line, index| %>
-    <text x="50" y="<%= 200 + (index * 50) %>" font-family="Noto Sans CJK JP" font-size="40" fill="#000">
+    <text x="150" y="<%= 224 + (index * 52) %>" font-family="Noto Sans CJK JP, Noto Color Emoji" font-size="40" fill="#1f2937">
       <%= line %>
     </text>
   <% end %>
 
   <% if @post_drawing_base64 %>
     <%
-      line_count = lines.first(max_lines).size
-      start_y = 160 + (line_count * 50)
-      start_y += 20 if line_count > 0
+      scale = 5
+      img_w = 320 * scale
+      img_h = 120 * scale
+      img_x = (1920 - img_w) / 2
 
-      img_w = 800
-      img_h = 300
-      img_x = 50
-      img_y = start_y
+      line_count = lines.first(max_lines).size
+      content_bottom = line_count > 0 ? 194 + (line_count - 1) * 102 : 150
+      footer_top = 910
+
+      img_y = content_bottom + ((footer_top - content_bottom) - img_h) / 2
+
+      border_w = 6
     %>
-    <rect x="<%= img_x %>" y="<%= img_y %>" width="<%= img_w %>" height="<%= img_h %>" fill="none" stroke="#e0e0e0" stroke-width="2" />
-    <image x="<%= img_x %>" y="<%= img_y %>" width="<%= img_w %>" height="<%= img_h %>" xlink:href="<%= @post_drawing_base64 %>" preserveAspectRatio="xMidYMid meet" />
+    <rect x="<%= img_x %>" y="<%= img_y + 14 %>" width="<%= img_w %>" height="<%= img_h %>" fill="#000000" opacity="0.18" filter="url(#softShadow)" />
+    <rect x="<%= img_x - border_w %>" y="<%= img_y - border_w %>" width="<%= img_w + border_w * 2 %>" height="<%= img_h + border_w * 2 %>" fill="#ffffff" />
+    <image x="<%= img_x %>" y="<%= img_y %>" width="<%= img_w %>" height="<%= img_h %>" xlink:href="<%= @post_drawing_base64 %>" preserveAspectRatio="xMidYMid meet" image-rendering="pixelated" />
+    <rect x="<%= img_x - border_w / 2 %>" y="<%= img_y - border_w / 2 %>" width="<%= img_w + border_w %>" height="<%= img_h + border_w %>" fill="none" stroke="url(#rainbow)" stroke-width="<%= border_w %>" />
   <% end %>
 
-  <svg x="870" y="530" width="70" height="70" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <text x="1320" y="993" text-anchor="end" font-family="Noto Sans CJK JP" font-size="40" fill="#000000" font-weight="bold">
+    手描きでつぶやく
+  </text>
+  <rect x="1346" y="926" width="420" height="104" rx="22" fill="#000000" />
+  <svg x="1370" y="942" width="70" height="70" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
   <g clip-path="url(#clip0_138_2)">
   <path d="M37.7072 29.3479C49.1869 6.05762 84.1671 13.5399 85.1146 39.4883L86.5873 79.8175C86.6907 82.6486 84.4236 85 81.5906 85H18.3154C14.6109 85 12.1928 81.1122 13.8306 77.7895L37.7072 29.3479Z" fill="url(#paint0_linear_138_2)"/>
   <ellipse cx="49.4637" cy="42.3818" rx="8" ry="12.5" transform="rotate(7 49.4637 42.3818)" fill="#F9FFEE"/>
@@ -61,7 +89,7 @@
   </defs>
   </svg>
 
-  <text x="950" y="580" font-family="Noto Sans CJK JP" font-size="30" fill="#373737ff" font-weight="bold">
+  <text x="1452" y="993" font-family="Noto Sans CJK JP" font-size="40" fill="#ffffff" font-weight="bold">
     Amiverse.net
   </text>
 </svg>
