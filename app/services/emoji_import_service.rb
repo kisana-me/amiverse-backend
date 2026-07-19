@@ -2,6 +2,14 @@ class EmojiImportService
   # 使い方: EmojiImportService.call('storage/emoji-test.txt')
   # https://www.unicode.org/Public/17.0.0/emoji/emoji-test.txt を想定
 
+  # name_id 生成時、英数字以外は削られるため、記号だけの絵文字名（"keycap: #" など）は
+  # 単語に置換してから正規化する。これをしないと "keycap: #" と "keycap: *" が
+  # どちらも "keycap" に潰れて衝突してしまう。
+  SYMBOL_WORDS = {
+    "#" => " number sign ",
+    "*" => " asterisk ",
+  }.freeze
+
   def self.call(file_path)
     new(file_path).perform
   end
@@ -75,7 +83,7 @@ class EmojiImportService
 
       # name_id: 英数字以外をアンダーバーに置換（連続は1つにまとめる）
       # 例: "boy: medium skin tone" -> "boy_medium_skin_tone"
-      name_id_value = english_name.downcase.gsub(/[^a-z0-9]+/, "_").gsub(/^_|_$/, "")
+      name_id_value = build_name_id(english_name)
 
       # description: "1F600\nE1.0" の形式
       description_value = "#{hex_sequence}\n#{version_str}"
@@ -94,6 +102,16 @@ class EmojiImportService
   end
 
   private
+
+  # 英語名から name_id を生成する。記号は SYMBOL_WORDS で単語化してから
+  # 英数字以外をアンダーバーへ潰す。
+  # 例: "keycap: #" -> "keycap_number_sign", "keycap: *" -> "keycap_asterisk"
+  def build_name_id(english_name)
+    normalized = SYMBOL_WORDS.reduce(english_name.downcase) do |name, (symbol, word)|
+      name.gsub(symbol, word)
+    end
+    normalized.gsub(/[^a-z0-9]+/, "_").gsub(/\A_|_\z/, "")
+  end
 
   def create_or_skip_emoji(attrs)
     if Emoji.exists?(name_id: attrs[:name_id])

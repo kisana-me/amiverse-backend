@@ -7,6 +7,14 @@ class EmojiJsonExportService
   # EmojiJsonExportService.call('storage/emoji-test.txt')
   # EmojiJsonExportService.call('storage/emoji-test.txt', output_dir: 'storage')
 
+  # name_id 生成時、英数字以外は削られるため、記号だけの絵文字名（"keycap: #" など）は
+  # 単語に置換してから正規化する。これをしないと "keycap: #" と "keycap: *" が
+  # どちらも "keycap" に潰れて衝突してしまう。
+  SYMBOL_WORDS = {
+    "#" => " number sign ",
+    "*" => " asterisk ",
+  }.freeze
+
   def self.call(file_path = "storage/emoji-test.txt", output_dir: "storage")
     new(file_path, output_dir: output_dir).perform
   end
@@ -61,6 +69,16 @@ class EmojiJsonExportService
 
   private
 
+  # 英語名から name_id を生成する。記号は SYMBOL_WORDS で単語化してから
+  # 英数字以外をアンダーバーへ潰す。
+  # 例: "keycap: #" -> "keycap_number_sign", "keycap: *" -> "keycap_asterisk"
+  def build_name_id(english_name)
+    normalized = SYMBOL_WORDS.reduce(english_name.downcase) do |name, (symbol, word)|
+      name.gsub(symbol, word)
+    end
+    normalized.gsub(/[^a-z0-9]+/, "_").gsub(/\A_|_\z/, "")
+  end
+
   def extract_group(line)
     match = line.match(/\A#?\s*group:\s*(.+)\z/)
     match && match[1].strip
@@ -94,7 +112,7 @@ class EmojiJsonExportService
     english_name = match_data[2]
 
     emoji_char = hex_sequence.split.map { |code_point| code_point.hex }.pack("U*")
-    name_id_value = english_name.downcase.gsub(/[^a-z0-9]+/, "_").gsub(/^_|_$/, "")
+    name_id_value = build_name_id(english_name)
     description_value = "#{hex_sequence}\n#{version_str}"
 
     {
