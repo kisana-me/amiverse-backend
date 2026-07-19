@@ -160,6 +160,7 @@ class V1::PostsController < V1::ApplicationController
       post: [
         :reply_aid,
         :quote_aid,
+        :community_aid,
         :content,
         :visibility,
         :user_rating,

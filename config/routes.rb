@@ -11,6 +11,9 @@ Rails.application.routes.draw do
   # Posts
   resources :posts, only: [ :index, :show, :update ], param: :aid
 
+  # Communities
+  resources :communities, only: [ :index, :show, :update, :new, :create ], param: :aid
+
   # Images
   resources :images, only: [ :index, :show, :update ], param: :aid do
     member do
@@ -107,6 +110,10 @@ Rails.application.routes.draw do
       post "reactions"
     end
 
+    # Communities
+    post "communities" => "communities#index"
+    post "communities/:aid" => "communities#show"
+
     # Emojis
     post "emojis/groups" => "emojis#groups_index"
     post "emojis/groups/:group_name" => "emojis#groups_show"
@@ -124,6 +131,7 @@ Rails.application.routes.draw do
     post "feeds/following" => "feeds#following"
     post "feeds/current" => "feeds#new_current"
     post "feeds/account" => "feeds#account"
+    post "feeds/community" => "feeds#community"
 
     # Notifications
     post "notifications" => "notifications#index"

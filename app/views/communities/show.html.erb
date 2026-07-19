@@ -1,0 +1,19 @@
+<% content_for :title, "コミュニティ詳細" %>
+
+<h1>コミュニティ詳細</h1>
+
+<%= render @community %>
+
+<div>
+  <div style="max-width: 30rem;">
+    <%= image_tag @community.banner_url, style: "width: 100%; object-fit: cover;" %>
+  </div>
+  <div>AID: <%= @community.aid %></div>
+  <div>説明: <%= @community.description %></div>
+  <div>創設者: <%= @community.founder ? "@#{@community.founder.name_id}" : "なし" %></div>
+  <div>状態: <%= @community.status %> / 公開: <%= @community.visibility %></div>
+</div>
+
+<hr />
+
+<%= render "form", community: @community, url: community_path(@community.aid) %>

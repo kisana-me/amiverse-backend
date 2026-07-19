@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 27) do
+ActiveRecord::Schema[8.1].define(version: 29) do
   create_table "accounts", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
     t.string "aid", limit: 14, null: false
     t.bigint "banner_id"
@@ -44,6 +44,25 @@ ActiveRecord::Schema[8.1].define(version: 27) do
     t.index ["blocked_id", "blocker_id"], name: "index_blocks_on_blocked_id_and_blocker_id", unique: true
     t.index ["blocked_id"], name: "index_blocks_on_blocked_id"
     t.index ["blocker_id"], name: "index_blocks_on_blocker_id"
+  end
+
+  create_table "communities", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
+    t.string "aid", limit: 14, null: false
+    t.bigint "banner_id"
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.bigint "founder_id"
+    t.bigint "icon_id"
+    t.text "meta", size: :long, default: "{}", null: false, collation: "utf8mb4_bin"
+    t.string "name"
+    t.integer "status", limit: 1, default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.integer "visibility", limit: 1, default: 0, null: false
+    t.index ["aid"], name: "index_communities_on_aid", unique: true
+    t.index ["banner_id"], name: "index_communities_on_banner_id"
+    t.index ["founder_id"], name: "index_communities_on_founder_id"
+    t.index ["icon_id"], name: "index_communities_on_icon_id"
+    t.check_constraint "json_valid(`meta`)", name: "meta"
   end
 
   create_table "diffuses", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
@@ -243,6 +262,7 @@ ActiveRecord::Schema[8.1].define(version: 27) do
     t.bigint "account_id", null: false
     t.string "aid", limit: 14, null: false
     t.integer "auto_rating", limit: 1
+    t.bigint "community_id"
     t.text "content", default: "", null: false
     t.datetime "created_at", null: false
     t.text "meta", size: :long, default: "{}", null: false, collation: "utf8mb4_bin"
@@ -256,6 +276,7 @@ ActiveRecord::Schema[8.1].define(version: 27) do
     t.integer "visibility", limit: 1, default: 0, null: false
     t.index ["account_id"], name: "index_posts_on_account_id"
     t.index ["aid"], name: "index_posts_on_aid", unique: true
+    t.index ["community_id"], name: "index_posts_on_community_id"
     t.index ["quote_id"], name: "index_posts_on_quote_id"
     t.index ["rating"], name: "index_posts_on_rating"
     t.index ["reply_id"], name: "index_posts_on_reply_id"
@@ -358,6 +379,9 @@ ActiveRecord::Schema[8.1].define(version: 27) do
   add_foreign_key "accounts", "images", column: "icon_id"
   add_foreign_key "blocks", "accounts", column: "blocked_id"
   add_foreign_key "blocks", "accounts", column: "blocker_id"
+  add_foreign_key "communities", "accounts", column: "founder_id"
+  add_foreign_key "communities", "images", column: "banner_id"
+  add_foreign_key "communities", "images", column: "icon_id"
   add_foreign_key "diffuses", "accounts"
   add_foreign_key "diffuses", "posts"
   add_foreign_key "drawings", "accounts"
@@ -379,6 +403,7 @@ ActiveRecord::Schema[8.1].define(version: 27) do
   add_foreign_key "post_videos", "posts"
   add_foreign_key "post_videos", "videos"
   add_foreign_key "posts", "accounts"
+  add_foreign_key "posts", "communities"
   add_foreign_key "posts", "posts", column: "quote_id"
   add_foreign_key "posts", "posts", column: "reply_id"
   add_foreign_key "reactions", "accounts"

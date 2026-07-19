@@ -3,6 +3,7 @@ class Post < ApplicationRecord
   include Rateable
 
   belongs_to :account
+  belongs_to :community, optional: true
 
   belongs_to :reply, -> { from_normal_account.is_normal.is_opened }, class_name: "Post", optional: true
   has_many   :replies, -> { from_normal_account.is_normal.is_opened }, class_name: "Post", foreign_key: :reply_id
@@ -30,13 +31,14 @@ class Post < ApplicationRecord
   has_many :notifications, as: :notifiable, dependent: :destroy
   has_many :moderation_results, as: :moderatable, dependent: :destroy
 
-  attr_accessor :reply_aid, :quote_aid
+  attr_accessor :reply_aid, :quote_aid, :community_aid
   attribute :meta, :json, default: -> { {} }
   enum :visibility, { opened: 0, limited: 1, closed: 2 }, default: :opened
   enum :status, { normal: 0, locked: 1, deleted: 2 }
 
   before_validation :assign_reply_from_aid
   before_validation :assign_quote_from_aid
+  before_validation :assign_community_from_aid
   before_create :set_aid
   before_create :rate_content_text
 
@@ -173,6 +175,12 @@ class Post < ApplicationRecord
     else
       self.quote = quote_post
     end
+  end
+
+  def assign_community_from_aid
+    return if community_aid.blank?
+
+    self.community = Community.listable.find_by(aid: community_aid)
   end
 
   def media_attached?

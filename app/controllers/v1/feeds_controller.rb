@@ -419,6 +419,66 @@ class V1::FeedsController < V1::ApplicationController
     render template: "v1/feeds/feed", formats: [ :json ]
   end
 
+  def community
+    @community = Community.listable.find_by(aid: params[:aid])
+    if @community.nil?
+      render json: { error: "Community not found" }, status: :not_found
+      return
+    end
+
+    filter = params[:filter].to_s
+
+    if filter == "recommended"
+      render_community_recommended
+      return
+    end
+
+    cursor_time = params[:cursor].present? ? Time.at(params[:cursor].to_f) : Time.current
+
+    posts_scope = Post
+      .where(community_id: @community.id)
+      .from_normal_account
+      .is_normal
+      .isnt_closed
+      .where("posts.created_at < ?", cursor_time)
+
+    case filter
+    when "media"
+      posts_scope = posts_scope.where(
+        "EXISTS (SELECT 1 FROM post_images WHERE post_images.post_id = posts.id) OR " \
+        "EXISTS (SELECT 1 FROM post_videos WHERE post_videos.post_id = posts.id)"
+      )
+    when "drawings"
+      posts_scope = posts_scope.where(
+        "EXISTS (SELECT 1 FROM post_drawings WHERE post_drawings.post_id = posts.id)"
+      )
+    end
+
+    posts = posts_scope
+      .order(created_at: :desc)
+      .limit(30)
+      .to_a
+
+    if posts.present?
+      response.headers["X-Next-Cursor"] = posts.last.created_at.to_f.to_s
+    end
+
+    @posts = Post
+      .from_normal_account
+      .rating_visible_to(@current_account)
+      .with_associations
+      .where(id: posts.map(&:id))
+      .in_order_of(:id, posts.map(&:id))
+
+    @feeds = @posts.map do |post|
+      {
+        type: "post",
+        post_aid: post.aid
+      }
+    end
+    render template: "v1/feeds/feed", formats: [ :json ]
+  end
+
   def account
     @account = Account.find_by(aid: params[:aid])
     if @account.nil? || !@account.normal?
@@ -518,6 +578,79 @@ class V1::FeedsController < V1::ApplicationController
         }
       end
     end.compact
+    render template: "v1/feeds/feed", formats: [ :json ]
+  end
+
+  private
+
+  def render_community_recommended
+    posts = Post
+      .where(community_id: @community.id)
+      .from_normal_account
+      .is_normal
+      .is_opened
+      .rating_visible_to(@current_account)
+
+    if @current_account
+      blocked_account_ids = Block
+        .where(blocker_id: @current_account.id)
+        .select(:blocked_id)
+      posts = posts.where.not(account_id: blocked_account_ids)
+    end
+
+    random_order_sql = ActiveRecord::Base.connection.adapter_name.downcase.include?("mysql") ? "RAND()" : "RANDOM()"
+
+    sampled_posts = posts
+      .select(:id, :reply_id, :created_at)
+      .reorder(Arel.sql(random_order_sql))
+      .limit(90)
+      .to_a
+
+    post_ids_pool = sampled_posts.map(&:id)
+
+    diffuses_counts = Diffuse.where(post_id: post_ids_pool).group(:post_id).count
+    reactions_counts = Reaction.where(post_id: post_ids_pool).group(:post_id).count
+    drawing_post_ids = PostDrawing
+      .where(post_id: post_ids_pool)
+      .distinct
+      .pluck(:post_id)
+      .each_with_object({}) { |post_id, hash| hash[post_id] = true }
+
+    thirty_days_ago = 30.days.ago
+
+    scored_posts = sampled_posts.map do |post|
+      score = 0
+      score += 1 if (diffuses_counts[post.id] || 0) > 0
+      score += 1 if (reactions_counts[post.id] || 0) > 0
+      score += 1 if drawing_post_ids[post.id]
+      score -= 1 if post.reply_id.present?
+      score += 1 if post.created_at >= thirty_days_ago
+
+      { id: post.id, score: score }
+    end
+
+    ranked_posts = scored_posts
+      .group_by { |item| item[:score] }
+      .sort_by { |score, _items| -score }
+      .flat_map { |_score, items| items.shuffle }
+
+    post_ids = ranked_posts.first(30).map { |item| item[:id] }
+
+    @posts = Post
+      .from_normal_account
+      .is_normal
+      .is_opened
+      .rating_visible_to(@current_account)
+      .with_associations
+      .where(id: post_ids)
+      .in_order_of(:id, post_ids)
+
+    @feeds = @posts.map do |post|
+      {
+        type: "post",
+        post_aid: post.aid
+      }
+    end
     render template: "v1/feeds/feed", formats: [ :json ]
   end
 end

@@ -28,6 +28,21 @@ ja:
         created_at: "作成日時"
         updated_at: "更新日時"
         icon: "アイコン"
+      community:
+        aid: "固有ID"
+        name: "名前"
+        description: "説明"
+        founder: "創設者"
+        founder_aid: "創設者 (aid)"
+        icon: "アイコン"
+        banner: "バナー"
+        icon_file: "アイコン"
+        banner_file: "バナー"
+        visibility: "公開状態"
+        meta: "メタデータ"
+        status: "ステータス"
+        created_at: "作成日時"
+        updated_at: "更新日時"
       session:
         aid: "固有ID"
         account: "アカウント"
@@ -139,6 +154,15 @@ ja:
         updated_at: "更新日時"
     enums:
       account:
+        visibility:
+          closed: "非公開"
+          limited: "限定公開"
+          opened: "公開"
+        status:
+          normal: "通常"
+          locked: "停止中"
+          deleted: "削除済み"
+      community:
         visibility:
           closed: "非公開"
           limited: "限定公開"
