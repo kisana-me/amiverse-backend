@@ -4,6 +4,9 @@ Rails.application.routes.draw do
 
   # Accounts
   resources :accounts, only: [ :index, :show, :update ], param: :aid do
+    member do
+      get :heatmap
+    end
     resources :sessions, only: [ :index, :show, :update ], param: :aid
     resources :webpush_subscriptions, only: [ :index, :show, :update ]
   end
@@ -92,6 +95,7 @@ Rails.application.routes.draw do
     get "start" => "pages#start"
 
     # Accounts
+    post "accounts/heatmap" => "accounts#heatmap"
     post "accounts/@:name_id" => "accounts#show", constraints: { name_id: /.*/ }
     resources :accounts, only: [], param: :aid do
       resource :follow, only: [ :create, :destroy ]

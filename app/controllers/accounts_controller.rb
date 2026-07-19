@@ -7,6 +7,15 @@ class AccountsController < ApplicationController
     @accounts = set_pagination_for(accounts)
   end
 
+  def heatmap
+    @account = Account.find_by(aid: params[:aid])
+    if @account
+      data = @account.post_heatmap
+      @days = data[:days]
+      @max = data[:max]
+    end
+  end
+
   def show
   end
 

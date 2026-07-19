@@ -20,6 +20,7 @@ class Account < ApplicationRecord
   has_many :act_notifications, class_name: "Notification", foreign_key: :actor_id, dependent: :nullify
   has_one :notification_setting, dependent: :destroy
   has_many :webpush_subscriptions, dependent: :destroy
+  has_many :daily_visits, dependent: :destroy
 
   attribute :meta, :json, default: -> { {} }
   enum :visibility, { opened: 0, limited: 1, closed: 2 }, default: :opened
@@ -103,6 +104,32 @@ class Account < ApplicationRecord
 
   def notification_setting
     super || create_notification_setting!
+  end
+
+  def post_heatmap(weeks: 53)
+    today = Date.current
+    from = today.beginning_of_week(:sunday) - (weeks - 1).weeks
+
+    post_counts = posts
+      .isnt_deleted
+      .where(reply_id: nil)
+      .where(created_at: from.beginning_of_day..)
+      .group(Arel.sql("DATE(created_at)"))
+      .count
+      .transform_keys(&:to_s)
+
+    visited = daily_visits
+      .where(visited_on: from..today)
+      .pluck(:visited_on)
+      .map(&:to_s)
+      .to_set
+
+    days = (from..today).map do |date|
+      key = date.to_s
+      { date: key, count: post_counts[key] || 0, visited: visited.include?(key) }
+    end
+
+    { days: days, max: days.map { |day| day[:count] }.max || 0 }
   end
 
   private

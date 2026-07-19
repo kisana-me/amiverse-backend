@@ -1,4 +1,6 @@
 class V1::AccountsController < V1::ApplicationController
+  before_action :require_signin, only: [ :heatmap ]
+
   def show
     @account = Account
       .is_normal
@@ -36,6 +38,14 @@ class V1::AccountsController < V1::ApplicationController
       .limit(50)
 
     render template: "v1/accounts/index", formats: [ :json ]
+  end
+
+  def heatmap
+    data = @current_account.post_heatmap
+    @days = data[:days]
+    @max = data[:max]
+
+    render template: "v1/accounts/heatmap", formats: [ :json ]
   end
 
   private
