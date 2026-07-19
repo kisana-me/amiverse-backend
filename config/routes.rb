@@ -123,6 +123,10 @@ Rails.application.routes.draw do
     post "emojis/groups/:group_name" => "emojis#groups_show"
     post "emojis/:name_id" => "emojis#show"
 
+    # Coins
+    post "coins" => "coins#show"
+    post "coins/history" => "coins#history"
+
     # Search
     post "search" => "search#index"
 

@@ -4,7 +4,7 @@ class V1::PagesController < V1::ApplicationController
   end
 
   def start
-    record_daily_visit
+    grant_login_bonus if record_daily_visit
     render template: "v1/pages/start", formats: [ :json ]
   end
 
@@ -17,5 +17,11 @@ class V1::PagesController < V1::ApplicationController
     true
   rescue ActiveRecord::RecordNotUnique
     false
+  end
+
+  def grant_login_bonus
+    CoinService.grant(@current_account, CoinService::LOGIN_BONUS_AMOUNT, kind: :login_bonus)
+  rescue => e
+    Rails.logger.error("[login_bonus] #{e.class}: #{e.message}")
   end
 end

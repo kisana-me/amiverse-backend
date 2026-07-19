@@ -10,11 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 31) do
+ActiveRecord::Schema[8.1].define(version: 33) do
   create_table "accounts", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
     t.string "aid", limit: 14, null: false
     t.bigint "banner_id"
     t.datetime "birthdate"
+    t.bigint "coin_balance", default: 0, null: false
     t.datetime "created_at", null: false
     t.text "description", default: "", null: false
     t.string "email"
@@ -44,6 +45,19 @@ ActiveRecord::Schema[8.1].define(version: 31) do
     t.index ["blocked_id", "blocker_id"], name: "index_blocks_on_blocked_id_and_blocker_id", unique: true
     t.index ["blocked_id"], name: "index_blocks_on_blocked_id"
     t.index ["blocker_id"], name: "index_blocks_on_blocker_id"
+  end
+
+  create_table "coin_transactions", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.string "aid", null: false
+    t.bigint "amount", null: false
+    t.bigint "balance_after", null: false
+    t.datetime "created_at", null: false
+    t.integer "kind", default: 0, null: false
+    t.string "memo"
+    t.datetime "updated_at", null: false
+    t.index ["account_id", "created_at"], name: "index_coin_transactions_on_account_id_and_created_at"
+    t.index ["aid"], name: "index_coin_transactions_on_aid", unique: true
   end
 
   create_table "communities", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
@@ -388,6 +402,7 @@ ActiveRecord::Schema[8.1].define(version: 31) do
   add_foreign_key "accounts", "images", column: "icon_id"
   add_foreign_key "blocks", "accounts", column: "blocked_id"
   add_foreign_key "blocks", "accounts", column: "blocker_id"
+  add_foreign_key "coin_transactions", "accounts"
   add_foreign_key "communities", "accounts", column: "founder_id"
   add_foreign_key "communities", "images", column: "banner_id"
   add_foreign_key "communities", "images", column: "icon_id"

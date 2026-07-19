@@ -13,3 +13,4 @@ json.banner_url account.banner_url
 json.followers_count account.followers.count
 json.following_count account.following.count
 json.posts_count account.posts.is_normal.count
+json.coin_balance account.coin_balance

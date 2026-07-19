@@ -21,6 +21,7 @@ class Account < ApplicationRecord
   has_one :notification_setting, dependent: :destroy
   has_many :webpush_subscriptions, dependent: :destroy
   has_many :daily_visits, dependent: :destroy
+  has_many :coin_transactions, dependent: :destroy
 
   attribute :meta, :json, default: -> { {} }
   enum :visibility, { opened: 0, limited: 1, closed: 2 }, default: :opened
