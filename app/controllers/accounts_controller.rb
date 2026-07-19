@@ -16,6 +16,16 @@ class AccountsController < ApplicationController
     end
   end
 
+  def coin
+    @account = Account.find_by(aid: params[:aid])
+    if @account
+      per = 100
+      @page = [ params[:page].to_i, 1 ].max
+      @transactions = @account.coin_transactions.recent.offset((@page - 1) * per).limit(per)
+      @has_more = @page * per < @account.coin_transactions.count
+    end
+  end
+
   def show
   end
 

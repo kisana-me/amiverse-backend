@@ -162,6 +162,13 @@ ja:
           normal: "通常"
           locked: "停止中"
           deleted: "削除済み"
+      coin_transaction:
+        kind:
+          login_bonus: "ログインボーナス"
+          spend: "使用"
+          grant: "付与"
+          admin_spend: "運営徴収"
+          admin_grant: "運営付与"
       community:
         visibility:
           closed: "非公開"

@@ -6,10 +6,14 @@ Rails.application.routes.draw do
   resources :accounts, only: [ :index, :show, :update ], param: :aid do
     member do
       get :heatmap
+      get :coin
     end
     resources :sessions, only: [ :index, :show, :update ], param: :aid
     resources :webpush_subscriptions, only: [ :index, :show, :update ]
   end
+
+  # Coin Transactions
+  resources :coin_transactions, only: [ :show, :new, :create, :update ], param: :aid
 
   # Posts
   resources :posts, only: [ :index, :show, :update ], param: :aid

@@ -1,0 +1,33 @@
+<% content_for :title, "取引新規作成" %>
+
+<h1>取引新規作成</h1>
+
+<p style="color: #888;">
+  金額は絶対値で入力してください。種別が「使用」の場合は残高から減算されます。
+</p>
+
+<%= form_with url: coin_transactions_path, method: :post, class: "ctmf", data: { turbo: false } do |form| %>
+  <div>
+    <%= form.label :account_aid, "アカウントAID" %>
+    <%= form.text_field :account_aid, value: @account_aid %>
+  </div>
+
+  <div>
+    <%= form.label :amount, "金額（絶対値）" %>
+    <%= form.number_field :amount, min: 1 %>
+  </div>
+
+  <div>
+    <%= form.label :kind, "種別" %>
+    <%= form.select :kind, CoinTransaction.kinds.keys.map { |k| [ t("activerecord.enums.coin_transaction.kind.#{k}"), k ] } %>
+  </div>
+
+  <div>
+    <%= form.label :memo, "メモ（任意）" %>
+    <%= form.text_field :memo %>
+  </div>
+
+  <div>
+    <%= form.submit "作成" %>
+  </div>
+<% end %>

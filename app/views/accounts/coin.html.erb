@@ -1,0 +1,26 @@
+<% content_for :title, "コイン履歴" %>
+
+<% if @account %>
+  <h1>コイン履歴</h1>
+  <p>
+    <strong><%= @account.name %></strong> (@<%= @account.name_id %>) —
+    残高 <strong><%= number_with_delimiter @account.coin_balance %></strong> AMV
+    &nbsp;|&nbsp; <%= link_to "アカウント詳細", account_path(@account.aid) %>
+    &nbsp;|&nbsp; <%= link_to "取引を新規作成", new_coin_transaction_path(account_aid: @account.aid) %>
+  </p>
+
+  <div id="coin_transactions">
+    <% if @transactions.any? %>
+      <%= render @transactions %>
+    <% else %>
+      <p style="color: #888;">取引履歴はありません。</p>
+    <% end %>
+  </div>
+
+  <div id="coin_load_more" style="padding: 0.75rem 0;">
+    <%= render "coin_load_more", account: @account, page: @page, has_more: @has_more %>
+  </div>
+<% else %>
+  <h1>コイン履歴</h1>
+  <p>アカウントが見つかりませんでした。</p>
+<% end %>

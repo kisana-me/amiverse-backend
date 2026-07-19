@@ -1,0 +1,7 @@
+<%= turbo_stream.append "coin_transactions" do %>
+  <%= render @transactions %>
+<% end %>
+
+<%= turbo_stream.update "coin_load_more" do %>
+  <%= render "coin_load_more", account: @account, page: @page, has_more: @has_more %>
+<% end %>

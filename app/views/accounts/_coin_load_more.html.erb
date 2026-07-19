@@ -1,0 +1,7 @@
+<% if has_more %>
+  <%= link_to "さらに100件さかのぼる",
+        coin_account_path(account.aid, page: page + 1),
+        data: { turbo_stream: true } %>
+<% else %>
+  <span style="color: #888;">これ以上の履歴はありません</span>
+<% end %>

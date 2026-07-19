@@ -12,7 +12,7 @@
       <%= @account.status %>
     </span>
   </div>
-  <div>操作: <%= link_to "セッション一覧", account_sessions_path(@account.aid) %> <%= link_to "WebPushSubscription一覧 (#{@account.webpush_subscriptions.is_normal.count})", account_webpush_subscriptions_path(@account.aid) %></div>
+  <div>操作: <%= link_to "ヒートマップ", heatmap_account_path(@account.aid) %> <%= link_to "コイン", coin_account_path(@account.aid) %> <%= link_to "セッション一覧", account_sessions_path(@account.aid) %> <%= link_to "WebPushSubscription一覧 (#{@account.webpush_subscriptions.is_normal.count})", account_webpush_subscriptions_path(@account.aid) %></div>
 </div>
 
 <hr />

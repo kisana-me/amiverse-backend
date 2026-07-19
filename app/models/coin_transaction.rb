@@ -1,10 +1,10 @@
 class CoinTransaction < ApplicationRecord
   belongs_to :account
 
-  enum :kind, { login_bonus: 0, spend: 1, grant: 2, admin_grant: 3 }
+  enum :kind, { login_bonus: 0, spend: 1, grant: 2, admin_spend: 3, admin_grant: 4 }
 
   CREDIT_KINDS = %w[login_bonus grant admin_grant].freeze
-  DEBIT_KINDS = %w[spend].freeze
+  DEBIT_KINDS = %w[spend admin_spend].freeze
 
   before_create :set_aid
 

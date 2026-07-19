@@ -1,0 +1,32 @@
+<% content_for :title, "取引詳細" %>
+
+<% if @coin_transaction %>
+  <h1>取引詳細</h1>
+
+  <div>
+    <div>取引AID: <%= @coin_transaction.aid %></div>
+    <div>アカウント:
+      <%= link_to "@#{@coin_transaction.account.name_id}", account_path(@coin_transaction.account.aid) %>
+      &nbsp;|&nbsp; <%= link_to "コイン履歴", coin_account_path(@coin_transaction.account.aid) %>
+    </div>
+    <div>種別: <%= t("activerecord.enums.coin_transaction.kind.#{@coin_transaction.kind}") %></div>
+    <div>金額: <%= @coin_transaction.amount.positive? ? "+" : "" %><%= number_with_delimiter @coin_transaction.amount %></div>
+    <div>取引後残高: <%= number_with_delimiter @coin_transaction.balance_after %></div>
+    <div>日時: <%= @coin_transaction.created_at.strftime("%Y-%m-%d %H:%M:%S") %></div>
+  </div>
+
+  <hr />
+
+  <%= form_with model: @coin_transaction, url: coin_transaction_path(@coin_transaction.aid), method: :patch, class: "ctmf", data: { turbo: false } do |form| %>
+    <div>
+      <%= form.label :memo, "メモ" %>
+      <%= form.text_field :memo %>
+    </div>
+    <div>
+      <%= form.submit "メモを更新" %>
+    </div>
+  <% end %>
+<% else %>
+  <h1>取引詳細</h1>
+  <p>取引が見つかりませんでした。</p>
+<% end %>
