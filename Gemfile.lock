@@ -321,6 +321,10 @@ GEM
       erb
       psych (>= 4.0.0)
       tsort
+    redis (5.4.1)
+      redis-client (>= 0.22.0)
+    redis-client (0.30.0)
+      connection_pool
     regexp_parser (2.11.3)
     reline (0.6.3)
       io-console (~> 0.5)
@@ -365,15 +369,6 @@ GEM
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 4.0)
       websocket (~> 1.0)
-    solid_cable (3.0.12)
-      actioncable (>= 7.2)
-      activejob (>= 7.2)
-      activerecord (>= 7.2)
-      railties (>= 7.2)
-    solid_cache (1.0.10)
-      activejob (>= 7.2)
-      activerecord (>= 7.2)
-      railties (>= 7.2)
     solid_queue (1.2.4)
       activejob (>= 7.1)
       activerecord (>= 7.1)
@@ -458,10 +453,9 @@ DEPENDENCIES
   puma (>= 5.0)
   rack-cors (~> 3.0)
   rails (~> 8.1.1)
+  redis
   rubocop-rails-omakase
   selenium-webdriver
-  solid_cable
-  solid_cache
   solid_queue
   stimulus-rails
   streamio-ffmpeg (~> 3.0)

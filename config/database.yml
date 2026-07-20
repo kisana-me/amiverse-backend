@@ -10,18 +10,10 @@ development:
   primary: &primary_development
     <<: *default
     database: amiverse_development
-  cache:
-    <<: *primary_development
-    database: amiverse_development_cache
-    migrations_paths: db/cache_migrate
   queue:
     <<: *primary_development
     database: amiverse_development_queue
     migrations_paths: db/queue_migrate
-  cable:
-    <<: *primary_development
-    database: amiverse_development_cable
-    migrations_paths: db/cable_migrate
 
 test:
   <<: *default
@@ -31,15 +23,7 @@ production:
   primary: &primary_production
     <<: *default
     database: amiverse_production
-  cache:
-    <<: *primary_production
-    database: amiverse_production_cache
-    migrations_paths: db/cache_migrate
   queue:
     <<: *primary_production
     database: amiverse_production_queue
     migrations_paths: db/queue_migrate
-  cable:
-    <<: *primary_production
-    database: amiverse_production_cable
-    migrations_paths: db/cable_migrate

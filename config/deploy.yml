@@ -40,6 +40,7 @@ env:
     DB_HOST: host.docker.internal
     MEILISEARCH_URL: http://host.docker.internal:7700
     MODERATION_ENDPOINT: http://host.docker.internal:8000
+    REDIS_URL: redis://host.docker.internal:6379/0
 
     BACK_URL: https://api.amiverse.net
     FRONT_URL: https://amiverse.net

@@ -12,10 +12,9 @@ gem "jbuilder"
 gem "bcrypt", "~> 3.1.7"
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 
-gem "solid_cache"
 gem "solid_queue"
 gem "mission_control-jobs"
-gem "solid_cable"
+gem "redis"
 
 gem "bootsnap", require: false
 gem "kamal", require: false # ??

@@ -23,7 +23,7 @@ Rails.application.configure do
   config.active_record.dump_schema_after_migration = false
   config.active_record.attributes_for_inspect = [ :id ]
   config.silence_healthcheck_path = "/up"
-  config.cache_store = :memory_store # solid_cache_store
+  config.cache_store = :redis_cache_store, { url: ENV.fetch("REDIS_URL", "redis://localhost:6379/0"), namespace: "amiverse_production_cache" }
 
   # Replace the default in-process and non-durable queuing backend for Active Job.
   config.active_job.queue_adapter = :solid_queue
