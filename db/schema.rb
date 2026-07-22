@@ -10,8 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 33) do
+ActiveRecord::Schema[8.1].define(version: 34) do
   create_table "accounts", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
+    t.datetime "agreed_at"
     t.string "aid", limit: 14, null: false
     t.bigint "banner_id"
     t.datetime "birthdate"

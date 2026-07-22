@@ -32,15 +32,17 @@ Rails.application.configure do
   config.mission_control.jobs.http_basic_auth_user = ENV["MISSION_CONTROL_USER"]
   config.mission_control.jobs.http_basic_auth_password = ENV["MISSION_CONTROL_PASSWORD"]
 
-  # config.action_mailer.raise_delivery_errors = false
-  # config.action_mailer.default_url_options = { host: 'example.com' }
-  # config.action_mailer.smtp_settings = {
-  #   user_name: Rails.application.credentials.dig(:smtp, :user_name),
-  #   password: Rails.application.credentials.dig(:smtp, :password),
-  #   address: "smtp.example.com",
-  #   port: 587,
-  #   authentication: :plain
-  # }
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.default_url_options = { host: "amiverse.net" }
+  config.action_mailer.smtp_settings = {
+    user_name: Rails.application.credentials.dig(:smtp, :user_name),
+    password: Rails.application.credentials.dig(:smtp, :password),
+    domain: "amiverse.net",
+    address: "smtp.gmail.com",
+    port: 587,
+    authentication: :plain,
+    enable_starttls_auto: true
+  }
 
   # Enable DNS rebinding protection and other `Host` header attacks.
   env_hosts = [ ENV["BACK_URL"], ENV["FRONT_URL"] ].compact.map do |u|

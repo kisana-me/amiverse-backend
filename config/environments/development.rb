@@ -26,9 +26,17 @@ Rails.application.configure do
   end
 
   # Action Mailer
-  config.action_mailer.raise_delivery_errors = false
-  config.action_mailer.perform_caching = false
+  config.action_mailer.raise_delivery_errors = true
   config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
+  config.action_mailer.smtp_settings = {
+    user_name: Rails.application.credentials.dig(:smtp, :user_name),
+    password: Rails.application.credentials.dig(:smtp, :password),
+    domain: "amiverse.net",
+    address: "smtp.gmail.com",
+    port: 587,
+    authentication: :plain,
+    enable_starttls_auto: true
+  }
 
   # Active Record
   config.active_record.migration_error = :page_load

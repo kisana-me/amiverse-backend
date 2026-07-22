@@ -1,0 +1,17 @@
+<h1>Amiverse</h1>
+<h2>確認コードのお知らせ</h2>
+<p>確認コード:</p>
+<code><%= @code %></code>
+<p>確認コードの有効期限:</p>
+<p>発行より<%= @expires_in_minutes %>分間</p>
+<p>心当たりがない場合は、このメールを破棄してください</p>
+
+<style>
+  code {
+    padding: 10px;
+    border-radius: 7px;
+    color: #333333;
+    background: #dddddd;
+    font-size: 20px;
+  }
+</style>

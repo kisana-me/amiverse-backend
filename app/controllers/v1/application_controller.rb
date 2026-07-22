@@ -9,4 +9,10 @@ class V1::ApplicationController < ApplicationController
 
     render json: { status: "error", message: "サインインしてください" }, status: :unauthorized
   end
+
+  def require_signout
+    return unless @current_account
+
+    render json: { status: "error", message: "サインイン済みです" }, status: :forbidden
+  end
 end
