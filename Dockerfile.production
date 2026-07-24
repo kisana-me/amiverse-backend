@@ -11,7 +11,7 @@ WORKDIR /rails
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y \
       curl libjemalloc2 default-mysql-client \
-      imagemagick libvips ffmpeg \
+      imagemagick libvips ffmpeg nano \
       mecab libmecab-dev mecab-ipadic-utf8 \
       fonts-noto-cjk fonts-noto-color-emoji && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
