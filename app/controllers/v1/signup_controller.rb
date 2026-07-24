@@ -20,10 +20,6 @@ class V1::SignupController < V1::ApplicationController
       return render json: { status: "error", message: "メールアドレスが不正です" }, status: :unprocessable_entity
     end
 
-    if Account.exists?(email: email)
-      return render json: { status: "error", message: "このメールアドレスは既に使用されています" }, status: :unprocessable_entity
-    end
-
     if SignupCode.throttled?(email)
       return render json: { status: "error", message: "確認コードの送信間隔が短すぎます しばらく待ってからお試しください" }, status: :too_many_requests
     end
@@ -32,7 +28,12 @@ class V1::SignupController < V1::ApplicationController
       return render json: { status: "error", message: "人間性検証に失敗しました もう一度お試しください" }, status: :unprocessable_entity
     end
 
-    SignupMailer.verification_code(email, SignupCode.issue(email)).deliver_later
+    if Account.exists?(email: email)
+      SignupCode.mark_throttled(email)
+    else
+      SignupMailer.verification_code(email, SignupCode.issue(email)).deliver_later
+    end
+
     render json: { status: "success", message: "確認コードを送信しました" }, status: :ok
   end
 
@@ -48,8 +49,12 @@ class V1::SignupController < V1::ApplicationController
     @account.email_verified = true
     @account.agreed_at = Time.current
 
-    unless @account.valid?
-      return render json: { status: "error", message: "登録に失敗しました", errors: @account.errors.full_messages }, status: :unprocessable_entity
+    # メール重複エラーは列挙につながるため、それ以外の検証エラーのみ先に返す
+    # （登録済みメールには確認コードを発行していないので、下の verify で弾かれる）
+    @account.valid?
+    other_errors = @account.errors.reject { |err| err.attribute == :email && err.type == :taken }
+    if other_errors.present?
+      return render json: { status: "error", message: "登録に失敗しました", errors: other_errors.map(&:full_message) }, status: :unprocessable_entity
     end
 
     unless SignupCode.verify(email, params[:code])

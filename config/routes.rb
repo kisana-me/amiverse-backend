@@ -163,6 +163,10 @@ Rails.application.routes.draw do
     post "signup/code" => "signup#code"
     post "signup/oauth" => "signup#oauth"
 
+    # Signin
+    post "signin" => "signin#create"
+    post "signin/code" => "signin#code"
+
     # Settings
     post "settings/account" => "settings#account"
     post "settings/notification" => "settings#notification"

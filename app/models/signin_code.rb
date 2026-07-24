@@ -1,5 +1,5 @@
-class SignupCode
-  # SignupCode Ver. 1.0.0
+class SigninCode
+  # SigninCode Ver. 1.0.0
 
   EXPIRES_IN = 10.minutes
   RESEND_INTERVAL = 60.seconds
@@ -51,11 +51,11 @@ class SignupCode
     end
 
     def code_key(email)
-      "signup_code:#{normalize(email)}"
+      "signin_code:#{normalize(email)}"
     end
 
     def throttle_key(email)
-      "signup_code_throttle:#{normalize(email)}"
+      "signin_code_throttle:#{normalize(email)}"
     end
 
     def digest(code)
