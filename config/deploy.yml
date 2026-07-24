@@ -36,6 +36,7 @@ env:
     - S3_LOCAL_ENDPOINT
     - MISSION_CONTROL_USER
     - MISSION_CONTROL_PASSWORD
+    - CLOUDFLARE_TURNSTILE_SECRET_KEY
   clear:
     DB_HOST: host.docker.internal
     MEILISEARCH_URL: http://host.docker.internal:7700
